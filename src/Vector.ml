@@ -245,7 +245,7 @@ let (* public *) push v x =
   (* On the fast path, one test suffices. *)
   if length < A.length data then begin
     (* A physical array slot exists. *)
-    A.set data length x;
+    A.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
   else if length < v.capacity then begin
