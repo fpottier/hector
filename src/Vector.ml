@@ -263,11 +263,9 @@ let[@inline] (* private *) ensure_extra_capacity v delta =
   ensure_capacity v (length v + delta)
 
 let (* public *) fit_capacity v =
-  let { length; capacity; data; _ } = v in
-  if length < capacity then begin
-    v.capacity <- length;
-    v.data <- A.sub data 0 length
-  end
+  let { length; capacity; _ } = v in
+  if length < capacity then
+    set_lower_capacity v length
 
 (* -------------------------------------------------------------------------- *)
 
