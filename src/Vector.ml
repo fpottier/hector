@@ -199,15 +199,6 @@ let set_lower_capacity v new_capacity =
     v.data <- A.sub data 0 new_capacity
   end
 
-(* [really_enforce_current_capacity] does not change the vector's capacity,
-   but ensures that the length of the [data] array is [capacity]. A new array
-   is allocated; the value [dummy] is used to initialize it. *)
-
-let[@inline] really_enforce_current_capacity v dummy =
-  assert (v.length = 0 && A.length v.data = 0);
-  assert (0 < v.capacity);
-  v.data <- A.make v.capacity dummy
-
 (* [really_set_higher_capacity] increases the vector's capacity and
    immediately re-allocates the [data] array so as to match the new
    capacity. The value [dummy] is used to initialize unused slots. *)
@@ -306,12 +297,13 @@ let (* public *) push v x =
     assert (A.length data < capacity);
     assert (A.length data = 0);
     assert (length = 0);
-    really_enforce_current_capacity v x;
-    let { data; _ } = v in
-    assert (A.length data = v.capacity);
+    (* Without changing the vector's capacity, allocate a new [data] array. *)
+    let dummy = x in
+    let data = A.make capacity dummy in
+    v.data <- data;
     (* Try again. *)
     let length = 0 in
-    A.set data length x;
+    A.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
   else begin
