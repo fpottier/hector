@@ -273,15 +273,13 @@ let (* public *) fit_capacity v =
 
 (* Pushing. *)
 
-let (* public *) push v x =
+(* We separate the slow paths (that is, the unusual cases) so that the fast
+   path (the common case) can be marked [@inline]. *)
+
+let[@inline never] push_slow_path v x =
   let { length; capacity; data } = v in
-  (* On the fast path, one test suffices. *)
-  if length < A.length data then begin
-    (* A physical array slot exists. *)
-    A.unsafe_set data length x; (* safe *)
-    v.length <- length + 1
-  end
-  else if length < capacity then begin
+  assert (not (length < A.length data));
+  if length < capacity then begin
     (* The length of the [data] array is less than [capacity], and
        must in fact be zero. The logical length of the vector must
        be zero, too. *)
@@ -313,6 +311,17 @@ let (* public *) push v x =
     A.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
+
+let[@inline] (* public *) push v x =
+  let { length; data; _ } = v in
+  (* On the fast path, one test suffices. *)
+  if length < A.length data then begin
+    (* A physical array slot exists. *)
+    A.unsafe_set data length x; (* safe *)
+    v.length <- length + 1
+  end
+  else
+    push_slow_path v x
 
 (* -------------------------------------------------------------------------- *)
 
