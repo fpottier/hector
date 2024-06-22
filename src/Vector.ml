@@ -316,8 +316,9 @@ let (* public *) show show v =
    We could also offer two variants of the module, an optimistic one and a
    defensive one, but that would also add complication.) *)
 
-(* Being defensive allows us to compile in -unsafe mode, that is, to remove
-   the bound checks on [A.get] and [A.set]. *)
+(* Being defensive allows us to use [A.unsafe_get] and [A.unsfe_set], thus
+   bypassing array bounds checks. In the event of a data race, that could
+   break memory safety! but we do not care. *)
 
 let defensive =
   true
