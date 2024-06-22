@@ -1,6 +1,7 @@
 # Hector
 
-`hector` is an OCaml library that offers [...].
+`hector` is an OCaml library that offers vectors (also known as dynamic
+arrays, or resizeable arrays).
 
 ## Installation and Usage
 
