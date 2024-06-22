@@ -10,16 +10,4 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type t
-
-val empty : t
-
-(**/**)
-
-(**[name] is used only while testing. *)
-val name : string
-
-(**[check] is used only while testing. *)
-val check : t -> unit
-
-(**/**)
+module Vector : (module type of Vector)

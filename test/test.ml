@@ -1,36 +1,80 @@
-(******************************************************************************)
-(*                                                                            *)
-(*                                   Hector                                   *)
-(*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*                                                                            *)
-(*       Copyright 2024--2024 Inria. All rights reserved. This file is        *)
-(*       distributed under the terms of the GNU Library General Public        *)
-(*       License, with an exception, as described in the file LICENSE.        *)
-(*                                                                            *)
-(******************************************************************************)
-
 open Monolith
 
-(* This is the reference implementation. *)
 module R = Reference
-
-(* This is the candidate implementation. *)
-module C = Hector
+module C = Hector.Vector
 
 (* -------------------------------------------------------------------------- *)
 
-(* The abstract type [t]. *)
+(* A Monolith combinator for arrays. *)
 
-(* This type is equipped with a well-formedness check,
-   which ignores the model (the reference side). *)
+let constructible_array spec =
+  map_outof
+    Array.of_list
+    (Array.of_list, constant "Array.of_list")
+    (list spec)
+
+let deconstructible_array spec =
+  map_into
+    Array.to_list
+    (Array.to_list, constant "Array.to_list")
+    (list spec)
+
+let array spec =
+  ifpol
+    (constructible_array spec)
+    (deconstructible_array spec)
+
+(* -------------------------------------------------------------------------- *)
+
+(* We have one abstract type, namely [vector]. *)
 
 let check _model =
-  C.check,
-  constant "check"
+  C.check, constant "check"
 
-let t =
+let vector =
   declare_abstract_type ~check ()
+
+(* We draw random integer elements. *)
+
+let element =
+  semi_open_interval 0 32
+
+(* We draw random integer capacities and lengths. *)
+
+let capacity =
+  semi_open_interval 0 32
+
+let length =
+  semi_open_interval 0 32
+
+(* We draw indices within the range of a vector. *)
+
+let index v =
+  semi_open_interval 0 (R.length v)
+
+(* Exchanging arguments. *)
+
+let flip f x y =
+  f y x
+
+(* We test [iter] by converting it to an [elements] function. *)
+
+let elements iter v =
+  let xs = ref [] in
+  iter (fun x -> xs := x :: !xs) v;
+  List.rev !xs
+
+(* -------------------------------------------------------------------------- *)
+
+(* Declare the correspondence between exceptions. *)
+
+let () =
+  override_exn_eq @@ fun (=) e1 e2 ->
+    match e1, e2 with
+    | R.Empty, C.Empty ->
+        true
+    | _, _ ->
+        e1 = e2
 
 (* -------------------------------------------------------------------------- *)
 
@@ -38,8 +82,68 @@ let t =
 
 let () =
 
-  let spec = t in
-  declare "empty" spec R.empty C.empty;
+  let spec = vector ^> length in
+  declare "length" spec R.length C.length;
+
+  let spec = vector ^> bool in
+  declare "is_empty" spec R.is_empty C.is_empty;
+
+  let spec = capacity ^> vector in
+  declare "make" spec R.make C.make;
+
+  let spec = unit ^> vector in
+  declare "create" spec R.create C.create;
+
+  let spec = length ^> vector in
+  declare "flip init Fun.id" spec
+    (flip R.init Fun.id) (flip C.init Fun.id);
+
+  let spec = vector ^> vector in
+  declare "copy" spec R.copy C.copy;
+
+  let spec = vector ^> array element in
+  declare "elements" spec R.elements C.elements;
+
+  let spec = vector ^>> fun v -> index v ^> element in
+  declare "get" spec R.get C.get;
+
+  let spec = vector ^>> fun v -> index v ^> element ^> unit in
+  declare "set" spec R.set C.set;
+
+  let spec = vector ^> element ^> unit in
+  declare "push" spec R.push C.push;
+
+  let spec = vector ^> option element in
+  declare "pop_opt" spec R.pop_opt C.pop_opt;
+
+  let spec = vector ^!> element in
+  declare "pop" spec R.pop C.pop;
+
+  let spec = vector ^!> unit in
+  declare "drop" spec R.drop C.drop;
+
+  let spec = vector ^> length ^> unit in
+  declare "truncate" spec R.truncate C.truncate;
+
+  let spec = vector ^> unit in
+  declare "clear" spec R.clear C.clear;
+  declare "reset" spec R.reset C.reset;
+
+  let spec = vector ^> capacity ^> unit in
+  declare "ensure_capacity" spec R.ensure_capacity C.ensure_capacity;
+  declare "ensure_extra_capacity" spec
+    R.ensure_extra_capacity C.ensure_extra_capacity;
+  declare "set_capacity" spec R.set_capacity C.set_capacity;
+
+  let spec = vector ^> unit in
+  declare "fit_capacity" spec R.fit_capacity C.fit_capacity;
+
+  let spec = vector ^> list element in
+  declare "elements iter" spec (elements R.iter) (elements C.iter);
+
+  (* [find] is applied specifically to the function [(<=) 8]. *)
+  let spec = vector ^!> int in
+  declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
 
   ()
 
@@ -49,8 +153,9 @@ let () =
 
 let () =
   let prologue () =
-    dprintf "          open %s;;\n" C.name;
+    dprintf "          open Hector.Vector;;\n";
+    dprintf "          let elements iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
     ()
   in
-  let fuel = 16 in
+  let fuel = 128 in
   main ~prologue fuel

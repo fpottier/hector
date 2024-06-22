@@ -10,12 +10,4 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type t = T
-
-let empty = T
-
-let name =
-  "Hector"
-
-let check _t =
-  ()
+module Vector = Vector
