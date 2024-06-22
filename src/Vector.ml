@@ -90,7 +90,7 @@ let[@inline] validate f length data =
 
 (* Construction. *)
 
-let (* public *) make capacity =
+let (* private *) make capacity =
   let length = 0 in
   let data = [||] in
   { length; capacity; data }
@@ -98,7 +98,7 @@ let (* public *) make capacity =
 let[@inline] (* public *) create () =
   make 0
 
-let (* public *) init n f =
+let (* private *) init n f =
   let length = n
   and capacity = n in
   let data = A.init capacity f in
@@ -125,11 +125,17 @@ let (* public *) elements v =
   let { length; data; _ } = v in
   A.sub data 0 length
 
-let[@inline] (* public *) get v i =
-  A.get v.data i
+(* In [get] and [set], our use of [A.unsafe_get] and [A.unsafe_set] is NOT
+   completely safe. We have validated the index [i], but, if there is a
+   data race, then by the time we read [v.data], we might find that [i] is
+   not a valid index in this array. That would break memory safety! but we
+   accept this risk. *)
 
-let[@inline] (* public *) set v i x =
-  A.set v.data i x
+let[@inline] (* private *) get v i =
+  A.unsafe_get v.data i (* not entirely safe *)
+
+let[@inline] (* private *) set v i x =
+  A.unsafe_set v.data i x (* not entirely safe *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -163,7 +169,7 @@ let (* public *) drop v =
   else
     raise Empty
 
-let[@inline] (* public *) truncate v n =
+let[@inline] (* private *) truncate v n =
   let { length; _ } = v in
   if n < length then
     v.length <- n
@@ -187,7 +193,7 @@ let (* public *) reset v =
 
 (* [set_lower_capacity] decreases the vector's capacity. *)
 
-let set_lower_capacity v new_capacity =
+let[@inline] set_lower_capacity v new_capacity =
   assert (new_capacity < v.capacity);
   v.capacity <- new_capacity;
   (* If the [data] array is nonempty, then it must be truncated so as to
@@ -225,7 +231,7 @@ let set_higher_capacity v new_capacity =
     let _data = really_set_higher_capacity v new_capacity dummy in
     ()
 
-let[@inline] (* public *) set_capacity v new_capacity =
+let[@inline] (* private *) set_capacity v new_capacity =
   let { capacity; _ } = v in
   if new_capacity < capacity then
     set_lower_capacity v new_capacity
@@ -243,23 +249,17 @@ let[@inline] next_capacity capacity =
     else capacity + capacity / 2
   )
 
-(* [ensure_higher_capacity] ensures that the vector's capacity is at least
-   [request]. It uses [set_higher_capacity], so the [data] array is not
-   necessarily grown. *)
-
-let ensure_higher_capacity v request =
+let[@inline] (* private *) ensure_capacity v request =
   let { capacity; _ } = v in
-  assert (request > capacity);
-  let new_capacity = max (next_capacity capacity) request in
-  assert (new_capacity > capacity);
-  set_higher_capacity v new_capacity
+  if request > capacity then begin
+    (* Ensure that the vector's capacity is at least [request]. We use
+       [set_higher_capacity], so the [data] array is not necessarily grown. *)
+    let new_capacity = max (next_capacity capacity) request in
+    assert (new_capacity >= request);
+    set_higher_capacity v new_capacity
+  end
 
-let[@inline] (* public *) ensure_capacity v request =
-  let { capacity; _ } = v in
-  if request > capacity then
-    ensure_higher_capacity v request
-
-let[@inline] (* public *) ensure_extra_capacity v delta =
+let[@inline] (* private *) ensure_extra_capacity v delta =
   ensure_capacity v (length v + delta)
 
 let (* public *) fit_capacity v =
