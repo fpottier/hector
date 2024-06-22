@@ -46,7 +46,7 @@ reinstall: uninstall
 show: reinstall
 	@ echo "#require \"hector\";;\n#show Hector;;" | ocaml
 
-ASSEMBLY=$(shell find . -name "hector__Hector.s")
+ASSEMBLY=$(shell find . -name "hector__Vector.s")
 .PHONY: assembly
 assembly:
 	@ dune clean && dune build --profile=release

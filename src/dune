@@ -8,7 +8,8 @@
 ;; Assertions are disabled in release builds.
 (env
   (dev     (flags :standard -w @A-4-44))
-  (release (flags :standard -noassert ))
+  (release (flags :standard -noassert)
+           (ocamlopt_flags :standard -S))
 )
 
 ;; Request documentation.
