@@ -142,9 +142,10 @@ let set_lower_capacity v new_capacity =
   (* If the [data] array is nonempty, then it must be truncated so as to
      match the new capacity. If it is empty, then [v.length] must be zero,
      so neither [v.length] nor [v.data] needs to be updated. *)
-  if 0 < A.length v.data then begin
-    v.length <- min v.length new_capacity;
-    v.data <- A.sub v.data 0 new_capacity
+  let { length; data; _ } = v in
+  if 0 < A.length data then begin
+    v.length <- min length new_capacity;
+    v.data <- A.sub data 0 new_capacity
   end
 
 (* [really_enforce_current_capacity] does not change the vector's capacity,
