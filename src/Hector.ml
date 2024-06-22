@@ -10,4 +10,5 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Vector = Vector
+module Mono = Mono
+module Poly = Poly

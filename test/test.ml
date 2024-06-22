@@ -1,7 +1,11 @@
 open Monolith
 
 module R = Reference
-module C = Hector.Vector
+
+(* Choose one of the following candidate implementations. *)
+module CPoly = Hector.Poly
+module CMono = Hector.Mono.Make(struct type t = int end)
+module C = CMono
 
 (* -------------------------------------------------------------------------- *)
 

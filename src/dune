@@ -12,5 +12,27 @@
            (ocamlopt_flags :standard -S))
 )
 
+;; Some files require preprocessing by cppo.
+
+(rule
+  (targets Mono.ml)
+  (deps Mono.cppo.ml (glob_files *.frag.ml))
+  (action (run %{bin:cppo} Mono.cppo.ml -o %{targets})))
+
+(rule
+  (targets Mono.mli)
+  (deps Mono.cppo.mli (glob_files *.frag.mli))
+  (action (run %{bin:cppo} Mono.cppo.mli -o %{targets})))
+
+(rule
+  (targets Poly.ml)
+  (deps Poly.cppo.ml (glob_files *.frag.ml))
+  (action (run %{bin:cppo} Poly.cppo.ml -o %{targets})))
+
+(rule
+  (targets Poly.mli)
+  (deps Poly.cppo.mli (glob_files *.frag.mli))
+  (action (run %{bin:cppo} Poly.cppo.mli -o %{targets})))
+
 ;; Request documentation.
 (documentation)
