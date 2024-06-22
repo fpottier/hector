@@ -36,31 +36,25 @@ let defensive =
 let[@inline] fail format =
   Printf.ksprintf invalid_arg format
 
-let[@inline never] capacity_failure f capacity =
-  fail "Vector.%s: capacity %d is negative" f capacity
+let[@inline never] capacity_failure capacity =
+  fail "invalid capacity %d" capacity
 
-let[@inline never] length_failure f n =
-  fail "Vector.%s: length %d is negative" f n
+let[@inline never] length_failure n =
+  fail "invalid length %d" n
 
-let[@inline never] index_failure f v i =
-  fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
-
-let[@inline never] get_failure v i =
-  index_failure "get" v i
-
-let[@inline never] set_failure v i =
-  index_failure "set" v i
+let[@inline never] index_failure v i =
+  fail "index %d is out of range [0, %d)" i v.length
 
 (* [validate length data] checks [length <= A.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
-let[@inline never] violation f length data =
-  fail "Vector.%s: length is %d, but data array has length %d (racy access?)"
-    f length (A.length data)
+let[@inline never] violation length data =
+  fail "length is %d, but data array has length %d (racy access?)"
+    length (A.length data)
 
-let[@inline] validate f length data =
+let[@inline] validate length data =
   if defensive && not (length <= A.length data) then
-    violation f length data
+    violation length data
 
 (* -------------------------------------------------------------------------- *)
 
@@ -306,7 +300,7 @@ let[@inline] (* public *) push v x =
 
 let[@inline] (* public *) iter f v =
   let { length; data; _ } = v in
-  validate "iter" length data;
+  validate length data;
   for i = 0 to length - 1 do
     f (A.unsafe_get data i) (* safe *)
   done
@@ -321,7 +315,7 @@ let rec find f length data i =
 
 let (* public *) find f v =
   let { length; data; _ } = v in
-  validate "find" length data;
+  validate length data;
   find f length data 0
 
 let (* public *) show show v =
@@ -342,36 +336,33 @@ let (* public *) show show v =
 (* Wrap the public functions that need defensive checks. *)
 
 let (* public *) make capacity =
-  if defensive && capacity < 0 then capacity_failure "make" capacity;
+  if defensive && capacity < 0 then capacity_failure capacity;
   make capacity
 
 let (* public *) init n f =
-  if defensive && n < 0 then length_failure "init" n;
+  if defensive && n < 0 then length_failure n;
   init n f
 
 let[@inline] (* public *) get v i =
-  if defensive && not (0 <= i && i < v.length) then get_failure v i;
+  if defensive && not (0 <= i && i < v.length) then index_failure v i;
   get v i
 
 let[@inline] (* public *) set v i x =
-  if defensive && not (0 <= i && i < v.length) then set_failure v i;
+  if defensive && not (0 <= i && i < v.length) then index_failure v i;
   set v i x
 
 let (* public *) truncate v n =
-  if defensive && n < 0 then length_failure "truncate" n;
+  if defensive && n < 0 then length_failure n;
   truncate v n
 
 let (* public *) set_capacity v new_capacity =
-  if defensive && new_capacity < 0 then
-    capacity_failure "set_capacity" new_capacity;
+  if defensive && new_capacity < 0 then capacity_failure new_capacity;
   set_capacity v new_capacity
 
 let (* public *) ensure_capacity v request =
-  if defensive && request < 0 then
-    capacity_failure "ensure_capacity" request;
+  if defensive && request < 0 then capacity_failure request;
   ensure_capacity v request
 
 let (* public *) ensure_extra_capacity v delta =
-  if defensive && delta < 0 then
-    capacity_failure "ensure_extra_capacity" delta;
+  if defensive && delta < 0 then capacity_failure delta;
   ensure_extra_capacity v delta
