@@ -1,4 +1,4 @@
-module Make (X : sig type t end) = struct
+module[@inline] Make (X : sig type t end) = struct
 
 (* -------------------------------------------------------------------------- *)
 
