@@ -204,7 +204,7 @@ let[@inline] next_capacity capacity =
    necessarily grown. *)
 
 let ensure_higher_capacity v request =
-  let capacity = v.capacity in
+  let { capacity; _ } = v in
   assert (request > capacity);
   let new_capacity = max (next_capacity capacity) request in
   assert (new_capacity > capacity);
@@ -215,14 +215,15 @@ let ensure_higher_capacity v request =
    is immediately grown. A [dummy] value must be supplied. *)
 
 let[@inline] really_ensure_higher_capacity v request dummy =
-  let capacity = v.capacity in
+  let { capacity; _ } = v in
   assert (request > capacity);
   let new_capacity = max (next_capacity capacity) request in
   assert (new_capacity > capacity);
   really_set_higher_capacity v new_capacity dummy
 
 let[@inline] (* public *) ensure_capacity v request =
-  if request > v.capacity then
+  let { capacity; _ } = v in
+  if request > capacity then
     ensure_higher_capacity v request
 
 let[@inline] (* public *) ensure_extra_capacity v delta =
