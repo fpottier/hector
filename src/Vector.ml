@@ -34,6 +34,7 @@ let (* public *) check v =
   assert (0 <= length);
   assert (length <= capacity);
   assert (length = 0 || A.length data = capacity);
+  assert (A.length data = 0 || A.length data = capacity);
   (* The following assertion follows from the previous ones: *)
   assert (length <= A.length data)
 
@@ -291,16 +292,19 @@ let (* public *) fit_capacity v =
 (* Pushing. *)
 
 let (* public *) push v x =
-  let { length; data; _ } = v in
+  let { length; capacity; data } = v in
   (* On the fast path, one test suffices. *)
   if length < A.length data then begin
     (* A physical array slot exists. *)
     A.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
-  else if length < v.capacity then begin
-    (* The length of the [data] array is less than [capacity]. This
-       implies that the logical length of the vector is zero. *)
+  else if length < capacity then begin
+    (* The length of the [data] array is less than [capacity], and
+       must in fact be zero. The logical length of the vector must
+       be zero, too. *)
+    assert (A.length data < capacity);
+    assert (A.length data = 0);
     assert (length = 0);
     really_enforce_current_capacity v x;
     let { data; _ } = v in
