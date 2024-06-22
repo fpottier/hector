@@ -1,5 +1,5 @@
 (* The functions of the module [A] that we need are
-   [length], [unsafe_get], [unsafe_set], [init], [sub], [make], [blit]. *)
+   [make], [init], [sub], [length], [unsafe_get], [unsafe_set], [blit]. *)
 
 (* -------------------------------------------------------------------------- *)
 
