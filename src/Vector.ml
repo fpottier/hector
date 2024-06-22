@@ -252,17 +252,6 @@ let ensure_higher_capacity v request =
   assert (new_capacity > capacity);
   set_higher_capacity v new_capacity
 
-(* [really_ensure_higher_capacity] ensures that the vector's capacity is at
-   least [request]. It uses [really_set_higher_capacity], so the [data] array
-   is immediately grown. A [dummy] value must be supplied. *)
-
-let[@inline] really_ensure_higher_capacity v request dummy =
-  let { capacity; _ } = v in
-  assert (request > capacity);
-  let new_capacity = max (next_capacity capacity) request in
-  assert (new_capacity > capacity);
-  really_set_higher_capacity v new_capacity dummy
-
 let[@inline] (* public *) ensure_capacity v request =
   let { capacity; _ } = v in
   if request > capacity then
@@ -308,8 +297,13 @@ let (* public *) push v x =
   end
   else begin
     (* The [data] array is full. *)
-    assert (length = v.capacity);
-    really_ensure_higher_capacity v (length + 1) x;
+    assert (length = capacity);
+    (* Ensure that the vector's capacity is at least [length + 1]. *)
+    let request = length + 1 in
+    let new_capacity = max (next_capacity capacity) request in
+    assert (new_capacity > capacity);
+    let dummy = x in
+    really_set_higher_capacity v new_capacity dummy;
     (* Try again. *)
     let { data; _ } = v in
     assert (A.length data = v.capacity);
