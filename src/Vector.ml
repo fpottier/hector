@@ -172,12 +172,13 @@ let really_set_higher_capacity v new_capacity dummy =
    array is re-allocated only if a dummy value is at hand. *)
 
 let set_higher_capacity v new_capacity =
-  if A.length v.data = 0 then
+  let { data; _ } = v in
+  if A.length data = 0 then
     (* The allocation of an array of size [capacity] is delayed,
        because we do not have a value of type ['a] at hand. *)
     v.capacity <- new_capacity
   else
-    let dummy = A.get v.data 0 in
+    let dummy = A.unsafe_get data 0 in (* safe *)
     really_set_higher_capacity v new_capacity dummy
 
 let[@inline] (* public *) set_capacity v new_capacity =
