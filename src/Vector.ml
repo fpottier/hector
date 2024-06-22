@@ -208,7 +208,8 @@ let really_set_higher_capacity v new_capacity dummy =
   let new_data = A.make new_capacity dummy in
   A.blit v.data 0 new_data 0 v.length ;
   v.capacity <- new_capacity;
-  v.data <- new_data
+  v.data <- new_data;
+  new_data
 
 (* [set_higher_capacity] increases the vector's capacity. The [data]
    array is re-allocated only if a dummy value is at hand. *)
@@ -221,7 +222,8 @@ let set_higher_capacity v new_capacity =
     v.capacity <- new_capacity
   else
     let dummy = A.unsafe_get data 0 in (* safe *)
-    really_set_higher_capacity v new_capacity dummy
+    let _data = really_set_higher_capacity v new_capacity dummy in
+    ()
 
 let[@inline] (* public *) set_capacity v new_capacity =
   let { capacity; _ } = v in
@@ -302,13 +304,13 @@ let (* public *) push v x =
     let request = length + 1 in
     let new_capacity = max (next_capacity capacity) request in
     assert (new_capacity > capacity);
+    assert (length < new_capacity);
     let dummy = x in
-    really_set_higher_capacity v new_capacity dummy;
+    let data = really_set_higher_capacity v new_capacity dummy in
     (* Try again. *)
-    let { data; _ } = v in
+    assert (v.capacity = new_capacity);
     assert (A.length data = v.capacity);
-    assert (length < v.capacity);
-    A.set data length x;
+    A.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
 
