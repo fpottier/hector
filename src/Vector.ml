@@ -46,9 +46,12 @@ let (* public *) check v =
    We could also offer two variants of the module, an optimistic one and a
    defensive one, but that would also add complication.) *)
 
-(* Being defensive allows us to use [A.unsafe_get] and [A.unsfe_set], thus
-   bypassing array bounds checks. In the event of a data race, that could
-   break memory safety! but we do not care. *)
+(* Being defensive allows us to use [A.unsafe_get] and [A.unsafe_set], thus
+   bypassing array bounds checks. In most places, this is safe, because our
+   defensive checks are strong enough. In [get] and [set], our defensive
+   checks are strong enough if the data structure is used sequentially, but
+   can be insufficient if there is a data race. Thus, racy accesses to a
+   vector can break memory safety! but we accept this risk. *)
 
 let defensive =
   true
@@ -70,6 +73,17 @@ let[@inline never] get_failure v i =
 
 let[@inline never] set_failure v i =
   index_failure "set" v i
+
+(* [validate length data] checks [length <= A.length data]. This property is
+   part of our invariant, and can be violated only through racy accesses. *)
+
+let[@inline never] violation f length data =
+  fail "Vector.%s: length is %d, but data array has length %d (racy access?)"
+    f length (A.length data)
+
+let[@inline] validate f length data =
+  if defensive && not (length <= A.length data) then
+    violation f length data
 
 (* -------------------------------------------------------------------------- *)
 
@@ -312,23 +326,27 @@ let (* public *) push v x =
 
 (* Iterating, searching, showing. *)
 
+(* Calling [validate] ensures that our use [unsafe_get] is safe. *)
+
 let[@inline] (* public *) iter f v =
   let { length; data; _ } = v in
+  validate "iter" length data;
   for i = 0 to length - 1 do
-    f (A.get data i)
+    f (A.unsafe_get data i) (* safe *)
   done
+
+let rec find f length data i =
+  if i = length then
+    raise Not_found
+  else if f (A.unsafe_get data i) (* safe *) then
+    i
+  else
+    find f length data (i + 1)
 
 let (* public *) find f v =
   let { length; data; _ } = v in
-  let rec find i =
-    if i = length then
-      raise Not_found
-    else if f (A.get data i) then
-      i
-    else
-      find (i + 1)
-  in
-  find 0
+  validate "find" length data;
+  find f length data 0
 
 let (* public *) show show v =
   let opening, separator, closing = "[|", "; ", "|]" in
