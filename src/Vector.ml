@@ -36,35 +36,9 @@ let (* public *) check v =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Defensive checks. *)
-
-let defensive =
-  true
-
-let[@inline] fail format =
-  Printf.ksprintf invalid_arg format
-
-let capacity_failure f capacity =
-  fail "Vector.%s: capacity %d is negative" f capacity
-
-let length_failure f n =
-  fail "Vector.%s: length %d is negative" f n
-
-let index_failure f v i =
-  fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
-
-let get_failure v i =
-  index_failure "get" v i
-
-let set_failure v i =
-  index_failure "set" v i
-
-(* -------------------------------------------------------------------------- *)
-
 (* Construction. *)
 
 let (* public *) make capacity =
-  if defensive && capacity < 0 then capacity_failure "make" capacity;
   let length = 0 in
   let data = [||] in
   { length; capacity; data }
@@ -73,7 +47,6 @@ let[@inline] (* public *) create () =
   make 0
 
 let (* public *) init n f =
-  if defensive && n < 0 then length_failure "init" n;
   let length = n
   and capacity = n in
   let data = A.init capacity f in
@@ -101,11 +74,9 @@ let (* public *) elements v =
   A.sub data 0 length
 
 let[@inline] (* public *) get v i =
-  if defensive && not (0 <= i && i < v.length) then get_failure v i;
   A.get v.data i
 
 let[@inline] (* public *) set v i x =
-  if defensive && not (0 <= i && i < v.length) then set_failure v i;
   A.set v.data i x
 
 (* -------------------------------------------------------------------------- *)
@@ -140,8 +111,7 @@ let (* public *) drop v =
   else
     raise Empty
 
-let (* public *) truncate v n =
-  if defensive && n < 0 then length_failure "truncate" n;
+let[@inline] (* public *) truncate v n =
   let { length; _ } = v in
   if n < length then
     v.length <- n
@@ -208,8 +178,7 @@ let set_higher_capacity v new_capacity =
     let dummy = A.get v.data 0 in
     really_set_higher_capacity v new_capacity dummy
 
-let (* public *) set_capacity v new_capacity =
-  if defensive && new_capacity < 0 then capacity_failure "set_capacity" new_capacity;
+let[@inline] (* public *) set_capacity v new_capacity =
   if new_capacity < v.capacity then
     set_lower_capacity v new_capacity
   else if new_capacity > v.capacity then
@@ -248,13 +217,11 @@ let[@inline] really_ensure_higher_capacity v request dummy =
   assert (new_capacity > capacity);
   really_set_higher_capacity v new_capacity dummy
 
-let (* public *) ensure_capacity v request =
-  if defensive && request < 0 then capacity_failure "ensure_capacity" request;
+let[@inline] (* public *) ensure_capacity v request =
   if request > v.capacity then
     ensure_higher_capacity v request
 
-let (* public *) ensure_extra_capacity v delta =
-  if defensive && delta < 0 then capacity_failure "ensure_extra_capacity" delta;
+let[@inline] (* public *) ensure_extra_capacity v delta =
   ensure_capacity v (length v + delta)
 
 let (* public *) fit_capacity v =
@@ -334,3 +301,75 @@ let (* public *) show show v =
   ) v;
   Buffer.add_string b closing;
   Buffer.contents b
+
+(* -------------------------------------------------------------------------- *)
+
+(* Error messages for our defensive checks. *)
+
+(* We set [defensive] unconditionally to [true]. (We could make [defensive]
+   a parameter of this module, but that would add overhead and complication.
+   We could also offer two variants of the module, an optimistic one and a
+   defensive one, but that would also add complication.) *)
+
+(* Being defensive allows us to compile in -unsafe mode, that is, to remove
+   the bound checks on [A.get] and [A.set]. *)
+
+let defensive =
+  true
+
+let[@inline] fail format =
+  Printf.ksprintf invalid_arg format
+
+let capacity_failure f capacity =
+  fail "Vector.%s: capacity %d is negative" f capacity
+
+let length_failure f n =
+  fail "Vector.%s: length %d is negative" f n
+
+let index_failure f v i =
+  fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
+
+let get_failure v i =
+  index_failure "get" v i
+
+let set_failure v i =
+  index_failure "set" v i
+
+(* -------------------------------------------------------------------------- *)
+
+(* Wrap the public functions that need defensive checks. *)
+
+let (* public *) make capacity =
+  if defensive && capacity < 0 then capacity_failure "make" capacity;
+  make capacity
+
+let (* public *) init n f =
+  if defensive && n < 0 then length_failure "init" n;
+  init n f
+
+let[@inline] (* public *) get v i =
+  if defensive && not (0 <= i && i < v.length) then get_failure v i;
+  get v i
+
+let[@inline] (* public *) set v i x =
+  if defensive && not (0 <= i && i < v.length) then set_failure v i;
+  set v i x
+
+let (* public *) truncate v n =
+  if defensive && n < 0 then length_failure "truncate" n;
+  truncate v n
+
+let (* public *) set_capacity v new_capacity =
+  if defensive && new_capacity < 0 then
+    capacity_failure "set_capacity" new_capacity;
+  set_capacity v new_capacity
+
+let (* public *) ensure_capacity v request =
+  if defensive && request < 0 then
+    capacity_failure "ensure_capacity" request;
+  ensure_capacity v request
+
+let (* public *) ensure_extra_capacity v delta =
+  if defensive && delta < 0 then
+    capacity_failure "ensure_extra_capacity" delta;
+  ensure_extra_capacity v delta
