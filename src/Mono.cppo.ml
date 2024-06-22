@@ -7,7 +7,9 @@ module A = struct
   include Array
 
   (* We implement [init] and [sub] using [make], so that [make] is our
-     single factory function for arrays. *)
+     single factory function for arrays. We also re-implement [blit].
+     This guarantees that [unsafe_set] is our sole way of writing an
+     array. *)
 
   let init n f =
     assert (0 <= n);
@@ -44,6 +46,17 @@ module A = struct
       unsafe_set a' i (unsafe_get a (o + i)) (* safe *)
     done;
     a'
+
+  (* We implement just a special case of [blit] where the two arrays
+     are distinct. *)
+
+  let[@inline] blit src sofs dst dofs n =
+    assert (src != dst);
+    validate src sofs n;
+    validate dst dofs n;
+    for i = 0 to n - 1 do
+      unsafe_set dst (dofs + i) (unsafe_get src (sofs + i)) (* safe *)
+    done
 
 end
 
