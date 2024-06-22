@@ -6,8 +6,6 @@ module A = struct
 
   include Array
 
-  let defensive = true
-
   (* We implement [init] and [sub] using [make], so that [make] is our
      single factory function for arrays. *)
 
@@ -21,14 +19,24 @@ module A = struct
     done;
     a
 
+  (* Validation ensures that our use of [unsafe_get] and [unsafe_set]
+     is safe. *)
+
+  let defensive = true
+
+  let[@inline never] violation a o n =
+    Printf.ksprintf invalid_arg
+      "invalid offset/length pair (%d, %d) in an array of length %d"
+      o n (length a)
+
+  let[@inline] validate a o n =
+    if defensive && not (0 <= n && 0 <= o && o + n <= length a) then
+      violation a o n
+
   (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
 
   let sub a o n =
-    assert (0 <= n);
-    if defensive && not (0 <= o && o + n <= length a) then
-      Printf.ksprintf invalid_arg
-        "invalid offset-length pair (%d, %d) in an array of length %d"
-        o n (length a);
+    validate a o n;
     if n = 0 then [||] else
     let x = unsafe_get a o in (* safe *)
     let a' = make n x in
