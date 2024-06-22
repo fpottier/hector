@@ -325,19 +325,19 @@ let defensive =
 let[@inline] fail format =
   Printf.ksprintf invalid_arg format
 
-let capacity_failure f capacity =
+let[@inline never] capacity_failure f capacity =
   fail "Vector.%s: capacity %d is negative" f capacity
 
-let length_failure f n =
+let[@inline never] length_failure f n =
   fail "Vector.%s: length %d is negative" f n
 
-let index_failure f v i =
+let[@inline never] index_failure f v i =
   fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
 
-let get_failure v i =
+let[@inline never] get_failure v i =
   index_failure "get" v i
 
-let set_failure v i =
+let[@inline never] set_failure v i =
   index_failure "set" v i
 
 (* -------------------------------------------------------------------------- *)
