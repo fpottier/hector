@@ -30,9 +30,10 @@ type 'a vector = {
 (* [check v] checks that the invariant holds. *)
 
 let (* public *) check v =
-  assert (0 <= v.length);
-  assert (0 <= v.capacity);
-  assert (v.length = 0 || A.length v.data = v.capacity)
+  let { length; capacity; data } = v in
+  assert (0 <= length);
+  assert (0 <= capacity);
+  assert (length = 0 || A.length data = capacity)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -86,20 +87,20 @@ let[@inline] (* public *) set v i x =
 exception Empty
 
 let (* public *) pop v =
-  let { length; data; _ } = v in
+  let { length; _ } = v in
   if length > 0 then
     let i = length - 1 in
     v.length <- i;
-    A.get data i
+    get v i
   else
     raise Empty
 
 let (* public *) pop_opt v =
-  let { length; data; _ } = v in
+  let { length; _ } = v in
   if length > 0 then
     let i = length - 1 in
     v.length <- i;
-    Some (A.get data i)
+    Some (get v i)
   else
     None
 
