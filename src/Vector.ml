@@ -32,8 +32,10 @@ type 'a vector = {
 let (* public *) check v =
   let { length; capacity; data } = v in
   assert (0 <= length);
-  assert (0 <= capacity);
-  assert (length = 0 || A.length data = capacity)
+  assert (length <= capacity);
+  assert (length = 0 || A.length data = capacity);
+  (* The following assertion follows from the previous ones: *)
+  assert (length <= A.length data)
 
 (* -------------------------------------------------------------------------- *)
 
