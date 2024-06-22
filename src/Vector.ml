@@ -182,9 +182,10 @@ let set_higher_capacity v new_capacity =
     really_set_higher_capacity v new_capacity dummy
 
 let[@inline] (* public *) set_capacity v new_capacity =
-  if new_capacity < v.capacity then
+  let { capacity; _ } = v in
+  if new_capacity < capacity then
     set_lower_capacity v new_capacity
-  else if new_capacity > v.capacity then
+  else if new_capacity > capacity then
     set_higher_capacity v new_capacity
 
 (* [next_capacity] decides by how much to increase the vector's capacity. *)
