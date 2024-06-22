@@ -2,7 +2,42 @@ module[@inline] Make (X : sig type t end) = struct
 
 (* -------------------------------------------------------------------------- *)
 
-module A = Array
+module A = struct
+
+  include Array
+
+  let defensive = true
+
+  (* We implement [init] and [sub] using [make], so that [make] is our
+     single factory function for arrays. *)
+
+  let init n f =
+    assert (0 <= n);
+    if n = 0 then [||] else
+    let x = f 0 in
+    let a = make n x in
+    for i = 1 to n - 1 do
+      unsafe_set a i (f i) (* safe *)
+    done;
+    a
+
+  (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
+
+  let sub a o n =
+    assert (0 <= n);
+    if defensive && not (0 <= o && o + n <= length a) then
+      Printf.ksprintf invalid_arg
+        "invalid offset-length pair (%d, %d) in an array of length %d"
+        o n (length a);
+    if n = 0 then [||] else
+    let x = unsafe_get a o in (* safe *)
+    let a' = make n x in
+    for i = 1 to n - 1 do
+      unsafe_set a' i (unsafe_get a (o + i)) (* safe *)
+    done;
+    a'
+
+end
 
 (* -------------------------------------------------------------------------- *)
 
