@@ -39,6 +39,40 @@ let (* public *) check v =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Error messages for our defensive checks. *)
+
+(* We set [defensive] unconditionally to [true]. (We could make [defensive]
+   a parameter of this module, but that would add overhead and complication.
+   We could also offer two variants of the module, an optimistic one and a
+   defensive one, but that would also add complication.) *)
+
+(* Being defensive allows us to use [A.unsafe_get] and [A.unsfe_set], thus
+   bypassing array bounds checks. In the event of a data race, that could
+   break memory safety! but we do not care. *)
+
+let defensive =
+  true
+
+let[@inline] fail format =
+  Printf.ksprintf invalid_arg format
+
+let[@inline never] capacity_failure f capacity =
+  fail "Vector.%s: capacity %d is negative" f capacity
+
+let[@inline never] length_failure f n =
+  fail "Vector.%s: length %d is negative" f n
+
+let[@inline never] index_failure f v i =
+  fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
+
+let[@inline never] get_failure v i =
+  index_failure "get" v i
+
+let[@inline never] set_failure v i =
+  index_failure "set" v i
+
+(* -------------------------------------------------------------------------- *)
+
 (* Construction. *)
 
 let (* public *) make capacity =
@@ -308,40 +342,6 @@ let (* public *) show show v =
   ) v;
   Buffer.add_string b closing;
   Buffer.contents b
-
-(* -------------------------------------------------------------------------- *)
-
-(* Error messages for our defensive checks. *)
-
-(* We set [defensive] unconditionally to [true]. (We could make [defensive]
-   a parameter of this module, but that would add overhead and complication.
-   We could also offer two variants of the module, an optimistic one and a
-   defensive one, but that would also add complication.) *)
-
-(* Being defensive allows us to use [A.unsafe_get] and [A.unsfe_set], thus
-   bypassing array bounds checks. In the event of a data race, that could
-   break memory safety! but we do not care. *)
-
-let defensive =
-  true
-
-let[@inline] fail format =
-  Printf.ksprintf invalid_arg format
-
-let[@inline never] capacity_failure f capacity =
-  fail "Vector.%s: capacity %d is negative" f capacity
-
-let[@inline never] length_failure f n =
-  fail "Vector.%s: length %d is negative" f n
-
-let[@inline never] index_failure f v i =
-  fail "Vector.%s: index %d is out of range [0, %d)" f i v.length
-
-let[@inline never] get_failure v i =
-  index_failure "get" v i
-
-let[@inline never] set_failure v i =
-  index_failure "set" v i
 
 (* -------------------------------------------------------------------------- *)
 
