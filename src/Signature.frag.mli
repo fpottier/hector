@@ -60,6 +60,9 @@ val add_last : VECTOR -> ELEMENT -> unit
    If the vector is empty, [None] is returned. *)
 val pop_opt : VECTOR -> ELEMENT option
 
+(**[pop_last_opt] is a synonym for [pop_opt]. *)
+val pop_last_opt : VECTOR -> ELEMENT option
+
 (**[Empty] is raised by [pop] and [drop]. *)
 exception Empty
 

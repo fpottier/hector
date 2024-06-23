@@ -136,6 +136,9 @@ let (* public *) pop_opt v =
   else
     None
 
+let (* public *) pop_last_opt =
+  pop_opt
+
 let (* public *) drop v =
   let { length; _ } = v in
   if length > 0 then
