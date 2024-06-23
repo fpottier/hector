@@ -23,7 +23,7 @@ type 'a vector = {
   mutable capacity : int;
 
   (* The data array. *)
-  mutable data     : 'a A.t;
+  mutable data     : 'a array;
 
 }
 

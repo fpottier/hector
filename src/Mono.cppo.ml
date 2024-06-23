@@ -1,10 +1,23 @@
-module[@inline] Make (X : sig type t end) = struct
+module[@inline] Make (X : sig
+  type t
+  val make : int -> t -> t array
+end) = struct
 
 (* -------------------------------------------------------------------------- *)
 
 module A = struct
 
-  include Array
+  (* We take the following functions from the [Array] module. *)
+
+  let length = Array.length
+  let unsafe_get = Array.unsafe_get
+  let unsafe_set = Array.unsafe_set
+
+  (* To construct arrays, we do not use [Array.make]. Instead, we use the
+     factory function provided the user, [X.make]. This allows the user
+     to use exotic (possibly unorthodox) array construction methods. *)
+
+  let make = X.make
 
   (* We implement [init] and [sub] using [make], so that [make] is our
      single factory function for arrays. We also re-implement [blit].
@@ -85,7 +98,7 @@ type vector = {
   mutable capacity : int;
 
   (* The data array. *)
-  mutable data     : element A.t;
+  mutable data     : element array;
 
 }
 

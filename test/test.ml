@@ -3,8 +3,14 @@ open Monolith
 module R = Reference
 
 (* Choose one of the following candidate implementations. *)
+
 module CPoly = Hector.Poly
-module CMono = Hector.Mono.Make(struct type t = int end)
+
+module CMono = Hector.Mono.Make(struct
+  type t = int
+  let make = Array.make
+end)
+
 module C = CMono
 
 (* -------------------------------------------------------------------------- *)

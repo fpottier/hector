@@ -1,4 +1,7 @@
-module Make (X : sig type t end) : sig
+module Make (X : sig
+  type t
+  val make : int -> t -> t array
+end) : sig
 
   type element = X.t
 
