@@ -16,42 +16,42 @@
 
 (rule
   (targets Int.ml)
-  (deps Int.cppo.ml (glob_files *.frag.ml))
+  (deps Int.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Int.cppo.ml -o %{targets})))
 
 (rule
   (targets Int.mli)
-  (deps Int.cppo.mli (glob_files *.frag.mli))
+  (deps Int.cppo.mli (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Int.cppo.mli -o %{targets})))
 
 (rule
   (targets Mono.ml)
-  (deps Mono.cppo.ml (glob_files *.frag.ml))
+  (deps Mono.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Mono.cppo.ml -o %{targets})))
 
 (rule
   (targets Mono.mli)
-  (deps Mono.cppo.mli (glob_files *.frag.mli))
+  (deps Mono.cppo.mli (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Mono.cppo.mli -o %{targets})))
 
 (rule
   (targets Poly.ml)
-  (deps Poly.cppo.ml (glob_files *.frag.ml))
+  (deps Poly.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Poly.cppo.ml -o %{targets})))
 
 (rule
   (targets Poly.mli)
-  (deps Poly.cppo.mli (glob_files *.frag.mli))
+  (deps Poly.cppo.mli (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Poly.cppo.mli -o %{targets})))
 
 (rule
   (targets Hector.ml)
-  (deps Hector.cppo.ml (glob_files *.frag.ml))
+  (deps Hector.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Hector.cppo.ml -o %{targets})))
 
 (rule
   (targets Hector.mli)
-  (deps Hector.cppo.mli (glob_files *.frag.mli))
+  (deps Hector.cppo.mli (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Hector.cppo.mli -o %{targets})))
 
 ;; Request documentation.
