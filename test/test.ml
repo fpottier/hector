@@ -103,9 +103,11 @@ let () =
 
   let spec = vector ^>> fun v -> index v ^> element in
   declare "get" spec R.get C.get;
+  declare "unsafe_get" spec R.get C.unsafe_get;
 
   let spec = vector ^>> fun v -> index v ^> element ^> unit in
   declare "set" spec R.set C.set;
+  declare "unsafe_set" spec R.set C.unsafe_set;
 
   let spec = vector ^> element ^> unit in
   declare "push" spec R.push C.push;

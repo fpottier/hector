@@ -43,10 +43,23 @@ val elements : VECTOR -> ELEMENT array
    [i] must be comprised in the semi-open interval of 0 to [length v]. *)
 val get : VECTOR -> index -> ELEMENT
 
+(**[unsafe_get v i] fetches the element at index [i] in vector [v].
+   [i] must be comprised in the semi-open interval of 0 to [length v].
+   {b No bounds check is performed.} If the index [i] is out of bounds,
+   memory safety can be compromised. Use at your own risk! *)
+val unsafe_get : VECTOR -> index -> ELEMENT
+
 (**[set v i x] overwrites the element at index [i] in vector [v] with the
    value [x]. [i] must be comprised in the semi-open interval of 0 to
    [length v]. *)
 val set : VECTOR -> index -> ELEMENT -> unit
+
+(**[unsafe_set v i x] overwrites the element at index [i] in vector
+   [v] with the value [x]. [i] must be comprised in the semi-open
+   interval of 0 to [length v].
+   {b No bounds check is performed.} If the index [i] is out of bounds,
+   memory safety can be compromised. Use at your own risk! *)
+val unsafe_set : VECTOR -> index -> ELEMENT -> unit
 
 (**[push v x] appends the element [x] at the end of the vector [v],
    that is, at offset [length v]. If necessary, the capacity of the
