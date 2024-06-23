@@ -10,5 +10,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
+module Int  : (module type of Int ) (* TODO *)
 module Mono : (module type of Mono) (* TODO *)
 module Poly : (module type of Poly) (* TODO *)

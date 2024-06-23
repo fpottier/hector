@@ -11,7 +11,9 @@ module CMono = Hector.Mono.Make(struct
   let make = Array.make
 end)
 
-module C = CMono
+module CInt  = Hector.Int
+
+module C = CInt
 
 (* -------------------------------------------------------------------------- *)
 

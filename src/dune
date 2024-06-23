@@ -15,6 +15,16 @@
 ;; Some files require preprocessing by cppo.
 
 (rule
+  (targets Int.ml)
+  (deps Int.cppo.ml (glob_files *.frag.ml))
+  (action (run %{bin:cppo} Int.cppo.ml -o %{targets})))
+
+(rule
+  (targets Int.mli)
+  (deps Int.cppo.mli (glob_files *.frag.mli))
+  (action (run %{bin:cppo} Int.cppo.mli -o %{targets})))
+
+(rule
   (targets Mono.ml)
   (deps Mono.cppo.ml (glob_files *.frag.ml))
   (action (run %{bin:cppo} Mono.cppo.ml -o %{targets})))
