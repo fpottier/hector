@@ -297,6 +297,9 @@ let[@inline] (* public *) push v x =
   else
     push_slow_path v x
 
+let (* public *) add_last =
+  push
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)

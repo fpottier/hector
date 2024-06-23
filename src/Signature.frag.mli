@@ -53,6 +53,9 @@ val set : VECTOR -> index -> ELEMENT -> unit
    vector is increased. *)
 val push : VECTOR -> ELEMENT -> unit
 
+(**[add_last] is a synonym for [push]. *)
+val add_last : VECTOR -> ELEMENT -> unit
+
 (**[pop_opt v] removes and returns the last element of the vector [v].
    If the vector is empty, [None] is returned. *)
 val pop_opt : VECTOR -> ELEMENT option
