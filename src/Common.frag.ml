@@ -2,7 +2,11 @@
    [length], [unsafe_get], [unsafe_set].
 
    Furthermore, we use [make], [init], [sub], [blit]. We take these functions
-   from a module named [A]. This allows them to be possibly redefined. *)
+   from a module named [A]. This allows them to be possibly redefined.
+
+   We do *NOT* assume that [A.make n x] initializes every array slot with the
+   value [x]. In fact, in this file, every call to [A.make] is of the form
+   [A.make n dummy], where [dummy] is a dummy value. *)
 
 (* -------------------------------------------------------------------------- *)
 
