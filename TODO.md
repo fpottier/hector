@@ -1,7 +1,5 @@
 # To Do
 
-* Declare module types for monomorphic and polymorphic vectors.
-
 * Improve the compatibility of our `Vector` modules with OCaml's `Dynarray`.
   Also, test using `Dynarray` as a reference implementation.
 
