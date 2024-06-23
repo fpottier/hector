@@ -10,6 +10,24 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Int  : (module type of Int ) (* TODO *)
-module Mono : (module type of Mono) (* TODO *)
-module Poly : (module type of Poly) (* TODO *)
+
+module type MONOVECTOR = sig
+  type element
+  #undef CONTAINER
+  #undef ELEMENT
+  #define CONTAINER vector
+  #define ELEMENT   element
+  #include "Signature.frag.mli"
+end
+
+module type POLYVECTOR = sig
+  #undef CONTAINER
+  #undef ELEMENT
+  #define CONTAINER 'a vector
+  #define ELEMENT   'a
+  #include "Signature.frag.mli"
+end
+
+module Int  = Int
+module Mono = Mono
+module Poly = Poly

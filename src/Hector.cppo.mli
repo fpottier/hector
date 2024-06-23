@@ -10,6 +10,31 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Int  = Int
-module Mono = Mono
-module Poly = Poly
+module type MONOVECTOR = sig
+  type element
+  #undef CONTAINER
+  #undef ELEMENT
+  #define CONTAINER vector
+  #define ELEMENT   element
+  #include "Signature.frag.mli"
+end
+
+module type POLYVECTOR = sig
+  #undef CONTAINER
+  #undef ELEMENT
+  #define CONTAINER 'a vector
+  #define ELEMENT   'a
+  #include "Signature.frag.mli"
+end
+
+module Int : MONOVECTOR with type element = int
+
+module Mono : sig
+  module Make (X : sig
+    type t
+    val make : int -> t -> t array
+  end)
+  : MONOVECTOR with type element = X.t
+end
+
+module Poly : POLYVECTOR

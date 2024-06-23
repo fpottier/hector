@@ -44,5 +44,15 @@
   (deps Poly.cppo.mli (glob_files *.frag.mli))
   (action (run %{bin:cppo} Poly.cppo.mli -o %{targets})))
 
+(rule
+  (targets Hector.ml)
+  (deps Hector.cppo.ml (glob_files *.frag.ml))
+  (action (run %{bin:cppo} Hector.cppo.ml -o %{targets})))
+
+(rule
+  (targets Hector.mli)
+  (deps Hector.cppo.mli (glob_files *.frag.mli))
+  (action (run %{bin:cppo} Hector.cppo.mli -o %{targets})))
+
 ;; Request documentation.
 (documentation)
