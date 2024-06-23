@@ -146,6 +146,9 @@ let (* public *) drop v =
     let i = length - 1 in
     v.length <- i
 
+let (* public *) remove_last =
+  drop
+
 let[@inline] (* private *) truncate v n =
   let { length; _ } = v in
   if n < length then
