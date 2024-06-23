@@ -9,11 +9,8 @@ let length v =
 let is_empty v =
   !v = []
 
-let make _capacity =
-  ref []
-
 let create () =
-  make 0
+  ref []
 
 let init n f =
   ref (List.init n f)

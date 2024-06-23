@@ -100,9 +100,6 @@ let () =
   let spec = vector ^> bool in
   declare "is_empty" spec R.is_empty C.is_empty;
 
-  let spec = capacity ^> vector in
-  declare "make" spec R.make C.make;
-
   let spec = unit ^> vector in
   declare "create" spec R.create C.create;
 

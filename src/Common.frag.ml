@@ -67,13 +67,11 @@ let[@inline] validate length data =
 
 (* Construction. *)
 
-let (* private *) make capacity =
-  let length = 0 in
-  let data = [||] in
-  { length; capacity; data }
-
 let[@inline] (* public *) create () =
-  make 0
+  let length = 0
+  and capacity = 0
+  and data = [||] in
+  { length; capacity; data }
 
 let (* private *) init n f =
   let length = n
@@ -341,10 +339,6 @@ let (* public *) show show v =
 (* -------------------------------------------------------------------------- *)
 
 (* Wrap the public functions that need defensive checks. *)
-
-let (* public *) make capacity =
-  if defensive && capacity < 0 then capacity_failure capacity;
-  make capacity
 
 let (* public *) init n f =
   if defensive && n < 0 then length_failure n;

@@ -24,12 +24,7 @@ val length : VECTOR -> length
 (**[s_empty v] is equivalent to [length v = 0]. *)
 val is_empty : VECTOR -> bool
 
-(**[make capacity] creates a new vector of length 0 and capacity
-   [capacity]. *)
-val make : capacity -> VECTOR
-
-(**[create()] creates a new vector of length 0 and capacity 0.
-   It is equivalent to [make 0]. *)
+(**[create()] creates a new vector of length 0 and capacity 0. *)
 val create : unit -> VECTOR
 
 (**[init n f] creates a new vector of length and capacity [n]
