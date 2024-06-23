@@ -7,11 +7,7 @@ end) = struct
 
 module A = struct
 
-  (* We take the following functions from the [Array] module. *)
-
-  let length = Array.length
-  let unsafe_get = Array.unsafe_get
-  let unsafe_set = Array.unsafe_set
+  open Array
 
   (* To construct arrays, we do not use [Array.make]. Instead, we use the
      factory function provided the user, [X.make]. This allows the user

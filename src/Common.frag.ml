@@ -1,7 +1,8 @@
-(* We use a subset of the functionality of the [Array] module. We assume that
-   this functionality is provided by a module named [A]. The functions that we
-   need are [make], [init], [sub], [length], [unsafe_get], [unsafe_set],
-   [blit]. *)
+(* We use a subset of the functionality of the [Array] module, namely
+   [length], [unsafe_get], [unsafe_set].
+
+   Furthermore, we use [make], [init], [sub], [blit]. We take these functions
+   from a module named [A]. This allows them to be possibly redefined. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -11,10 +12,10 @@ let (* public *) check v =
   let { length; capacity; data } = v in
   assert (0 <= length);
   assert (length <= capacity);
-  assert (length = 0 || A.length data = capacity);
-  assert (A.length data = 0 || A.length data = capacity);
+  assert (length = 0 || Array.length data = capacity);
+  assert (Array.length data = 0 || Array.length data = capacity);
   (* The following assertion follows from the previous ones: *)
-  assert (length <= A.length data)
+  assert (length <= Array.length data)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -25,7 +26,7 @@ let (* public *) check v =
    We could also offer two variants of the module, an optimistic one and a
    defensive one, but that would also add complication.) *)
 
-(* Being defensive allows us to use [A.unsafe_get] and [A.unsafe_set], thus
+(* Being defensive allows us to use [Array.unsafe_get] and [Array.unsafe_set], thus
    bypassing array bounds checks. In most places, this is safe, because our
    defensive checks are strong enough. In [get] and [set], our defensive
    checks are strong enough if the data structure is used sequentially, but
@@ -47,15 +48,15 @@ let[@inline never] length_failure n =
 let[@inline never] index_failure v i =
   fail "index %d is out of range [0, %d)" i v.length
 
-(* [validate length data] checks [length <= A.length data]. This property is
+(* [validate length data] checks [length <= Array.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
 let[@inline never] violation length data =
   fail "length is %d, but data array has length %d (racy access?)"
-    length (A.length data)
+    length (Array.length data)
 
 let[@inline] validate length data =
-  if defensive && not (length <= A.length data) then
+  if defensive && not (length <= Array.length data) then
     violation length data
 
 (* -------------------------------------------------------------------------- *)
@@ -97,17 +98,17 @@ let (* public *) elements v =
   let { length; data; _ } = v in
   A.sub data 0 length
 
-(* In [get] and [set], our use of [A.unsafe_get] and [A.unsafe_set] is NOT
+(* In [get] and [set], our use of [Array.unsafe_get] and [Array.unsafe_set] is NOT
    completely safe. We have validated the index [i], but, if there is a
    data race, then by the time we read [v.data], we might find that [i] is
    not a valid index in this array. That would break memory safety! but we
    accept this risk. *)
 
 let[@inline] (* private *) get v i =
-  A.unsafe_get v.data i (* not entirely safe *)
+  Array.unsafe_get v.data i (* not entirely safe *)
 
 let[@inline] (* private *) set v i x =
-  A.unsafe_set v.data i x (* not entirely safe *)
+  Array.unsafe_set v.data i x (* not entirely safe *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -172,7 +173,7 @@ let[@inline] set_lower_capacity v new_capacity =
      match the new capacity. If it is empty, then [v.length] must be zero,
      so neither [v.length] nor [v.data] needs to be updated. *)
   let { length; data; _ } = v in
-  if 0 < A.length data then begin
+  if 0 < Array.length data then begin
     v.length <- min length new_capacity;
     v.data <- A.sub data 0 new_capacity
   end
@@ -195,12 +196,12 @@ let really_set_higher_capacity v new_capacity dummy =
 
 let set_higher_capacity v new_capacity =
   let { data; _ } = v in
-  if A.length data = 0 then
+  if Array.length data = 0 then
     (* The allocation of an array of size [capacity] is delayed,
        because we do not have a value of type ['a] at hand. *)
     v.capacity <- new_capacity
   else
-    let dummy = A.unsafe_get data 0 in (* safe *)
+    let dummy = Array.unsafe_get data 0 in (* safe *)
     let _data = really_set_higher_capacity v new_capacity dummy in
     ()
 
@@ -249,13 +250,13 @@ let (* public *) fit_capacity v =
 
 let[@inline never] push_slow_path v x =
   let { length; capacity; data } = v in
-  assert (not (length < A.length data));
+  assert (not (length < Array.length data));
   if length < capacity then begin
     (* The length of the [data] array is less than [capacity], and
        must in fact be zero. The logical length of the vector must
        be zero, too. *)
-    assert (A.length data < capacity);
-    assert (A.length data = 0);
+    assert (Array.length data < capacity);
+    assert (Array.length data = 0);
     assert (length = 0);
     (* Without changing the vector's capacity, allocate a new [data] array. *)
     let dummy = x in
@@ -263,7 +264,7 @@ let[@inline never] push_slow_path v x =
     v.data <- data;
     (* Try again. *)
     let length = 0 in
-    A.unsafe_set data length x; (* safe *)
+    Array.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
   else begin
@@ -278,17 +279,17 @@ let[@inline never] push_slow_path v x =
     let data = really_set_higher_capacity v new_capacity dummy in
     (* Try again. *)
     assert (v.capacity = new_capacity);
-    assert (A.length data = v.capacity);
-    A.unsafe_set data length x; (* safe *)
+    assert (Array.length data = v.capacity);
+    Array.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
 
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
   (* On the fast path, one test suffices. *)
-  if length < A.length data then begin
+  if length < Array.length data then begin
     (* A physical array slot exists. *)
-    A.unsafe_set data length x; (* safe *)
+    Array.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
   else
@@ -304,13 +305,13 @@ let[@inline] (* public *) iter f v =
   let { length; data; _ } = v in
   validate length data;
   for i = 0 to length - 1 do
-    f (A.unsafe_get data i) (* safe *)
+    f (Array.unsafe_get data i) (* safe *)
   done
 
 let rec find f length data i =
   if i = length then
     raise Not_found
-  else if f (A.unsafe_get data i) (* safe *) then
+  else if f (Array.unsafe_get data i) (* safe *) then
     i
   else
     find f length data (i + 1)
