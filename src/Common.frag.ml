@@ -1,5 +1,7 @@
-(* The functions of the module [A] that we need are
-   [make], [init], [sub], [length], [unsafe_get], [unsafe_set], [blit]. *)
+(* We use a subset of the functionality of the [Array] module. We assume that
+   this functionality is provided by a module named [A]. The functions that we
+   need are [make], [init], [sub], [length], [unsafe_get], [unsafe_set],
+   [blit]. *)
 
 (* -------------------------------------------------------------------------- *)
 
