@@ -100,16 +100,18 @@ let (* public *) elements v =
   let { length; data; _ } = v in
   A.sub data 0 length
 
-(* In [get] and [set], our use of [Array.unsafe_get] and [Array.unsafe_set] is NOT
-   completely safe. We have validated the index [i], but, if there is a
-   data race, then by the time we read [v.data], we might find that [i] is
-   not a valid index in this array. That would break memory safety! but we
-   accept this risk. *)
+(* In [unsafe_get] and [unsafe_set], our use of [Array.unsafe_get] and
+   [Array.unsafe_set] is NOT completely safe. We have validated the
+   index [i], but, if there is a data race, then by the time we read
+   [v.data], we might find that [i] is not a valid index in this
+   array. That would break memory safety! but we accept this risk. *)
 
-let[@inline] (* private *) get v i =
+(* [get] and [set] inherit this risk. *)
+
+let[@inline] (* private *) unsafe_get v i =
   Array.unsafe_get v.data i (* not entirely safe *)
 
-let[@inline] (* private *) set v i x =
+let[@inline] (* private *) unsafe_set v i x =
   Array.unsafe_set v.data i x (* not entirely safe *)
 
 (* -------------------------------------------------------------------------- *)
@@ -121,7 +123,7 @@ let (* public *) pop v =
   if length > 0 then
     let i = length - 1 in
     v.length <- i;
-    get v i
+    unsafe_get v i
   else
     raise Not_found
 
@@ -133,7 +135,7 @@ let (* public *) pop_opt v =
   if length > 0 then
     let i = length - 1 in
     v.length <- i;
-    Some (get v i)
+    Some (unsafe_get v i)
   else
     None
 
@@ -354,11 +356,11 @@ let (* public *) init n f =
 
 let[@inline] (* public *) get v i =
   if defensive && not (0 <= i && i < v.length) then index_failure v i;
-  get v i
+  unsafe_get v i
 
 let[@inline] (* public *) set v i x =
   if defensive && not (0 <= i && i < v.length) then index_failure v i;
-  set v i x
+  unsafe_set v i x
 
 let (* public *) truncate v n =
   if defensive && n < 0 then length_failure n;
