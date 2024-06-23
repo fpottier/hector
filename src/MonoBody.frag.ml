@@ -10,6 +10,9 @@ module A = struct
      factory function provided the user, [X.make]. This allows the user
      to use exotic (possibly unorthodox) array construction methods. *)
 
+  (* We do *NOT* assume that [make n x] initializes every array slot with
+     the value [x]. We explicitly initialize every slot. *)
+
   let make = X.make
 
   (* We implement [init] and [sub] using [make], so that [make] is our
@@ -22,6 +25,7 @@ module A = struct
     if n = 0 then [||] else
     let x = f 0 in
     let a = make n x in
+    unsafe_set a 0 x; (* safe *)
     for i = 1 to n - 1 do
       unsafe_set a i (f i) (* safe *)
     done;
@@ -48,6 +52,7 @@ module A = struct
     if n = 0 then [||] else
     let x = unsafe_get a o in (* safe *)
     let a' = make n x in
+    unsafe_set a' 0 x; (* safe *)
     for i = 1 to n - 1 do
       unsafe_set a' i (unsafe_get a (o + i)) (* safe *)
     done;
