@@ -5,7 +5,7 @@ end) : sig
 
   type element = X.t
 
-  #define CONTAINER vector
+  #define VECTOR vector
   #define ELEMENT   element
 
   #include "Signature.frag.mli"
