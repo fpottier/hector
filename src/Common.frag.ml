@@ -116,8 +116,6 @@ let[@inline] (* private *) set v i x =
 
 (* Popping, truncating, clearing. *)
 
-exception Empty
-
 let (* public *) pop v =
   let { length; _ } = v in
   if length > 0 then
@@ -125,7 +123,10 @@ let (* public *) pop v =
     v.length <- i;
     get v i
   else
-    raise Empty
+    raise Not_found
+
+let (* public *) pop_last =
+  pop
 
 let (* public *) pop_opt v =
   let { length; _ } = v in
@@ -144,8 +145,6 @@ let (* public *) drop v =
   if length > 0 then
     let i = length - 1 in
     v.length <- i
-  else
-    raise Empty
 
 let[@inline] (* private *) truncate v n =
   let { length; _ } = v in

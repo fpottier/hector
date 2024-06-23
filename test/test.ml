@@ -78,18 +78,6 @@ let elements iter v =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Declare the correspondence between exceptions. *)
-
-let () =
-  override_exn_eq @@ fun (=) e1 e2 ->
-    match e1, e2 with
-    | R.Empty, C.Empty ->
-        true
-    | _, _ ->
-        e1 = e2
-
-(* -------------------------------------------------------------------------- *)
-
 (* Declare the operations. *)
 
 let () =

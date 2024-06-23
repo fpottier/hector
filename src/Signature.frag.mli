@@ -63,15 +63,15 @@ val pop_opt : VECTOR -> ELEMENT option
 (**[pop_last_opt] is a synonym for [pop_opt]. *)
 val pop_last_opt : VECTOR -> ELEMENT option
 
-(**[Empty] is raised by [pop] and [drop]. *)
-exception Empty
-
 (**[pop v] removes and returns the last element of the vector [v].
-   If the vector is empty, [Empty] is raised. *)
+   If the vector is empty, [Not_found] is raised. *)
 val pop : VECTOR -> ELEMENT
 
+(**[pop_last] is a synonym for [pop]. *)
+val pop_last : VECTOR -> ELEMENT
+
 (**[drop v] removes the last element of the vector [v].
-   If the vector is empty, [Empty] is raised. *)
+   If the vector [v] is empty, [drop v] has no effect. *)
 val drop : VECTOR -> unit
 
 (**If [n] is less than [length v], then [truncate v n] sets the length of the

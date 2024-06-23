@@ -39,8 +39,6 @@ let set v i x =
 let push v x =
   v := !v @ [x]
 
-exception Empty
-
 let pop_opt v =
   match List.rev !v with
   | x :: xs ->
@@ -55,10 +53,13 @@ let pop v =
       v := List.rev xs;
       x
   | [] ->
-      raise Empty
+      raise Not_found
 
 let drop v =
-  ignore (pop v)
+  match pop v with
+  | _
+  | exception Not_found ->
+      ()
 
 let rec take n xs =
   if n = 0 then []
