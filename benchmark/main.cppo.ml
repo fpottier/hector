@@ -31,7 +31,7 @@ module I = Hector.Int
   and run () () = \
     let v = create () in \
     for i = 0 to n-1 do \
-      let dummy = 42 in \
+      let dummy = i in \
       push v dummy \
     done \
   in \
