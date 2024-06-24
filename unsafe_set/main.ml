@@ -12,13 +12,17 @@ open Hector.Int
 
 (* Set. *)
 
-let benchmark_set n =
-  (* Initialization: *)
+let init n =
   let v = create () in
   for i = 0 to n-1 do
     let dummy = i in
     push v dummy
   done;
+  v
+
+let benchmark_set n =
+  (* Initialization: *)
+  let v = init n in
   for _ = 0 to 100 do
     (* Benchmark: *)
     for i = 0 to n-1 do
@@ -29,11 +33,7 @@ let benchmark_set n =
 
 let benchmark_unsafe_set n =
   (* Initialization: *)
-  let v = create () in
-  for i = 0 to n-1 do
-    let dummy = i in
-    push v dummy
-  done;
+  let v = init n in
   for _ = 0 to 100 do
     (* Benchmark: *)
     for i = 0 to n-1 do
