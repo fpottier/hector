@@ -4,8 +4,8 @@ open Printf
 
 (* The implementation that we wish to benchmark. *)
 
-(* module P = Hector.Poly *)
-(* module M = Hector.Mono.Make(struct type t = int let make = Array.make end) *)
+(* open Hector.Poly *)
+(* open Hector.Mono.Make(struct type t = int let make = Array.make end) *)
 open Hector.Int
 
 (* -------------------------------------------------------------------------- *)
