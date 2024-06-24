@@ -2,3 +2,10 @@
   (name main)
   (libraries hector common)
 )
+
+;; Some files require preprocessing by cppo.
+
+(rule
+  (targets main.ml)
+  (deps main.cppo.ml (glob_files *.frag.{ml,mli}))
+  (action (run %{bin:cppo} main.cppo.ml -o %{targets})))
