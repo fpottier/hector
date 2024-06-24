@@ -20,10 +20,13 @@ let init n =
   done;
   v
 
+let repetitions =
+  100
+
 let benchmark_set n =
   (* Initialization: *)
   let v = init n in
-  for _ = 0 to 100 do
+  for _ = 1 to repetitions do
     (* Benchmark: *)
     for i = 0 to n-1 do
       let dummy = 2 * i in
@@ -34,7 +37,7 @@ let benchmark_set n =
 let benchmark_unsafe_set n =
   (* Initialization: *)
   let v = init n in
-  for _ = 0 to 100 do
+  for _ = 1 to repetitions do
     (* Benchmark: *)
     for i = 0 to n-1 do
       let dummy = 2 * i in
