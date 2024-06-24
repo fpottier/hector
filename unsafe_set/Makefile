@@ -7,11 +7,23 @@ all:
 
 
 MAIN := ../_build/default/unsafe_set/main.exe
+
 .PHONY: test
 test: all
 	@ hyperfine --min-runs 30 --warmup 10 \
 	  "$(MAIN)" \
 	  "$(MAIN) --unsafe"
+
+.PHONY: once
+once: all
+	@ echo
+	@ echo Running safe:
+	@ echo
+	@ $(MAIN)
+	@ echo
+	@ echo Running unsafe:
+	@ echo
+	@ $(MAIN) --unsafe
 
 .PHONY: assembly
 assembly: all
