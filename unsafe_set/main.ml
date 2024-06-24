@@ -1,5 +1,3 @@
-open Printf
-
 (* -------------------------------------------------------------------------- *)
 
 (* The implementation that we wish to benchmark. *)
