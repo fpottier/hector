@@ -18,6 +18,13 @@ let init n =
   done;
   v
 
+let sum v n =
+  let s = ref 0 in
+  for i = 0 to n-1 do
+    s := !s + get v i
+  done;
+  Printf.printf "%d\n" !s
+
 let repetitions =
   100
 
@@ -30,7 +37,9 @@ let benchmark_set n =
       let dummy = 2 * i in
       set v i dummy
     done
-  done
+  done;
+  (* Dummy final read: *)
+  sum v n
 
 let benchmark_unsafe_set n =
   (* Initialization: *)
@@ -41,7 +50,9 @@ let benchmark_unsafe_set n =
       let dummy = 2 * i in
       unsafe_set v i dummy
     done
-  done
+  done;
+  (* Dummy final read: *)
+  sum v n
 
 (* -------------------------------------------------------------------------- *)
 
