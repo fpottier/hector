@@ -1,0 +1,4 @@
+(executable
+  (name main)
+  (ocamlopt_flags -S)
+)
