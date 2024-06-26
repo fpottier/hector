@@ -195,7 +195,7 @@ let really_set_higher_capacity v new_capacity dummy =
   let { length; capacity; data } = v in
   assert (new_capacity > capacity);
   let new_data = A.make new_capacity dummy in
-  A.blit data 0 new_data 0 length ;
+  A.blit data 0 new_data 0 length;
   v.capacity <- new_capacity;
   v.data <- new_data;
   new_data
