@@ -12,7 +12,9 @@ MAIN := ../_build/default/array_unsafe_set/main.exe
 test: all
 	@ hyperfine -N --min-runs 30 --warmup 10 \
 	  "$(MAIN)" \
-	  "$(MAIN) --unsafe"
+	  "$(MAIN) --unsafe" \
+	  "$(MAIN) --unrolled" \
+	  "$(MAIN) --unsafe --unrolled" \
 
 .PHONY: once
 once: all
@@ -24,7 +26,17 @@ once: all
 	@ echo Running unsafe:
 	@ echo
 	@ $(MAIN) --unsafe
+	@ echo
+	@ echo Running unrolled:
+	@ echo
+	@ $(MAIN) --unrolled
+	@ echo
+	@ echo Running unsafe unrolled:
+	@ echo
+	@ $(MAIN) --unsafe --unrolled
 
 .PHONY: assembly
-assembly: all
+assembly:
+	@ dune clean
+	@ make all
 	@ open -a /Applications/Emacs.app ../_build/default/array_unsafe_set/.main.eobjs/native/dune__exe__Main.s
