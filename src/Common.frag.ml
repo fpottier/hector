@@ -320,7 +320,7 @@ let[@inline] (* public *) iter f v =
     f (Array.unsafe_get data i) (* safe *)
   done
 
-let rec find f length data i =
+let rec find f length (data : ELEMENT array) i =
   if i = length then
     raise Not_found
   else if f (Array.unsafe_get data i) (* safe *) then

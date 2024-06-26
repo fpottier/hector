@@ -31,6 +31,10 @@ type vector = {
 
 (* -------------------------------------------------------------------------- *)
 
+(* We implement our own functions on arrays, so as to use [make],
+   [unsafe_get] and [unsafe_set] as the only primitive operations,
+   and we make them monomorphic, by adding type annotations. *)
+
 module A = struct
 
   open Array
@@ -49,7 +53,7 @@ module A = struct
      This guarantees that [unsafe_set] is our sole way of writing an
      array. *)
 
-  let init n f =
+  let init n f : element array =
     assert (0 <= n);
     if n = 0 then [||] else
     let x = f 0 in
@@ -76,7 +80,7 @@ module A = struct
 
   (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
 
-  let sub a o n =
+  let sub a o n : element array =
     validate a o n;
     if n = 0 then [||] else
     let x = unsafe_get a o in (* safe *)
@@ -90,7 +94,7 @@ module A = struct
   (* We implement just a special case of [blit] where the two arrays
      are distinct. *)
 
-  let[@inline] blit src sofs dst dofs n =
+  let[@inline] blit (src : element array) sofs dst dofs n =
     assert (src != dst);
     validate src sofs n;
     validate dst dofs n;
@@ -102,6 +106,7 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
+#define ELEMENT element
 #include "Common.frag.ml"
 
 (* -------------------------------------------------------------------------- *)
