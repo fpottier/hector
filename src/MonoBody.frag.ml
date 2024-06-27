@@ -89,7 +89,8 @@ module A = struct
      hand-written loop can be 30% slower than [Array.blit]. *)
 
   (* Unrolling the loop 5 times lets us avoid a bizarre slowness that
-     we have observed on arm64 processors, including Apple M1 and M2. *)
+     we have observed on arm64 processors, including Apple M1 and M2;
+     see https://github.com/ocaml/ocaml/issues/13262 *)
 
   let[@inline] blit (src : element array) sofs dst dofs n =
     assert (src != dst);
