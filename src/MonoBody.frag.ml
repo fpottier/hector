@@ -81,19 +81,6 @@ module A = struct
     if defensive && not (0 <= n && 0 <= o && o + n <= length a) then
       violation a o n
 
-  (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
-
-  let sub a o n : element array =
-    validate a o n;
-    if n = 0 then [||] else
-    let x = unsafe_get a o in (* safe *)
-    let a' = make n x in
-    unsafe_set a' 0 x; (* safe *)
-    for i = 1 to n - 1 do
-      unsafe_set a' i (unsafe_get a (o + i)) (* safe *)
-    done;
-    a'
-
   (* We implement just a special case of [blit] where the two arrays
      are distinct. *)
 
@@ -125,6 +112,16 @@ module A = struct
     (* for i = 0 to n - 1 do *)
     (*   unsafe_set dst (dofs + i) (unsafe_get src (sofs + i)) (\* safe *\) *)
     (* done *)
+
+  (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
+
+  let sub a o n : element array =
+    validate a o n;
+    if n = 0 then [||] else
+    let dummy = unsafe_get a o in (* safe *)
+    let a' = make n dummy in
+    blit a o a' 0 n;
+    a'
 
 end
 
