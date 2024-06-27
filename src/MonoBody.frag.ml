@@ -97,13 +97,34 @@ module A = struct
   (* We implement just a special case of [blit] where the two arrays
      are distinct. *)
 
+  (* In the case of integer arrays, a hand-written loop can be 3 times
+     faster than [Array.blit]. In the case of polymorphic arrays, the
+     hand-written loop can be 30% slower than [Array.blit]. *)
+
+  (* Unrolling the loop 5 times lets us avoid a bizarre slowness that
+     we have observed on arm64 processors, including Apple M1 and M2. *)
+
   let[@inline] blit (src : element array) sofs dst dofs n =
     assert (src != dst);
     validate src sofs n;
     validate dst dofs n;
-    for i = 0 to n - 1 do
-      unsafe_set dst (dofs + i) (unsafe_get src (sofs + i)) (* safe *)
+    let i = ref 0 in
+    while !i + 5 <= n do
+      #define COPY(e) (let j = e in unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)))
+      COPY(!i + 0);
+      COPY(!i + 1);
+      COPY(!i + 2);
+      COPY(!i + 3);
+      COPY(!i + 4);
+      i := !i + 5
+    done;
+    while !i < n do
+      COPY(!i);
+      i := !i + 1
     done
+    (* for i = 0 to n - 1 do *)
+    (*   unsafe_set dst (dofs + i) (unsafe_get src (sofs + i)) (\* safe *\) *)
+    (* done *)
 
 end
 
