@@ -31,9 +31,12 @@ type vector = {
 
 (* -------------------------------------------------------------------------- *)
 
-(* We implement our own functions on arrays, so as to use [make],
-   [unsafe_get] and [unsafe_set] as the only primitive operations,
-   and we make them monomorphic, by adding type annotations. *)
+(* We implement our own functions on arrays, so that [make], [unsafe_get],
+   and [unsafe_set] are the only primitive operations on which we rely. *)
+
+(* We add type annotations, where necessary, to ensure that our code is
+   monomorphic. Thus, if the type [element] is [int], we avoid the test
+   for float arrays, and we avoid the write barrier (_caml_modify). *)
 
 module A = struct
 
