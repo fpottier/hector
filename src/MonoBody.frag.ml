@@ -110,9 +110,6 @@ module A = struct
       COPY(!i);
       i := !i + 1
     done
-    (* for i = 0 to n - 1 do *)
-    (*   unsafe_set dst (dofs + i) (unsafe_get src (sofs + i)) (\* safe *\) *)
-    (* done *)
 
   (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
 
