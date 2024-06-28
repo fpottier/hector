@@ -96,9 +96,12 @@ module A = struct
     assert (src != dst);
     validate src sofs n;
     validate dst dofs n;
+    #define COPY(e) (\
+      let j = e in \
+      unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)) \
+    )
     let i = ref 0 in
     while !i + 5 <= n do
-      #define COPY(e) (let j = e in unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)))
       COPY(!i + 0);
       COPY(!i + 1);
       COPY(!i + 2);
