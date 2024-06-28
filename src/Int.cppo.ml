@@ -55,4 +55,6 @@ module X = struct
 
 end
 
+#define USE_MEMCPY 1
+
 #include "MonoBody.frag.ml"

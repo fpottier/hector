@@ -84,6 +84,23 @@ module A = struct
   (* We implement just a special case of [blit] where the two arrays
      are distinct. *)
 
+  #ifdef USE_MEMCPY
+
+  (* If the type [element] is immediate (i.e., not a pointer type)
+     then [memcpy] can be used. *)
+
+  (* In the case of integer arrays, [memcpy] can be 4 times faster than
+     hand-written loop, and 12 times faster than [Array.blit]. *)
+
+  external unsafe_blit :
+    int array -> int ->
+    int array -> int ->
+    int ->
+    unit
+  = "hector_array_blit"
+
+  #else
+
   (* In the case of integer arrays, a hand-written loop can be 3 times
      faster than [Array.blit]. In the case of polymorphic arrays, the
      hand-written loop can be 30% slower than [Array.blit]. *)
@@ -92,10 +109,7 @@ module A = struct
      we have observed on arm64 processors, including Apple M1 and M2;
      see https://github.com/ocaml/ocaml/issues/13262 *)
 
-  let[@inline] blit (src : element array) sofs dst dofs n =
-    assert (src != dst);
-    validate src sofs n;
-    validate dst dofs n;
+  let[@inline] unsafe_blit (src : element array) sofs dst dofs n =
     #define COPY(e) (\
       let j = e in \
       unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)) \
@@ -113,6 +127,14 @@ module A = struct
       COPY(!i);
       i := !i + 1
     done
+
+  #endif
+
+  let blit (src : element array) sofs dst dofs n =
+    assert (src != dst);
+    validate src sofs n;
+    validate dst dofs n;
+    unsafe_blit src sofs dst dofs n
 
   (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
 
