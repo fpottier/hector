@@ -23,7 +23,7 @@ let quota =
 
 (* The implementations that we wish to benchmark. *)
 
-(* module R = Dynarray *)
+module R = Dynarray
 module P = Hector.Poly
 module M = Hector.Mono.Make(struct type t = int let make = Array.make end)
 module I = Hector.Int
@@ -52,7 +52,7 @@ module I = Hector.Int
 
 let pushes n =
   [
-    (* PUSH("dynarray", R.create, R.add_last, n); *)
+    PUSH("dynarray", R.create, R.add_last, n);
     PUSH("poly", P.create, P.push, n);
     PUSH("mono", M.create, M.push, n);
     PUSH("int", I.create, I.push, n);
@@ -85,7 +85,7 @@ let pushes n =
 
 let gets n =
   [
-    (* GET("dynarray", R.create, R.add_last, R.get, n); *)
+    GET("dynarray", R.create, R.add_last, R.get, n);
     GET("poly", P.create, P.add_last, P.get, n);
     GET("mono", M.create, M.add_last, M.get, n);
     GET("int", I.create, I.add_last, I.get, n);
@@ -121,7 +121,7 @@ let gets n =
 
 let sets n =
   [
-    (* SET("dynarray", R.create, R.add_last, R.set, n); *)
+    SET("dynarray", R.create, R.add_last, R.set, n);
     SET("poly", P.create, P.add_last, P.set, n);
     SET("mono", M.create, M.add_last, M.set, n);
     SET("int", I.create, I.add_last, I.set, n);
