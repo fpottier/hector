@@ -1,3 +1,15 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Hector                                   *)
+(*                                                                            *)
+(*                       François Pottier, Inria Paris                        *)
+(*                                                                            *)
+(*       Copyright 2024--2024 Inria. All rights reserved. This file is        *)
+(*       distributed under the terms of the GNU Library General Public        *)
+(*       License, with an exception, as described in the file LICENSE.        *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* [unsafe_fill_bytes b o n c] fills the buffer [b], at offset [o], with [n]
    copies of the character [c]. It is implemented in runtime/str.c as a call
    to [memset]. *)
