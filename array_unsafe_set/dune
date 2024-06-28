@@ -1,5 +1,0 @@
-(executable
-  (name main)
-  (libraries unix)
-  (ocamlopt_flags -S)
-)
