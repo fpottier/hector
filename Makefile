@@ -128,10 +128,11 @@ handiwork:
 
 HEADACHE := headache
 HEADER   := header.txt
+SOURCES  := $(shell gfind . -type f -regex ".*\.\(mli?\|c\)" | grep -v dynarray)
 
 .PHONY: headache
 headache:
-	@ for f in $(shell gfind . -type f -regex ".*\.\(mli?\|c\)") ; do \
+	@ for f in $(SOURCES) ; do \
 	  $(HEADACHE) -c headache.config -h $(HEADER) $$f ; \
 	done
 
