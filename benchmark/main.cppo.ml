@@ -132,38 +132,47 @@ let sets n =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Main. *)
+(* Read the command line. *)
 
-let sizes =
-  [
-    10000;
-    (* 1_000_000; *)
-    (* 10_000_000; *)
-    (* 100_000_000 *)
-  ]
+let push, get, set =
+  ref 0, ref 0, ref 0
+
+let () =
+  Arg.parse [
+    "--push", Arg.Set_int push, " <n> Benchmark push";
+    "--get", Arg.Set_int get, " <n> Benchmark get";
+    "--set", Arg.Set_int set, " <n> Benchmark set";
+  ] (fun _ -> ()) "Invalid usage"
+
+let push, get, set =
+  !push, !get, !set
+
+(* -------------------------------------------------------------------------- *)
+
+(* Main. *)
 
 let () =
 
-  if false then begin
+  if push > 0 then begin
     eprintf "*** push\n";
     eprintf "\n";
-    sizes |> List.iter @@ fun n ->
+    let n = push in
     run (pushes n);
     eprintf "\n"
   end;
 
-  if false then begin
+  if get > 0 then begin
     eprintf "*** get\n";
     eprintf "\n";
-    sizes |> List.iter @@ fun n ->
+    let n = get in
     run (gets n);
     eprintf "\n"
   end;
 
-  if true then begin
+  if set > 0 then begin
     eprintf "*** set\n";
     eprintf "\n";
-    sizes |> List.iter @@ fun n ->
+    let n = set in
     run (sets n);
     eprintf "\n"
   end;

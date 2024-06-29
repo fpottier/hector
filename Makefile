@@ -30,6 +30,11 @@ test:
 	@ dune build @all
 	@ make -C test random
 
+.PHONY: bench
+bench:
+	@ dune build @all
+	@ make -C benchmark bench
+
 .PHONY: install
 install: all
 	@ dune install -p $(THIS)

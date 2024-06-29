@@ -4,12 +4,18 @@
 all:
 	@ dune build --profile release
 
-# [make test] runs this benchmark.
+# [make bench] runs the benchmarks.
 
 # Using --profile release ensures that debug assertions are turned off.
 
-.PHONY: test
-test:
-	@ dune exec --profile release \
-	    --display=quiet --no-print-directory \
-	     ./main.exe
+MAIN := \
+  dune exec --profile release \
+  --display=quiet --no-print-directory \
+  ./main.exe -- \
+
+.PHONY: bench
+bench:
+	mkdir -p log
+	@ $(MAIN) --push 10000 2>&1 | tee log/push.log
+	@ $(MAIN) --get 10000  2>&1 | tee log/get.log
+	@ $(MAIN) --set 10000  2>&1 | tee log/set.log
