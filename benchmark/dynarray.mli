@@ -91,6 +91,7 @@ val init : int -> (int -> 'a) -> 'a t
     @raise Invalid_argument if [n < 0] or [n > Sys.max_array_length].
 *)
 
+val unsafe_get : 'a t -> int -> 'a
 val get : 'a t -> int -> 'a
 (** [get a i] is the [i]-th element of [a], starting with index [0].
 

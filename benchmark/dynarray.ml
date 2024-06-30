@@ -442,10 +442,6 @@ let get (type a) (Pack a : a t) i =
   then Error.unexpected_empty_element "get" ~i ~length:a.length
   else Dummy.unsafe_get v
 
-let unsafe_set (Pack a) i x =
-  let {arr; _} = a in
-  arr.(i) <- Dummy.of_val x
-
 let set (Pack a) i x =
   let {arr; length; _} = a in
   if i >= length then Error.index_out_of_bounds "set" ~i ~length
@@ -1041,3 +1037,13 @@ let to_seq_rev_reentrant a =
     end
   in
   aux (length a - 1)
+
+(* fpottier *)
+let unsafe_get (type a) (Pack a : a t) i =
+  let v = Array.unsafe_get a.arr (i) in
+  Dummy.unsafe_get v
+
+(* fpottier *)
+let unsafe_set (Pack a) i x =
+  let {arr; _} = a in
+  Array.unsafe_set arr (i) (Dummy.of_val x)
