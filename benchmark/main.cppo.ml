@@ -89,6 +89,7 @@ let gets n =
     GET("poly", P.create, P.add_last, P.get, n);
     GET("mono", M.create, M.add_last, M.get, n);
     GET("int", I.create, I.add_last, I.get, n);
+    GET("dynarray/unsafe", R.create, R.add_last, R.unsafe_get, n);
     GET("poly/unsafe", P.create, P.add_last, P.unsafe_get, n);
     GET("mono/unsafe", M.create, M.add_last, M.unsafe_get, n);
     GET("int/unsafe", I.create, I.add_last, I.unsafe_get, n);
@@ -125,6 +126,7 @@ let sets n =
     SET("poly", P.create, P.add_last, P.set, n);
     SET("mono", M.create, M.add_last, M.set, n);
     SET("int", I.create, I.add_last, I.set, n);
+    SET("dynarray/unsafe", R.create, R.add_last, R.unsafe_set, n);
     SET("poly/unsafe", P.create, P.add_last, P.unsafe_set, n);
     SET("mono/unsafe", M.create, M.add_last, M.unsafe_set, n);
     SET("int/unsafe", I.create, I.add_last, I.unsafe_set, n);
