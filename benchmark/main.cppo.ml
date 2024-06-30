@@ -132,49 +132,73 @@ let sets n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* This benchmark allocates a lot of memory in the presence of a large vector.
+   We test whether using an unscanned vector (Hector.Int) or a scanned vector
+   (Dynarray, Hector.Poly) makes a difference. Apparently, it does not. *)
+
+let allocate_a_lot n =
+  Array.init n @@ fun k ->
+  List.init n @@ fun j ->
+  k * j
+
+#define SCAN(candidate, create, push, n) \
+( \
+  let basis = 1 \
+  and name = sprintf "scan (size %d) (%s)" n candidate \
+  and run () = \
+    (* Create an inert vector of size [n*n]: *) \
+    let v = create () in \
+    let size = n*n in \
+    for i = 0 to size-1 do \
+      let dummy = i in \
+      push v dummy \
+    done; \
+    fun () -> \
+      (* Allocate [3k*n*n] words: *) \
+      let k = 10 in \
+      for _ = 1 to k do \
+        allocate_a_lot n \
+        |> Sys.opaque_identity |> ignore \
+      done \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let scans n =
+  [
+    SCAN("dynarray", R.create, R.add_last, n);
+    SCAN("poly", P.create, P.add_last, n);
+    SCAN("int", I.create, I.add_last, n);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Read the command line. *)
 
-let push, get, set =
-  ref 0, ref 0, ref 0
+let push, get, set, scan =
+  ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
     "--push", Arg.Set_int push, " <n> Benchmark push";
     "--get", Arg.Set_int get, " <n> Benchmark get";
     "--set", Arg.Set_int set, " <n> Benchmark set";
+    "--scan", Arg.Set_int scan, " <n> Measure the cost of GC scans";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set =
-  !push, !get, !set
+let push, get, set, scan =
+  !push, !get, !set, !scan
+
+let possibly n (benchmarks : int -> B.benchmark list) =
+  if n > 0 then run (benchmarks n)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Main. *)
 
 let () =
-
-  if push > 0 then begin
-    eprintf "*** push\n";
-    eprintf "\n";
-    let n = push in
-    run (pushes n);
-    eprintf "\n"
-  end;
-
-  if get > 0 then begin
-    eprintf "*** get\n";
-    eprintf "\n";
-    let n = get in
-    run (gets n);
-    eprintf "\n"
-  end;
-
-  if set > 0 then begin
-    eprintf "*** set\n";
-    eprintf "\n";
-    let n = set in
-    run (sets n);
-    eprintf "\n"
-  end;
-
+  possibly push pushes;
+  possibly get gets;
+  possibly set sets;
+  possibly scan scans;
   ()
