@@ -143,7 +143,7 @@ let allocate_a_lot n =
   List.init n @@ fun j ->
   k * j
 
-#define SCAN(candidate, create, push, n) \
+#define SCAN(candidate, create, push, length, n) \
 ( \
   let basis = 1 \
   and name = sprintf "scan (size %d) (%s)" n candidate \
@@ -161,16 +161,18 @@ let allocate_a_lot n =
       for _ = 1 to k do \
         allocate_a_lot n \
         |> Sys.opaque_identity |> ignore \
-      done \
+      done; \
+      (* Do something to ensure that [v] is live: *) \
+      ignore (length v) \
   in \
   B.benchmark ~name ~quota ~basis ~run \
 )
 
 let scans n =
   [
-    SCAN("dynarray", R.create, R.add_last, n);
-    SCAN("poly", P.create, P.add_last, n);
-    SCAN("int", I.create, I.add_last, n);
+    SCAN("dynarray", R.create, R.add_last, R.length, n);
+    SCAN("poly", P.create, P.add_last, P.length, n);
+    SCAN("int", I.create, I.add_last, I.length, n);
   ]
 
 (* -------------------------------------------------------------------------- *)
