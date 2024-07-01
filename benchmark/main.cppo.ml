@@ -168,8 +168,15 @@ let allocate_a_lot n =
   B.benchmark ~name ~quota ~basis ~run \
 )
 
+module N = struct
+  let create () = ()
+  let add_last () _x = ()
+  let length () = 0
+end
+
 let scans n =
   [
+    SCAN("none", N.create, N.add_last, N.length, n);
     SCAN("dynarray", R.create, R.add_last, R.length, n);
     SCAN("poly", P.create, P.add_last, P.length, n);
     SCAN("int", I.create, I.add_last, I.length, n);
