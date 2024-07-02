@@ -1,5 +1,7 @@
 # To Do
 
+## Soon
+
 * Unroll more loops? E.g., `iter`. (Benchmark.)
 
 * Fix `set` benchmark so that it is not slow under OCaml 5?
@@ -15,3 +17,8 @@
 * Benchmark more operations.
 
 * Release.
+
+## Maybe Later
+
+* Benchmark a real-world application of integer vectors and determine
+  whether it is worthwhile to use an unscanned integer array.
