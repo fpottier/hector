@@ -99,6 +99,11 @@ let gets n =
 
 (* Set. *)
 
+(* We manually unroll the main loop in this benchmark, because (only in the
+   case of int/unsafe) we otherwise run into the slow-memory-barrier issue
+   with Apple processors, which appears to slow down this loop by a factor
+   of 100x. *)
+
 #define SET(candidate, create, push, set, n) \
 ( \
   let basis = n \
@@ -112,9 +117,18 @@ let gets n =
     done; \
     fun () -> \
       (* Benchmark: *) \
-      for i = 0 to n-1 do \
-        let dummy = 2 * i in \
-        set v i dummy \
+      let i = ref 0 in \
+      while !i + 5 <= n do \
+        (let i = !i + 0 in set v i (2 * i)); \
+        (let i = !i + 1 in set v i (2 * i)); \
+        (let i = !i + 2 in set v i (2 * i)); \
+        (let i = !i + 3 in set v i (2 * i)); \
+        (let i = !i + 4 in set v i (2 * i)); \
+        i := !i + 5 \
+      done; \
+      while !i < n do \
+        (let i = !i + 0 in set v i (2 * i)); \
+        i := !i + 1 \
       done \
   in \
   B.benchmark ~name ~quota ~basis ~run \
