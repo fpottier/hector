@@ -134,20 +134,51 @@ let sets n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Iter. *)
+
+#define ITER(candidate, create, push, iter, n) \
+( \
+  let basis = n \
+  and name = sprintf "iter (size %d) (%s)" n candidate \
+  and run () = \
+    (* Initialization: *) \
+    let v = create () in \
+    for i = 0 to n-1 do \
+      push v i \
+    done; \
+    fun () -> \
+      (* Benchmark: *) \
+      let sum = ref 0 in \
+      iter (fun x -> sum := !sum + x) v \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let iters n =
+  [
+    ITER("dynarray", R.create, R.add_last, R.iter, n);
+    ITER("poly", P.create, P.add_last, P.iter, n);
+    ITER("mono", M.create, M.add_last, M.iter, n);
+    ITER("int", I.create, I.add_last, I.iter, n);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Read the command line. *)
 
-let push, get, set =
-  ref 0, ref 0, ref 0
+let push, get, set, iter =
+  ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
     "--push", Arg.Set_int push, " <n> Benchmark push";
     "--get", Arg.Set_int get, " <n> Benchmark get";
     "--set", Arg.Set_int set, " <n> Benchmark set";
+    "--iter", Arg.Set_int iter, " <n> Benchmark iter";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set =
-  !push, !get, !set
+let push, get, set, iter =
+  !push, !get, !set, !iter
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -160,4 +191,5 @@ let () =
   possibly push pushes;
   possibly get gets;
   possibly set sets;
+  possibly iter iters;
   ()
