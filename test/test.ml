@@ -83,7 +83,7 @@ let flip f x y =
 
 (* We test [iter] by converting it to an [elements] function. *)
 
-let elements iter v =
+let elements_of_iter iter v =
   let xs = ref [] in
   iter (fun x -> xs := x :: !xs) v;
   List.rev !xs
@@ -150,7 +150,8 @@ let () =
   declare "fit_capacity" spec R.fit_capacity C.fit_capacity;
 
   let spec = vector ^> list element in
-  declare "elements iter" spec (elements R.iter) (elements C.iter);
+  declare "elements_of_iter iter" spec
+    (elements_of_iter R.iter) (elements_of_iter C.iter);
 
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
@@ -165,7 +166,7 @@ let () =
 let () =
   let prologue () =
     dprintf "          open Hector.Vector;;\n";
-    dprintf "          let elements iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
+    dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
     ()
   in
   let fuel = 128 in
