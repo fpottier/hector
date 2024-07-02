@@ -22,6 +22,13 @@
 
 (* -------------------------------------------------------------------------- *)
 
+(* Local copies of [min] and [max], with annotations. *)
+
+let[@inline] min (x : int) (y : int) = if x <= y then x else y
+let[@inline] max (x : int) (y : int) = if x >= y then x else y
+
+(* -------------------------------------------------------------------------- *)
+
 (* [check v] checks that the invariant holds. *)
 
 let (* public *) check v =
