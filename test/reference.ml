@@ -106,6 +106,9 @@ let set_capacity =
 let iter f v =
   List.iter f !v
 
+let iteri f v =
+  List.iteri f !v
+
 let rec index f xs i =
   match xs with
   | [] ->

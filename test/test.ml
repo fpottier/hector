@@ -88,6 +88,11 @@ let elements_of_iter iter v =
   iter (fun x -> xs := x :: !xs) v;
   List.rev !xs
 
+let elements_of_iteri iteri v =
+  let ixs = ref [] in
+  iteri (fun i x -> ixs := (i, x) :: !ixs) v;
+  List.rev !ixs
+
 (* -------------------------------------------------------------------------- *)
 
 (* Declare the operations. *)
@@ -153,6 +158,10 @@ let () =
   declare "elements_of_iter iter" spec
     (elements_of_iter R.iter) (elements_of_iter C.iter);
 
+  let spec = vector ^> list (int *** element) in
+  declare "elements_of_iteri iteri" spec
+    (elements_of_iteri R.iteri) (elements_of_iteri C.iteri);
+
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
@@ -167,6 +176,7 @@ let () =
   let prologue () =
     dprintf "          open Hector.Vector;;\n";
     dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
+    dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
     ()
   in
   let fuel = 128 in

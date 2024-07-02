@@ -339,6 +339,13 @@ let[@inline] (* public *) iter f v =
     f (Array.unsafe_get data i) (* safe *)
   done
 
+let[@inline] (* public *) iteri f v =
+  let { length; data; _ } = v in
+  validate length data;
+  for i = 0 to length - 1 do
+    f i (Array.unsafe_get data i) (* safe *)
+  done
+
 let rec find f length (data : ELEMENT array) i =
   if i = length then
     raise Not_found

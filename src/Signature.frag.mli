@@ -134,8 +134,12 @@ val fit_capacity : VECTOR -> unit
 val set_capacity : VECTOR -> capacity -> unit
 
 (**[iter f v] applies the function [f] in turn, from left to right, to each
-   element of the vector [v]. *)
+   element [x] of the vector [v]. *)
 val iter : (ELEMENT -> unit) -> VECTOR -> unit
+
+(**[iter f v] applies the function [f] in turn, from left to right, to each
+   index [i] and element [x] in the vector [v]. *)
+val iteri : (int -> ELEMENT -> unit) -> VECTOR -> unit
 
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
