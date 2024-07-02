@@ -1,6 +1,7 @@
 (executable
   (name main)
   (libraries hector common)
+  (ocamlopt_flags -S)
 )
 
 ;; Some files require preprocessing by cppo.

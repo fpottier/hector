@@ -19,6 +19,13 @@ bench:
 	@ echo
 	@ $(MAIN) --push 10000 2>&1 | tee log/push.log
 	@ echo
-	@ $(MAIN) --get 10000  2>&1 | tee log/get.log
+	@ $(MAIN) --get  10000 2>&1 | tee log/get.log
 	@ echo
-	@ $(MAIN) --set 10000  2>&1 | tee log/set.log
+	@ $(MAIN) --set  10000 2>&1 | tee log/set.log
+
+ASSEMBLY=$(shell find ../_build -name '*Main.s')
+.PHONY: assembly
+assembly:
+	@ dune clean
+	@ make all
+	@ open -a /Applications/Emacs.app $(ASSEMBLY)
