@@ -150,6 +150,8 @@ let sets n =
 
 (* Iter. *)
 
+(* We use [iter] to implement a summation. *)
+
 #define ITER(candidate, create, push, iter, n) \
 ( \
   let basis = n \
