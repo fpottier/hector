@@ -180,21 +180,61 @@ let iters n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Iteri. *)
+
+(* We use [iteri] and [set] to implement a blit. *)
+
+#define ITERI(candidate, create, push, iteri, set, n) \
+( \
+  let basis = n \
+  and name = sprintf "iteri/set (size %d) (%s)" n candidate \
+  and run () = \
+    (* Initialization: *) \
+    let src = create () in \
+    for i = 0 to n-1 do \
+      push src i \
+    done; \
+    let dst = create () in \
+    for _ = 0 to n-1 do \
+      push dst 0 \
+    done; \
+    fun () -> \
+      (* Benchmark: *) \
+      iteri (fun i x -> set dst i x) src \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let iteris n =
+  [
+    ITERI("dynarray", R.create, R.add_last, R.iteri, R.set, n);
+    ITERI("poly", P.create, P.add_last, P.iteri, P.set, n);
+    ITERI("mono", M.create, M.add_last, M.iteri, M.set, n);
+    ITERI("int", I.create, I.add_last, I.iteri, I.set, n);
+    ITERI("dynarray/unsafe", R.create, R.add_last, R.iteri, R.unsafe_set, n);
+    ITERI("poly/unsafe", P.create, P.add_last, P.iteri, P.unsafe_set, n);
+    ITERI("mono/unsafe", M.create, M.add_last, M.iteri, M.unsafe_set, n);
+    ITERI("int/unsafe", I.create, I.add_last, I.iteri, I.unsafe_set, n);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Read the command line. *)
 
-let push, get, set, iter =
-  ref 0, ref 0, ref 0, ref 0
+let push, get, set, iter, iteri =
+  ref 0, ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
     "--push", Arg.Set_int push, " <n> Benchmark push";
     "--get", Arg.Set_int get, " <n> Benchmark get";
     "--set", Arg.Set_int set, " <n> Benchmark set";
-    "--iter", Arg.Set_int iter, " <n> Benchmark iter";
+    "--iter", Arg.Set_int iter, " <n> Benchmark iter (and get)";
+    "--iteri", Arg.Set_int iteri, " <n> Benchmark iteri (and set)";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set, iter =
-  !push, !get, !set, !iter
+let push, get, set, iter, iteri =
+  !push, !get, !set, !iter, !iteri
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -208,4 +248,5 @@ let () =
   possibly get gets;
   possibly set sets;
   possibly iter iters;
+  possibly iteri iteris;
   ()
