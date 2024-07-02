@@ -323,7 +323,7 @@ let (* public *) add_last =
 
 (* Iterating, searching, showing. *)
 
-(* Calling [validate] ensures that our use [unsafe_get] is safe. *)
+(* Calling [validate] ensures that our use of [unsafe_get] is safe. *)
 
 let[@inline] (* public *) iter f v =
   let { length; data; _ } = v in
