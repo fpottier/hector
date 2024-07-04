@@ -29,6 +29,10 @@ val is_empty : VECTOR -> bool
 (**[create()] creates a new vector of length 0 and capacity 0. *)
 val create : unit -> VECTOR
 
+(**[make n x] creates a new vector of length and capacity [n]
+   and initializes it by storing the value [x] everywhere. *)
+val make : length -> ELEMENT -> VECTOR
+
 (**[init n f] creates a new vector of length and capacity [n]
    and initializes it by storing the value [f i] at each index [i]. *)
 val init : length -> (index -> ELEMENT) -> VECTOR

@@ -13,8 +13,9 @@
 (* We use a subset of the functionality of the [Array] module, namely
    [length], [unsafe_get], [unsafe_set].
 
-   Furthermore, we use [alloc], [init], [sub], [blit]. We take these functions
-   from a module named [A]. This allows them to be possibly redefined.
+   Furthermore, we use [alloc], [make], [init], [sub], [blit]. We take
+   these functions from a module named [A]. This allows them to be
+   possibly redefined.
 
    We do *NOT* assume that [A.alloc n x] initializes every array slot
    with the value [x]. In fact, in this file, every call to [A.alloc]
@@ -97,6 +98,12 @@ let (* private *) init n f =
   let length = n
   and capacity = n in
   let data = A.init capacity f in
+  { length; capacity; data }
+
+let (* private *) make n x =
+  let length = n
+  and capacity = n in
+  let data = A.make capacity x in
   { length; capacity; data }
 
 let (* public *) copy v =
@@ -380,6 +387,10 @@ let (* public *) show show v =
 let (* public *) init n f =
   if defensive && n < 0 then length_failure n;
   init n f
+
+let (* public *) make n x =
+  if defensive && n < 0 then length_failure n;
+  make n x
 
 let[@inline] (* public *) get v i =
   if defensive && not (0 <= i && i < v.length) then index_failure v i;

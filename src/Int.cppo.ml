@@ -61,6 +61,9 @@ module X = struct
     (* Done. *)
     a
 
+  let make =
+    Array.make
+
 end
 
 #define USE_MEMCPY 1

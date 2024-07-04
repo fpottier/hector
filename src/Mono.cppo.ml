@@ -13,6 +13,7 @@
 module[@inline] Make_ (X : sig
   type t
   val alloc : int -> t -> t array
+  val make  : int -> t -> t array
 end) = struct
 
   #include "MonoBody.frag.ml"
@@ -20,4 +21,8 @@ end) = struct
 end (* Make_ *)
 
 module[@inline] Make (X : sig type t end) =
-  Make_(struct include X let alloc = Array.make end)
+  Make_(struct
+    include X
+    let alloc = Array.make
+    let make = Array.make
+  end)

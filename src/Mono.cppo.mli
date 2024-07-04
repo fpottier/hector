@@ -21,6 +21,7 @@
 module Make_ (X : sig
   type t
   val alloc : int -> t -> t array
+  val make  : int -> t -> t array
 end) : sig
   type element = X.t
   #include "Signature.frag.mli"

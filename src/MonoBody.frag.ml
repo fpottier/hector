@@ -57,14 +57,12 @@ module A = struct
 
   open Array
 
-  (* To construct arrays, we use the factory function provided the user,
-     [X.alloc]. This allows the user to provide an exotic (and possibly
-     unorthodox) array construction method. *)
-
-  (* We do *NOT* assume that [alloc n x] initializes every array slot with
-     the value [x]. We explicitly initialize every slot. *)
+  (* To construct arrays, we use the factory functions provided the user,
+     [X.alloc] and [X.make]. This allows the user to provide exotic (and
+     possibly unorthodox) array construction methods. *)
 
   let alloc = X.alloc
+  let make  = X.make
 
   (* We implement [init] and [sub] using [alloc], so that [alloc] is our
      single factory function for arrays. We also re-implement [blit]. This

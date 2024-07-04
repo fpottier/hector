@@ -105,6 +105,9 @@ let () =
   let spec = unit ^> vector in
   declare "create" spec R.create C.create;
 
+  let spec = length ^> element ^> vector in
+  declare "make" spec R.make C.make;
+
   let spec = length ^> vector in
   declare "flip init Fun.id" spec
     (flip R.init Fun.id) (flip C.init Fun.id);

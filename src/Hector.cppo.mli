@@ -37,6 +37,7 @@ module Mono : sig
   module Make_ (X : sig
     type t
     val alloc : int -> t -> t array
+    val make  : int -> t -> t array
   end)
   : MONOVECTOR with type element = X.t
   module Make (X : sig

@@ -24,6 +24,9 @@ let is_empty v =
 let create () =
   ref []
 
+let make n x =
+  ref (List.init n (fun _i -> x))
+
 let init n f =
   ref (List.init n f)
 
