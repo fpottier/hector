@@ -13,17 +13,21 @@
 module type MONOVECTOR = sig
   type element
   #undef VECTOR
+  #undef SYNONYM
   #undef ELEMENT
-  #define VECTOR vector
-  #define ELEMENT   element
+  #define VECTOR  vector
+  #define SYNONYM t
+  #define ELEMENT element
   #include "Signature.frag.mli"
 end
 
 module type POLYVECTOR = sig
   #undef VECTOR
+  #undef SYNONYM
   #undef ELEMENT
-  #define VECTOR 'a vector
-  #define ELEMENT   'a
+  #define VECTOR  'a vector
+  #define SYNONYM 'a t
+  #define ELEMENT 'a
   #include "Signature.frag.mli"
 end
 

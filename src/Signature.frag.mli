@@ -14,6 +14,8 @@
    values. *)
 type VECTOR
 
+type SYNONYM = VECTOR
+
 type length = int
 type capacity = int
 type index = int

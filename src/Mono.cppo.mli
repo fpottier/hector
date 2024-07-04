@@ -11,6 +11,7 @@
 (******************************************************************************)
 
 #define VECTOR  vector
+#define SYNONYM t
 #define ELEMENT element
 
 (**The functor [Make_] lets the user choose the type [element] as well as

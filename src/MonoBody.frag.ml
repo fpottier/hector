@@ -41,6 +41,9 @@ type vector = {
 
 }
 
+type t =
+  vector
+
 (* -------------------------------------------------------------------------- *)
 
 (* We implement our own functions on arrays, so that [make], [unsafe_get],
