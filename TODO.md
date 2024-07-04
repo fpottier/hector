@@ -2,12 +2,6 @@
 
 ## Soon
 
-* If we decide to abandon unscanned integer arrays
-  then `Mono.Make` does not need to take `make` as
-  an argument. (Even if we do keep them, we could
-  offer two variants of the functor, and publish
-  only the simpler variant.)
-
 * Improve the compatibility of our `Vector` modules with OCaml's `Dynarray`.
   In the documentation, say something about compatibility.
 
