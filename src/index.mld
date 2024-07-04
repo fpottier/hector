@@ -32,11 +32,18 @@ collector remain reachable. This problem can be avoided by explicitly calling
 {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library,
 and are faster.
 [hector]'s polymorphic vectors and monomorphic vectors
-can be {b about 2x faster}
+can be {b up to 2x faster}
 than OCaml's dynamic arrays.
 [hector]'s integer vectors
-can be {b about 5x faster}
+can be {b up to 5x faster}
 than OCaml's dynamic arrays.
+
+Furthermore,
+[hector] offers fast (but dangerous) unchecked random access operations,
+[unsafe_get] and [unsafe_set],
+which OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+does not have.
 
 {1 Three Flavors of Vectors}
 
