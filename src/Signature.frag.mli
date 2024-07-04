@@ -10,20 +10,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**A vector holds a sequence of values. The length of the vector is the
-   length of this sequence. The capacity of the vector is at least equal
-   to its length, and can be greater than its length.
-
-   This data structure does {i not} include a protection against memory
-   leaks. If a vector's capacity is greater than its length, then the
-   logically empty slots in the data array can contain stale values, which
-   in the eyes of the GC remain reachable. This problem can be avoided by
-   explicitly calling [reset] or [fit_capacity].
-
-   This data structure is {i not} thread-safe. Concurrent read accesses by
-   multiple threads are safe. Concurrent accesses, where at least one thread
-   attempts to modify the data structure, are unsafe and can compromise memory
-   safety. *)
+(**A vector is a mutable abstract data structure, which stores a sequence of
+   values. *)
 type VECTOR
 
 type length = int
