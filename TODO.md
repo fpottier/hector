@@ -2,7 +2,7 @@
 
 ## Soon
 
-* Improve the compatibility of our `Vector` modules with OCaml's `Dynarray`.
+* Improve the compatibility with OCaml's `Dynarray`.
   In the documentation, say something about compatibility.
 
 * Test using `Dynarray` as a reference implementation.
@@ -18,6 +18,10 @@
 * Release.
 
 ## Maybe Later
+
+* Document `Make_`?
+
+* Can (should) the types `'a vector` and `'a t` be declared injective?
 
 * Our `for` loops can suffer from the slow-memory-barrier issue on Apple
   processors. (See for example the benchmark `iteri (int/unsafe)`, when
