@@ -10,7 +10,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This file contains the body of the functor [Mono.Make]. *)
+(* This file contains the body of the functor [Mono.Make_]. *)
 
 (* -------------------------------------------------------------------------- *)
 

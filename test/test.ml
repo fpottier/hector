@@ -18,10 +18,7 @@ module R = Reference
 
 module CPoly = Hector.Poly
 
-module CMono = Hector.Mono.Make(struct
-  type t = int
-  let make = Array.make
-end)
+module CMono = Hector.Mono.Make(struct type t = int end)
 
 module CInt  = Hector.Int
 

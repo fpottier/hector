@@ -33,15 +33,15 @@ let unsafe_initialize_int_array (a : int array) (n : int) =
 (* -------------------------------------------------------------------------- *)
 
 (* The following code is functionally equivalent to an application of the
-   functor [Mono.Make] to the module [X] below. However, by forcing the
+   functor [Mono.Make_] to the module [X] below. However, by forcing the
    compiler to recompile this code with the knowledge that the type [t] is
    [int], we get better machine code. In particular, when reading and writing
    arrays, the special case of floating-point arrays (tagged 254) disappears;
    and when writing arrays, the write barrier (_caml_modify) vanishes. *)
 
-(* Furthermore, instead of using [Array.make], we use an unorthodox method to
-   allocate a custom block, which the garbage collector does not scan, and
-   disguise it as an integer array. *)
+(* Instead of using [Array.make], we use an unorthodox method to allocate a
+   custom block, which the garbage collector does not scan, and disguise it
+   as an integer array. *)
 
 (* This implementation of [make] does not obey the usual specification of
    [make], as it initializes every slot with arbitrary data, instead of

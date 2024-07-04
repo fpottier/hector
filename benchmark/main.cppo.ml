@@ -25,7 +25,7 @@ let quota =
 
 module R = Dynarray
 module P = Hector.Poly
-module M = Hector.Mono.Make(struct type t = int let make = Array.make end)
+module M = Hector.Mono.Make(struct type t = int end)
 module I = Hector.Int
 
 (* -------------------------------------------------------------------------- *)

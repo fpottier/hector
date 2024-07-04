@@ -10,11 +10,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module[@inline] Make (X : sig
+module[@inline] Make_ (X : sig
   type t
   val make : int -> t -> t array
 end) = struct
 
   #include "MonoBody.frag.ml"
 
-end (* Make *)
+end (* Make_ *)
+
+module[@inline] Make (X : sig type t end) =
+  Make_(struct include X let make = Array.make end)
