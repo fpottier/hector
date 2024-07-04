@@ -3,6 +3,58 @@
 [hector] is an OCaml library that offers vectors (also known as dynamic
 arrays, or resizeable arrays).
 
+{1 What is a Vector?}
+
+A vector is a data structure that holds {b a sequence of values}. A vector is
+a {b mutable} data structure: it can be updated. Like an array, it offers
+efficient {b random access} functions, [get] and [set]. Furthermore, a vector
+can {b grow and shrink}; elements can be pushed or popped at its right end.
+
+The logical {b length} of a vector is the length of the sequence.
+The physical {b capacity} of a vector is the length of the data array
+where the vector's elements are stored.
+A vector's capacity is at least equal to its length,
+and can be greater than its length.
+
+[hector]'s vectors are {b not thread-safe} and {b do not include a protection
+against data races}: concurrent accesses to a vector, where at least one
+thread attempts to modify the vector, are forbidden and {b can compromise
+memory safety} (that is, they can cause a hard crash or silent memory
+corruption). Concurrent read accesses are safe.
+
+[hector]'s vectors do {b not include a protection against memory leaks}. If a
+vector's capacity is greater than its length, then the logically empty slots
+in its data array can contain stale values, which in the eyes of the garbage
+collector remain reachable. This problem can be avoided by explicitly calling
+[reset] or [fit_capacity].
+
+[hector]'s vectors are similar to those offered by OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library,
+and are faster.
+[hector]'s polymorphic vectors and monomorphic vectors
+can be {b about 2x faster}
+than OCaml's dynamic arrays.
+[hector]'s integer vectors
+can be {b about 5x faster}
+than OCaml's dynamic arrays.
+
+{1 Three Flavors of Vectors}
+
+Three implementations of vectors are offered:
+
++ The module {!Hector.Poly} offers polymorphic vectors:
+  if elements have type ['a]
+  then a vector has type ['a vector].
+  The signature of this module is {!Hector.POLYVECTOR}.
++ The functor {!Hector.Mono.Make} offers monomorphic vectors:
+  the type of elements is fixed when this functor is applied,
+  and a vector has type [vector].
+  The module produced by this functor has signature {!Hector.MONOVECTOR} [with type element = E.t].
++ The module {!Hector.Int} offers integer vectors:
+  the type of elements is [int]
+  and a vector has type [vector].
+  The signature of this module is {!Hector.MONOVECTOR} [with type element = int].
+
 {1 Installation and Usage}
 
 Type [opam install hector].
