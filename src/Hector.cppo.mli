@@ -36,7 +36,7 @@ module Int : MONOVECTOR with type element = int
 module Mono : sig
   module Make_ (X : sig
     type t
-    val make : int -> t -> t array
+    val alloc : int -> t -> t array
   end)
   : MONOVECTOR with type element = X.t
   module Make (X : sig

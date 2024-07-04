@@ -22,7 +22,7 @@ type length = int
 type capacity = int
 type index = int
 
-(* In [make] and in [set_higher_capacity], the allocation of an array of
+(* In [create] and in [set_higher_capacity], the allocation of an array of
    size [capacity] is delayed, because we do not have a value of type ['a]
    at hand. *)
 
@@ -46,7 +46,7 @@ type t =
 
 (* -------------------------------------------------------------------------- *)
 
-(* We implement our own functions on arrays, so that [make], [unsafe_get],
+(* We implement our own functions on arrays, so that [alloc], [unsafe_get],
    and [unsafe_set] are the only primitive operations on which we rely. *)
 
 (* We add type annotations, where necessary, to ensure that our code is
@@ -57,25 +57,24 @@ module A = struct
 
   open Array
 
-  (* To construct arrays, we do not use [Array.make]. Instead, we use the
-     factory function provided the user, [X.make]. This allows the user
-     to use exotic (possibly unorthodox) array construction methods. *)
+  (* To construct arrays, we use the factory function provided the user,
+     [X.alloc]. This allows the user to provide an exotic (and possibly
+     unorthodox) array construction method. *)
 
-  (* We do *NOT* assume that [make n x] initializes every array slot with
+  (* We do *NOT* assume that [alloc n x] initializes every array slot with
      the value [x]. We explicitly initialize every slot. *)
 
-  let make = X.make
+  let alloc = X.alloc
 
-  (* We implement [init] and [sub] using [make], so that [make] is our
-     single factory function for arrays. We also re-implement [blit].
-     This guarantees that [unsafe_set] is our sole way of writing an
-     array. *)
+  (* We implement [init] and [sub] using [alloc], so that [alloc] is our
+     single factory function for arrays. We also re-implement [blit]. This
+     guarantees that [unsafe_set] is our sole way of writing an array. *)
 
   let init n f : element array =
     assert (0 <= n);
     if n = 0 then [||] else
     let x = f 0 in
-    let a = make n x in
+    let a = alloc n x in
     unsafe_set a 0 x; (* safe *)
     for i = 1 to n - 1 do
       unsafe_set a i (f i) (* safe *)
@@ -157,7 +156,7 @@ module A = struct
     validate a o n;
     if n = 0 then [||] else
     let dummy = unsafe_get a o in (* safe *)
-    let a' = make n dummy in
+    let a' = alloc n dummy in
     blit a o a' 0 n;
     a'
 

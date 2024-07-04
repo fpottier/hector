@@ -10,7 +10,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module A = Array
+module A = struct
+  include Array
+  let alloc = make
+end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -20,7 +23,7 @@ type length = int
 type capacity = int
 type index = int
 
-(* In [make] and in [set_higher_capacity], the allocation of an array of
+(* In [create] and in [set_higher_capacity], the allocation of an array of
    size [capacity] is delayed, because we do not have a value of type ['a]
    at hand. *)
 

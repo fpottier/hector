@@ -41,18 +41,14 @@ let unsafe_initialize_int_array (a : int array) (n : int) =
 
 (* Instead of using [Array.make], we use an unorthodox method to allocate a
    custom block, which the garbage collector does not scan, and disguise it
-   as an integer array. *)
-
-(* This implementation of [make] does not obey the usual specification of
-   [make], as it initializes every slot with arbitrary data, instead of
-   initializing it with the value [x]. For our intended use, this is fine.
-   Our implementation of vectors never reads an uninitialized slot. *)
+   as an integer array. The arrays slots are uninitialized; they may contain
+   arbitrary data. *)
 
 module X = struct
 
   type t = int
 
-  let make n (_x : int) =
+  let alloc n (_x : int) =
     (* Allocate an uninitialized memory block, which the GC does not scan. *)
     let a = Obj.new_block Obj.abstract_tag n in
     (* Cast it to the type [int array]. *)

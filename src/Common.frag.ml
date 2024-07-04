@@ -13,12 +13,13 @@
 (* We use a subset of the functionality of the [Array] module, namely
    [length], [unsafe_get], [unsafe_set].
 
-   Furthermore, we use [make], [init], [sub], [blit]. We take these functions
+   Furthermore, we use [alloc], [init], [sub], [blit]. We take these functions
    from a module named [A]. This allows them to be possibly redefined.
 
-   We do *NOT* assume that [A.make n x] initializes every array slot with the
-   value [x]. In fact, in this file, every call to [A.make] is of the form
-   [A.make n dummy], where [dummy] is a dummy value. *)
+   We do *NOT* assume that [A.alloc n x] initializes every array slot
+   with the value [x]. In fact, in this file, every call to [A.alloc]
+   is of the form [A.alloc n dummy], where [dummy] is a dummy
+   value. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -213,7 +214,7 @@ let[@inline] set_lower_capacity v new_capacity =
 let really_set_higher_capacity v new_capacity dummy =
   let { length; capacity; data } = v in
   assert (new_capacity > capacity);
-  let new_data = A.make new_capacity dummy in
+  let new_data = A.alloc new_capacity dummy in
   A.blit data 0 new_data 0 length;
   v.capacity <- new_capacity;
   v.data <- new_data;
@@ -288,7 +289,7 @@ let[@inline never] push_slow_path v x =
     assert (length = 0);
     (* Without changing the vector's capacity, allocate a new [data] array. *)
     let dummy = x in
-    let data = A.make capacity dummy in
+    let data = A.alloc capacity dummy in
     v.data <- data;
     (* Try again. *)
     let length = 0 in

@@ -15,13 +15,12 @@
 #define ELEMENT element
 
 (**The functor [Make_] lets the user choose the type [element] as well as
-   the array allocation function [make]. The function call [make n x] is
-   expected to allocate an array of size [n]. The functor [Make_] does
-   {i not} assume that this array is initialized with [n] copies of the
-   element [x]. *)
+   the array allocation function [alloc]. The function call [alloc n x] is
+   expected to allocate an array of size [n], and is not required to
+   initialize this array. (The parameter [x] may be unused.) *)
 module Make_ (X : sig
   type t
-  val make : int -> t -> t array
+  val alloc : int -> t -> t array
 end) : sig
   type element = X.t
   #include "Signature.frag.mli"
