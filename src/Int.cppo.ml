@@ -56,13 +56,25 @@ module X = struct
     (* Initialize it. *)
     (* We cannot use [Array.fill], as it can (in some circumstances) read and
        interpret the previous content of the array. A simple loop would work,
-       but would be a bit slow (not vectorized; with a safe point). *)
+       but would be a bit slow (not vectorized; with a safe point). [memset]
+       is faster. *)
     unsafe_initialize_int_array a n;
     (* Done. *)
     a
 
-  let make =
-    Array.make
+  let make n (x : int) =
+    (* Allocate an uninitialized memory block, which the GC does not scan. *)
+    let a = Obj.new_block Obj.abstract_tag n in
+    (* Cast it to the type [int array]. *)
+    let a : int array = Obj.obj a in
+    (* Initialize it. *)
+    (* As above, we cannot use [Array.fill]. There is no [memset64] in C.
+       So, we use a loop. *)
+    for i = 0 to n - 1 do
+      Array.unsafe_set a i x (* safe *)
+    done;
+    (* Done. *)
+    a
 
 end
 

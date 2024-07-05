@@ -26,6 +26,7 @@
 * Our `for` loops can suffer from the slow-memory-barrier issue on Apple
   processors. (See for example the benchmark `iteri (int/unsafe)`, when
   compiled with OCaml 5 with `flambda`.) Should we unroll our loops?
+  + In `Int`, `make`.
   + In `MonoBody`, `init`.
   + In `Common`, `iter` and `iteri`.
 
