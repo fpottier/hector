@@ -74,9 +74,7 @@ module A = struct
     let x = f 0 in
     let a = alloc n x in
     unsafe_set a 0 x; (* safe *)
-    for i = 1 to n - 1 do
-      unsafe_set a i (f i) (* safe *)
-    done;
+    LOOP5(i, 1, n, unsafe_set a i (f i) (* safe *));
     a
 
   (* Validation ensures that our use of [unsafe_get] and [unsafe_set]
@@ -117,28 +115,8 @@ module A = struct
      faster than [Array.blit]. In the case of polymorphic arrays, the
      hand-written loop can be 30% slower than [Array.blit]. *)
 
-  (* Unrolling the loop 5 times lets us avoid a bizarre slowness that
-     we have observed on arm64 processors, including Apple M1 and M2;
-     see https://github.com/ocaml/ocaml/issues/13262 *)
-
   let[@inline] unsafe_blit (src : element array) sofs dst dofs n =
-    #define COPY(e) (\
-      let j = e in \
-      unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)) \
-    )
-    let i = ref 0 in
-    while !i + 5 <= n do
-      COPY(!i + 0);
-      COPY(!i + 1);
-      COPY(!i + 2);
-      COPY(!i + 3);
-      COPY(!i + 4);
-      i := !i + 5
-    done;
-    while !i < n do
-      COPY(!i);
-      i := !i + 1
-    done
+   LOOP5(j, 0, n, unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)))
 
   #endif
 

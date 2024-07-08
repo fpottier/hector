@@ -343,16 +343,12 @@ let (* public *) add_last =
 let[@inline] (* public *) iter f v =
   let { length; data; _ } = v in
   validate length data;
-  for i = 0 to length - 1 do
-    f (Array.unsafe_get data i) (* safe *)
-  done
+  LOOP5(i, 0, length, f (Array.unsafe_get data i) (* safe *))
 
 let[@inline] (* public *) iteri f v =
   let { length; data; _ } = v in
   validate length data;
-  for i = 0 to length - 1 do
-    f i (Array.unsafe_get data i) (* safe *)
-  done
+  LOOP5(i, 0, length, f i (Array.unsafe_get data i) (* safe *))
 
 let rec find f length (data : ELEMENT array) i =
   if i = length then

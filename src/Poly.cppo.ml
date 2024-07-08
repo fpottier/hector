@@ -48,4 +48,5 @@ type 'a t =
 (* -------------------------------------------------------------------------- *)
 
 #define ELEMENT _
+#include "Loop.frag.ml"
 #include "Common.frag.ml"

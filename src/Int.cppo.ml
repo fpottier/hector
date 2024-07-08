@@ -10,6 +10,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+#include "Loop.frag.ml"
+
 (* [unsafe_fill_bytes b o n c] fills the buffer [b], at offset [o], with [n]
    copies of the character [c]. It is implemented in runtime/str.c as a call
    to [memset]. *)
@@ -70,9 +72,7 @@ module X = struct
     (* Initialize it. *)
     (* As above, we cannot use [Array.fill]. There is no [memset64] in C.
        So, we use a loop. *)
-    for i = 0 to n - 1 do
-      Array.unsafe_set a i x (* safe *)
-    done;
+    LOOP5(i, 0, n, Array.unsafe_set a i x (* safe *));
     (* Done. *)
     a
 

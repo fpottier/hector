@@ -16,6 +16,7 @@ module[@inline] Make_ (X : sig
   val make  : int -> t -> t array
 end) = struct
 
+  #include "Loop.frag.ml"
   #include "MonoBody.frag.ml"
 
 end (* Make_ *)
