@@ -2,6 +2,10 @@
 
 ## Soon
 
+* For optimum speed, in integer vectors, we need a way of initializing
+  a freshly allocated array partly by copying data from an existing
+  array, partly by filling the new array with arbitrary data (memset).
+
 * Improve the compatibility with OCaml's `Dynarray`.
   In the documentation, say something about compatibility.
 
@@ -23,12 +27,8 @@
 
 * Can (should) the types `'a vector` and `'a t` be declared injective?
 
-* Our `for` loops can suffer from the slow-memory-barrier issue on Apple
-  processors. (See for example the benchmark `iteri (int/unsafe)`, when
-  compiled with OCaml 5 with `flambda`.) Should we unroll our loops?
-  + In `Int`, `make`.
-  + In `MonoBody`, `init`.
-  + In `Common`, `iter` and `iteri`.
+* In `MonoBody`, when `USE_MEMCPY` is false, why do we use a loop?
+  Why not just use `Array.blit` in this case?
 
 * Benchmark a real-world application of integer vectors and determine
   whether it is worthwhile to use an unscanned integer array.
