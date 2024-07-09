@@ -19,12 +19,13 @@
   let __index = ref (start) in\
   let __limit = __finish - 5 in\
   while !__index <= __limit do\
-    (let i = !__index + 0 in body);\
-    (let i = !__index + 1 in body);\
-    (let i = !__index + 2 in body);\
-    (let i = !__index + 3 in body);\
-    (let i = !__index + 4 in body);\
-    __index := !__index + 5\
+    let __this = !__index in\
+    (let i = __this + 0 in body);\
+    (let i = __this + 1 in body);\
+    (let i = __this + 2 in body);\
+    (let i = __this + 3 in body);\
+    (let i = __this + 4 in body);\
+    __index := __this + 5\
   done;\
   let __finish = __limit + 5 in\
   while !__index < __finish do\
