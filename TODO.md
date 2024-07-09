@@ -27,8 +27,5 @@
 
 * Can (should) the types `'a vector` and `'a t` be declared injective?
 
-* In `MonoBody`, when `USE_MEMCPY` is false, why do we use a loop?
-  Why not just use `Array.blit` in this case?
-
 * Benchmark a real-world application of integer vectors and determine
   whether it is worthwhile to use an unscanned integer array.
