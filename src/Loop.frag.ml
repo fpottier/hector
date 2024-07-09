@@ -17,7 +17,8 @@
 #define LOOP5(i, start, finish, body) (\
   let __finish = (finish) in\
   let __index = ref (start) in\
-  while !__index + 5 <= __finish do\
+  let __limit = __finish - 5 in\
+  while !__index <= __limit do\
     (let i = !__index + 0 in body);\
     (let i = !__index + 1 in body);\
     (let i = !__index + 2 in body);\
@@ -25,6 +26,7 @@
     (let i = !__index + 4 in body);\
     __index := !__index + 5\
   done;\
+  let __finish = __limit + 5 in\
   while !__index < __finish do\
     (let i = !__index + 0 in body);\
     __index := !__index + 1\
