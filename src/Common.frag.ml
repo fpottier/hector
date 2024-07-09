@@ -340,12 +340,12 @@ let (* public *) add_last =
 
 (* Calling [validate] ensures that our use of [unsafe_get] is safe. *)
 
-let[@inline] (* public *) iter f v =
+let (* public *) iter f v =
   let { length; data; _ } = v in
   validate length data;
   LOOP5(i, 0, length, f (Array.unsafe_get data i) (* safe *))
 
-let[@inline] (* public *) iteri f v =
+let (* public *) iteri f v =
   let { length; data; _ } = v in
   validate length data;
   LOOP5(i, 0, length, f i (Array.unsafe_get data i) (* safe *))
