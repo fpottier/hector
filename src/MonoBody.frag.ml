@@ -65,8 +65,7 @@ module A = struct
   let make  = X.make
 
   (* We implement [init] and [sub] using [alloc], so that [alloc] is our
-     single factory function for arrays. We also re-implement [blit]. This
-     guarantees that [unsafe_set] is our sole way of writing an array. *)
+     single factory function for arrays. *)
 
   let init n f : element array =
     assert (0 <= n);
@@ -111,12 +110,25 @@ module A = struct
 
   #else
 
-  (* In the case of integer arrays, a hand-written loop can be 3 times
-     faster than [Array.blit]. In the case of polymorphic arrays, the
-     hand-written loop can be 30% slower than [Array.blit]. *)
+  (* I have hesitated between using [Array.blit] and re-implementing it. One
+     advantage of re-implementing it might be that [unsafe_set] is then our
+     sole way of writing an array, so we can safely use truly initialized
+     arrays (where an uninitialized slot contains arbitrary bits). But this
+     seems too dangerous anyway. *)
+
+  (* In the case of integer arrays, a loop can be 3 times faster than
+     [Array.blit]. In the case of polymorphic arrays, a loop can be 30%
+     slower than [Array.blit]. So, here, a loop seems advantageous if
+     the code is specialized for a known immediate type; otherwise,
+     using [Array.blit] is advantageous. *)
+
+  (* The parallel loop LOOPRW5 is not noticeably faster than the ordinary
+     loop LOOP5. *)
 
   let[@inline] unsafe_blit (src : element array) sofs dst dofs n =
-   LOOP5(j, 0, n, unsafe_set dst (dofs + j) (unsafe_get src (sofs + j)))
+   (* LOOP5(j, 0, n, unsafe_set dst (dofs + j) (unsafe_get src (sofs + j))) *)
+   (* LOOPRW5(j, 0, n, x, unsafe_get src (sofs + j), unsafe_set dst (dofs + j) x) *)
+   Array.blit src sofs dst dofs n
 
   #endif
 
