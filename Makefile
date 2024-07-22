@@ -98,6 +98,13 @@ export: doc
 	ssh yquem.inria.fr rm -rf public_html/$(THIS)/doc
 	scp -r $(DOCDIR) yquem.inria.fr:public_html/$(THIS)/doc
 
+# [make count] counts how many operations this library exports.
+
+.PHONY: count
+count:
+	@ echo "Number of operations in the signature (not counting synonyms):"
+	@ grep -w val src/Signature.frag.mli | grep -v synonym | grep -vw check | wc -l
+
 # ------------------------------------------------------------------------------
 
 # [make versions] compiles the package under many versions of OCaml,

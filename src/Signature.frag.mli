@@ -76,72 +76,72 @@ val unsafe_set : VECTOR -> index -> ELEMENT -> unit
 val push : VECTOR -> ELEMENT -> unit
 
 (**[add_last] is a synonym for [push]. *)
-val add_last : VECTOR -> ELEMENT -> unit
+val add_last : VECTOR -> ELEMENT -> unit (* synonym *)
 
 (**[pop_opt v] removes and returns the last element of the vector [v].
    If the vector is empty, [None] is returned. *)
 val pop_opt : VECTOR -> ELEMENT option
 
 (**[pop_last_opt] is a synonym for [pop_opt]. *)
-val pop_last_opt : VECTOR -> ELEMENT option
+val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
 
 (**[pop v] removes and returns the last element of the vector [v].
    If the vector is empty, [Not_found] is raised. *)
 val pop : VECTOR -> ELEMENT
 
 (**[pop_last] is a synonym for [pop]. *)
-val pop_last : VECTOR -> ELEMENT
+val pop_last : VECTOR -> ELEMENT (* synonym *)
 
 (**[drop v] removes the last element of the vector [v].
    If the vector [v] is empty, [drop v] has no effect. *)
 val drop : VECTOR -> unit
 
 (**[remove_last] is a synonym for [drop]. *)
-val remove_last : VECTOR -> unit
+val remove_last : VECTOR -> unit (* synonym *)
 
 (**[peek v] returns the last element of the vector [v].
    If the vector is empty, [Not_found] is raised. *)
 val peek : VECTOR -> ELEMENT
 
 (**[get_last] is a synonym for [peek]. *)
-val get_last : VECTOR -> ELEMENT
+val get_last : VECTOR -> ELEMENT (* synonym *)
 
 (**[peek_opt v] returns the last element of the vector [v].
    If the vector is empty, [None] is returned. *)
 val peek_opt : VECTOR -> ELEMENT option
 
 (**[find_last] is a synonym for [peek_opt]. *)
-val find_last : VECTOR -> ELEMENT option
+val find_last : VECTOR -> ELEMENT option (* synonym *)
 
 (**TODO*)
 val push_array : VECTOR -> ELEMENT array -> unit
 
 (**[append_array] is a synonym for [push_array]. *)
-val append_array : VECTOR -> ELEMENT array -> unit
+val append_array : VECTOR -> ELEMENT array -> unit (* synonym *)
 
 (**TODO*)
 val push_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit
 
 (**[append_array_segment] is a synonym for [push_array_segment]. *)
-val append_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit
+val append_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit (* synonym *)
 
 (**TODO*)
 val push_vector : VECTOR -> VECTOR -> unit
 
 (**[append] is a synonym for [push_vector]. *)
-val append : VECTOR -> VECTOR -> unit
+val append : VECTOR -> VECTOR -> unit (* synonym *)
 
 (**TODO*)
 val push_list : VECTOR -> ELEMENT list -> unit
 
 (**[append_list] is a synonym for [push_list]. *)
-val append_list : VECTOR -> ELEMENT list -> unit
+val append_list : VECTOR -> ELEMENT list -> unit (* synonym *)
 
 (**TODO*)
 val push_seq : VECTOR -> ELEMENT Seq.t -> unit
 
 (**[append_seq] is a synonym for [push_seq]. *)
-val append_seq : VECTOR -> ELEMENT Seq.t -> unit
+val append_seq : VECTOR -> ELEMENT Seq.t -> unit (* synonym *)
 
 (** [push_iter v iter c] pushes each element of the collection [c]
     in turn onto the vector [v]. The function [iter] is used to
@@ -153,7 +153,7 @@ val push_iter :
   'c -> unit
 
 (**[append_iter] is a synonym for [push_iter]. *)
-val append_iter :
+val append_iter : (* synonym *)
   VECTOR ->
   ((ELEMENT -> unit) -> 'c -> unit) ->
   'c -> unit
