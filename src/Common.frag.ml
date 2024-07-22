@@ -301,7 +301,8 @@ let (* public *) fit_capacity v =
    capacity [request] really is available now in the [data] array, not
    just recorded in the [capacity] field. *)
 
-let (* private *) really_ensure_capacity v request dummy : ELEMENT array =
+let[@inline never] (* private *) really_ensure_capacity v request dummy
+: ELEMENT array =
   let { capacity; _ } = v in
   let new_capacity =
     if request <= capacity then capacity
