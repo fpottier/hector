@@ -412,6 +412,25 @@ let[@inline] (* public *) push_seq v xs =
 let (* public *) append_seq =
   push_seq
 
+(* In [push_iter], assuming that we are not allowed to call [iter] twice,
+   the best and simplest implementation is to just iterate [push]. Using
+   temporary storage would not help. *)
+
+(* If we are allowed to call [iter] twice, then we can call it once to
+   count how many elements must be appended, and call it again to
+   actually write these elements into the vector. This might be more
+   efficient in some cases, but that is not entirely clear. *)
+
+(* We want to be compatible with [Dynarray], whose documentation does
+   not indicate whether [push_iter] may call [iter] more than once. For
+   maximum compatibility, we must assume that this is not permitted. *)
+
+let[@inline] (* public *) push_iter v iter c =
+  iter (push v) c
+
+let (* public *) append_iter =
+  push_iter
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)

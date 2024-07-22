@@ -143,6 +143,21 @@ val push_seq : VECTOR -> ELEMENT Seq.t -> unit
 (**[append_seq] is a synonym for [push_seq]. *)
 val append_seq : VECTOR -> ELEMENT Seq.t -> unit
 
+(** [push_iter v iter c] pushes each element of the collection [c]
+    in turn onto the vector [v]. The function [iter] is used to
+    iterate over the elements of [c]. In other words,
+    [push_iter v iter c] is equivalent to [iter (push v) c]. *)
+val push_iter :
+  VECTOR ->
+  ((ELEMENT -> unit) -> 'c -> unit) ->
+  'c -> unit
+
+(**[append_iter] is a synonym for [push_iter]. *)
+val append_iter :
+  VECTOR ->
+  ((ELEMENT -> unit) -> 'c -> unit) ->
+  'c -> unit
+
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
    of the vector is unchanged. This is a constant-time operation. *)

@@ -169,6 +169,8 @@ let () =
   let spec = vector ^> seq_element ^> unit in
   declare "push_seq" spec R.push_seq C.push_seq;
 
+  (* [push_iter] is not tested. *)
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 
