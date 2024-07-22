@@ -310,7 +310,7 @@ let (* public *) fit_capacity v =
 
 let[@inline never] prepare_push v x : ELEMENT array =
   let { length; capacity; data } = v in
-  assert (not (length < Array.length data));
+  assert (length = Array.length data);
   if length < capacity then begin
     (* The length of the [data] array is less than [capacity], and
        must in fact be zero. The logical length of the vector must
