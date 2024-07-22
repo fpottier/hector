@@ -219,10 +219,41 @@ let iteris n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Push by chunks. *)
+
+#define PUNK(candidate,create,push_array,n,k) \
+( \
+  let basis = n \
+  and name = sprintf "push_array (size %d, chunk size %d) (%s)" n k candidate \
+  and run () = \
+    let a = Array.init k (fun i -> i) in \
+    fun () -> \
+    let v = create () in \
+    for _ = 0 to n-1 do \
+      push_array v a \
+    done \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let punks k n =
+  let[@inline] naive_push_array v a =
+    Array.iter (I.push v) a
+  in
+  [
+    PUNK("dynarray", R.create, R.append_array, n, k);
+    PUNK("poly", P.create, P.push_array, n, k);
+    PUNK("mono", M.create, M.push_array, n, k);
+    PUNK("int", I.create, I.push_array, n, k);
+    PUNK("int, naive iterated push", I.create, naive_push_array, n, k);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Read the command line. *)
 
-let push, get, set, iter, iteri =
-  ref 0, ref 0, ref 0, ref 0, ref 0
+let push, get, set, iter, iteri, punk =
+  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
@@ -231,10 +262,11 @@ let () =
     "--set", Arg.Set_int set, " <n> Benchmark set";
     "--iter", Arg.Set_int iter, " <n> Benchmark iter (and get)";
     "--iteri", Arg.Set_int iteri, " <n> Benchmark iteri (and set)";
+    "--punk", Arg.Set_int punk, " <n> Benchmark push by chunks";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set, iter, iteri =
-  !push, !get, !set, !iter, !iteri
+let push, get, set, iter, iteri, punk =
+  !push, !get, !set, !iter, !iteri, !punk
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -249,4 +281,5 @@ let () =
   possibly set sets;
   possibly iter iters;
   possibly iteri iteris;
+  possibly punk (let k = 10 in punks k);
   ()

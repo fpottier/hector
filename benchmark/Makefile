@@ -26,6 +26,8 @@ bench:
 	@ $(MAIN) --iter 10000 2>&1 | tee log/iter.log
 	@ echo
 	@ $(MAIN) --iteri 100000 2>&1 | tee log/iteri.log
+	@ echo
+	@ $(MAIN) --punk 10000 2>&1 | tee log/punk.log
 
 ASSEMBLY=$(shell find ../_build -name '*Main.s')
 .PHONY: assembly
