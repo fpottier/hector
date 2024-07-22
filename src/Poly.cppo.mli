@@ -10,8 +10,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-#define VECTOR  'a vector
-#define SYNONYM 'a t
-#define ELEMENT 'a
+#define VECTOR   'a vector
+#define SYNONYM  'a t
+#define ELEMENT  'a
+#define VECTOR'  'b vector
+#define ELEMENT' 'b
 
 #include "Signature.frag.mli"

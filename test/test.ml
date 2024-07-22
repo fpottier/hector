@@ -195,6 +195,12 @@ let () =
   declare "elements_of_iteri iteri" spec
     (elements_of_iteri R.iteri) (elements_of_iteri C.iteri);
 
+  (* [map] is applied specifically to the function [succ]. *)
+  (* We do not check that [map] calls [f x] at most once for each [x]
+     and from left to right. *)
+  let spec = vector ^> vector in
+  declare "map succ" spec (R.map succ) (C.map succ);
+
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

@@ -10,9 +10,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-#define VECTOR  vector
-#define SYNONYM t
-#define ELEMENT element
+#define VECTOR   vector
+#define SYNONYM  t
+#define ELEMENT  element
+#define VECTOR'  vector
+#define ELEMENT' element
 
 (**The functor [Make_] lets the user choose the type [element] as well as
    the array allocation function [alloc]. The function call [alloc n x] is

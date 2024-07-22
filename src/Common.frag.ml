@@ -447,6 +447,11 @@ let (* public *) iteri f v =
   validate length data;
   LOOP5(i, 0, length, f i (Array.unsafe_get data i) (* safe *))
 
+let (* public *) map f v =
+  let { length; data; _ } = v in
+  validate length data;
+  init length (fun i -> f (Array.unsafe_get data i) (* safe *))
+
 let rec find f length (data : ELEMENT array) i =
   if i = length then
     raise Not_found

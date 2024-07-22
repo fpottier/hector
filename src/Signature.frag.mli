@@ -197,6 +197,9 @@ val iter : (ELEMENT -> unit) -> VECTOR -> unit
    index [i] and element [x] in the vector [v]. *)
 val iteri : (int -> ELEMENT -> unit) -> VECTOR -> unit
 
+(**TODO*)
+val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)
