@@ -297,47 +297,37 @@ let (* public *) fit_capacity v =
   if length < capacity then
     set_lower_capacity v length
 
+(* [really_ensure_capacity v request dummy] ensures that the requested
+   capacity [request] really is available now in the [data] array, not
+   just recorded in the [capacity] field. *)
+
+let (* private *) really_ensure_capacity v request dummy : ELEMENT array =
+  let { capacity; _ } = v in
+  let new_capacity =
+    if request <= capacity then capacity
+    else max (next_capacity capacity) request
+  in
+  assert (new_capacity >= request);
+  really_set_higher_capacity v new_capacity dummy
+
 (* -------------------------------------------------------------------------- *)
 
 (* Pushing. *)
 
-(* We separate the slow paths (that is, the unusual cases) so that the fast
-   path (the common case) can be marked [@inline]. *)
+(* We separate the slow path (the unusual case) so that the fast path
+   (the common case) can be marked [@inline]. *)
 
-(* [prepare_push v x] increases the vector's capacity so as to ensure that
-   one new element can be pushed. The value [x] is ignored but can be used
-   as a dummy element to fill empty slots. *)
+(* [push_safely v (length v) x] is in fact equivalent to [push v x], but it
+   is invoked only if there is insufficient space in the [data] array. *)
 
-let[@inline never] prepare_push v x : ELEMENT array =
-  let { length; capacity; data } = v in
-  assert (length = Array.length data);
-  if length < capacity then begin
-    (* The length of the [data] array is less than [capacity], and
-       must in fact be zero. The logical length of the vector must
-       be zero, too. *)
-    assert (Array.length data < capacity);
-    assert (Array.length data = 0);
-    assert (length = 0);
-    (* Without changing the vector's capacity, allocate a new [data] array. *)
-    let dummy = x in
-    let data = A.alloc capacity dummy in
-    v.data <- data;
-    data
-  end
-  else begin
-    (* The [data] array is full. *)
-    assert (length = capacity);
-    (* Ensure that the vector's capacity is at least [length + 1]. *)
-    let request = length + 1 in
-    let new_capacity = max (next_capacity capacity) request in
-    assert (new_capacity > capacity);
-    assert (length < new_capacity);
-    let dummy = x in
-    let data = really_set_higher_capacity v new_capacity dummy in
-    assert (v.capacity = new_capacity);
-    assert (Array.length data = v.capacity);
-    data
-  end
+let[@inline never] (* private *) push_safely v length x =
+  (* Ensure that sufficient space exists in the [data] array. *)
+  let delta = 1
+  and dummy = x in
+  let data = really_ensure_capacity v (length + delta) dummy in
+  (* Write [x] to the [data] array and update the vector's length. *)
+  Array.unsafe_set data length x; (* safe *)
+  v.length <- length + 1
 
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
@@ -347,13 +337,8 @@ let[@inline] (* public *) push v x =
     Array.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
-  else begin
-    (* Increase the vector's capacity. *)
-    let data = prepare_push v x in
-    (* Write, and update the vector's length. *)
-    Array.unsafe_set data length x; (* safe *)
-    v.length <- length + 1
-  end
+  else
+    push_safely v length x
 
 let (* public *) add_last =
   push
