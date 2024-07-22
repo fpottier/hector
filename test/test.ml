@@ -60,6 +60,9 @@ let vector =
 let element =
   semi_open_interval 0 32
 
+let seq_element =
+  declare_seq element
+
 (* We draw random integer capacities and lengths. *)
 
 let capacity =
@@ -162,6 +165,9 @@ let () =
 
   let spec = vector ^> list element ^> unit in
   declare "push_list" spec R.push_list C.push_list;
+
+  let spec = vector ^> seq_element ^> unit in
+  declare "push_seq" spec R.push_seq C.push_seq;
 
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;

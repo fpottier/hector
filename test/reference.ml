@@ -66,6 +66,14 @@ let push_array_segment v xs ofs len =
 let push_vector v v' =
   push_list v !v'
 
+let rec push_seq v xs =
+  match xs() with
+  | Seq.Nil ->
+      ()
+  | Seq.Cons (x, xs) ->
+      push v x;
+      push_seq v xs
+
 let pop_opt v =
   match List.rev !v with
   | x :: xs ->
