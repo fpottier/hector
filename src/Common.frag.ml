@@ -316,30 +316,22 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy
 (* Pushing. *)
 
 (* We separate the slow path (the unusual case) so that the fast path
-   (the common case) can be marked [@inline]. *)
-
-(* [push_safely v (length v) x] is in fact equivalent to [push v x], but it
-   is invoked only if there is insufficient space in the [data] array. *)
-
-let[@inline never] (* private *) push_safely v length x =
-  (* Ensure that sufficient space exists in the [data] array. *)
-  let delta = 1
-  and dummy = x in
-  let data = really_ensure_capacity v (length + delta) dummy in
-  (* Write [x] to the [data] array and update the vector's length. *)
-  Array.unsafe_set data length x; (* safe *)
-  v.length <- length + 1
+   (the common case) can be marked [@inline]. On the fast path, one test
+   suffices. *)
 
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
-  (* On the fast path, one test suffices. *)
-  if length < Array.length data then begin
-    (* A physical array slot exists. *)
-    Array.unsafe_set data length x; (* safe *)
-    v.length <- length + 1
-  end
-  else
-    push_safely v length x
+  (* Ensure that sufficient space exists in the [data] array. *)
+  let data =
+    if length < Array.length data then
+      data
+    else
+      (* [x] serves as a dummy value. *)
+      really_ensure_capacity v (length + 1) x
+  in
+  (* A physical array slot now exists. *)
+  Array.unsafe_set data length x; (* safe *)
+  v.length <- length + 1
 
 let (* public *) add_last =
   push
