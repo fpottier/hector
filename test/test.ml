@@ -157,6 +157,9 @@ let () =
   in
   declare "push_array_segment" spec R.push_array_segment C.push_array_segment;
 
+  let spec = vector ^> vector ^> unit in
+  declare "push_vector" spec R.push_vector C.push_vector;
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 

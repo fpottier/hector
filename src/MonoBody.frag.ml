@@ -90,8 +90,9 @@ module A = struct
     if defensive && not (0 <= n && 0 <= o && o + n <= length a) then
       violation a o n
 
-  (* We implement just a special case of [blit] where the two arrays
-     are distinct. *)
+  (* We implement just the special case of [blit] where there is no
+     overlap between the source and destination. Thus, in C, [memcpy]
+     can be used; there is no need for [memmove]. *)
 
   #ifdef USE_MEMCPY
 
@@ -133,9 +134,9 @@ module A = struct
   #endif
 
   let blit (src : element array) sofs dst dofs n =
-    assert (src != dst);
     validate src sofs n;
     validate dst dofs n;
+    assert (src != dst || sofs + n <= dofs || dofs + n <= sofs);
     unsafe_blit src sofs dst dofs n
 
   (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)

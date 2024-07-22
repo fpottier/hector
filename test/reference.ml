@@ -60,6 +60,9 @@ let push_array v xs =
 let push_array_segment v xs ofs len =
   v := !v @ Array.to_list (Array.sub xs ofs len)
 
+let push_vector v v' =
+  v := !v @ !v'
+
 let pop_opt v =
   match List.rev !v with
   | x :: xs ->

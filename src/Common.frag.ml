@@ -369,6 +369,18 @@ let[@inline] (* public *) push_array v xs =
 let (* public *) append_array =
   push_array
 
+let[@inline] (* public *) push_vector v v' =
+  let { data = xs; length = len; _ } = v' in
+  let ofs = 0 in
+  unsafe_push_array_segment v xs ofs len
+    (* This works even if [v] and [v'] are the same vector. In all cases, we
+       are reading from a data array and writing to a data array (which may
+       or may not be the same array), and the source and destination ranges
+       are disjoint. *)
+
+let (* public *) append =
+  push_vector
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)
