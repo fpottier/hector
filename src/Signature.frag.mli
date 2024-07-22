@@ -115,6 +115,7 @@ val find_last : VECTOR -> ELEMENT option
 
 (**TODO*)
 val push_array : VECTOR -> ELEMENT array -> unit
+val push_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit
 
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity

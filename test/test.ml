@@ -147,6 +147,16 @@ let () =
   let spec = vector ^> array element ^> unit in
   declare "push_array" spec R.push_array C.push_array;
 
+  let spec =
+    vector ^>
+    array element ^>> fun a ->
+    let n = Array.length a in
+    closed_interval 0 n ^>> fun ofs ->
+    closed_interval 0 (n - ofs) ^>
+    unit
+  in
+  declare "push_array_segment" spec R.push_array_segment C.push_array_segment;
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 

@@ -73,6 +73,13 @@ let[@inline never] length_failure n =
 let[@inline never] index_failure v i =
   fail "index %d is out of range [0, %d)" i v.length
 
+let[@inline never] array_segment_base_failure xs ofs =
+  fail "segment base index %d is out of range [0, %d]" ofs (Array.length xs)
+
+let[@inline never] array_segment_end_failure xs ofs len =
+  fail "segment end index %d+%d = %d is out of range [0, %d]"
+    ofs len (ofs+len) (Array.length xs)
+
 (* [validate length data] checks [length <= Array.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
@@ -336,23 +343,28 @@ let[@inline] (* public *) push v x =
 let (* public *) add_last =
   push
 
-let[@inline] (* public *) push_array v xs =
-  let delta = Array.length xs in
+let[@inline] (* private *) unsafe_push_array_segment v xs ofs len =
+  assert (0 <= ofs && 0 <= len && ofs + len <= Array.length xs);
   let { length; data; _ } = v in
-  let new_length = length + delta in
+  let new_length = length + len in
   (* Ensure that sufficient space exists in the [data] array. *)
   let data =
     if new_length <= Array.length data then
       data
     else
       (* If there is insufficient space, then it must be the case
-         that [delta] is nonzero, so reading [xs.(0)] is safe. *)
-      let dummy = assert (0 < delta); Array.unsafe_get xs 0 (* safe *) in
+         that [len] is nonzero, so reading [xs.(0)] is safe. *)
+      let dummy = assert (0 < len); Array.unsafe_get xs 0 (* safe *) in
       really_ensure_capacity v new_length dummy
   in
   (* Physical array slots now exist. *)
   v.length <- new_length;
-  A.blit xs 0 data length delta
+  A.blit xs ofs data length len
+
+let[@inline] (* public *) push_array v xs =
+  let ofs = 0
+  and len = Array.length xs in
+  unsafe_push_array_segment v xs ofs len
 
 (* -------------------------------------------------------------------------- *)
 
@@ -431,3 +443,12 @@ let (* public *) ensure_capacity v request =
 let (* public *) ensure_extra_capacity v delta =
   if defensive && delta < 0 then capacity_failure delta;
   ensure_extra_capacity v delta
+
+let[@inline] (* public *) push_array_segment v xs ofs len =
+  if defensive && not (0 <= ofs && ofs <= Array.length xs) then
+    array_segment_base_failure xs ofs;
+  if defensive && not (0 <= len) then
+    length_failure len;
+  if defensive && not (0 <= ofs+len && ofs+len <= Array.length xs) then
+    array_segment_end_failure xs ofs len;
+  unsafe_push_array_segment v xs ofs len
