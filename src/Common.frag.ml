@@ -329,16 +329,17 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
   (* Ensure that sufficient space exists in the [data] array. *)
+  let new_length = length + 1 in
   let data =
-    if length < Array.length data then
+    if new_length <= Array.length data then
       data
     else
       let dummy = x in
-      really_ensure_capacity v (length + 1) dummy
+      really_ensure_capacity v new_length dummy
   in
   (* A physical array slot now exists. *)
-  Array.unsafe_set data length x; (* safe *)
-  v.length <- length + 1
+  Array.unsafe_set data (new_length - 1) x; (* safe *)
+  v.length <- new_length
 
 let (* public *) add_last =
   push
