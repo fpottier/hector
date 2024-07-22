@@ -213,9 +213,9 @@ let (* public *) reset v =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Changing the vector's capacity
-   and/or re-allocating the vector's [data] array to match its capacity,
-   are the most tricky aspects of this data structure. *)
+(* Changing the vector's capacity and/or re-allocating the [data]
+   array to match its capacity, are the most tricky aspects of this
+   data structure. *)
 
 (* One must keep in mind the invariant that if [v.length] is nonzero
    then [v.capacity] is the length of the [data] array. *)
