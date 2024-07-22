@@ -19,6 +19,14 @@
   Double-check the performance claims
   found in the documentation.
 
+* Use the new release of `cppo`
+  to write multi-line macros without backslashes,
+  remove all uses of `#undef`,
+  use higher-order macros where possible.
+  In particular, `ELEMENT`, `VECTOR`, and the signature itself
+  can be higher-order macros;
+  no need to simulate them via unhygienic `#include`.
+
 * Release.
 
 ## Maybe Later
