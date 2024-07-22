@@ -366,6 +366,9 @@ let[@inline] (* public *) push_array v xs =
   and len = Array.length xs in
   unsafe_push_array_segment v xs ofs len
 
+let (* public *) append_array =
+  push_array
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)
