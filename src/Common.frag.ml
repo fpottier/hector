@@ -304,7 +304,11 @@ let (* public *) fit_capacity v =
 (* We separate the slow paths (that is, the unusual cases) so that the fast
    path (the common case) can be marked [@inline]. *)
 
-let[@inline never] push_slow_path v x =
+(* [prepare_push v x] increases the vector's capacity so as to ensure that
+   one new element can be pushed. The value [x] is ignored but can be used
+   as a dummy element to fill empty slots. *)
+
+let[@inline never] prepare_push v x : ELEMENT array =
   let { length; capacity; data } = v in
   assert (not (length < Array.length data));
   if length < capacity then begin
@@ -318,10 +322,7 @@ let[@inline never] push_slow_path v x =
     let dummy = x in
     let data = A.alloc capacity dummy in
     v.data <- data;
-    (* Try again. *)
-    let length = 0 in
-    Array.unsafe_set data length x; (* safe *)
-    v.length <- length + 1
+    data
   end
   else begin
     (* The [data] array is full. *)
@@ -333,11 +334,9 @@ let[@inline never] push_slow_path v x =
     assert (length < new_capacity);
     let dummy = x in
     let data = really_set_higher_capacity v new_capacity dummy in
-    (* Try again. *)
     assert (v.capacity = new_capacity);
     assert (Array.length data = v.capacity);
-    Array.unsafe_set data length x; (* safe *)
-    v.length <- length + 1
+    data
   end
 
 let[@inline] (* public *) push v x =
@@ -348,8 +347,13 @@ let[@inline] (* public *) push v x =
     Array.unsafe_set data length x; (* safe *)
     v.length <- length + 1
   end
-  else
-    push_slow_path v x
+  else begin
+    (* Increase the vector's capacity. *)
+    let data = prepare_push v x in
+    (* Write, and update the vector's length. *)
+    Array.unsafe_set data length x; (* safe *)
+    v.length <- length + 1
+  end
 
 let (* public *) add_last =
   push
