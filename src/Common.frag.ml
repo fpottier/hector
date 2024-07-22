@@ -326,8 +326,8 @@ let[@inline] (* public *) push v x =
     if length < Array.length data then
       data
     else
-      (* [x] serves as a dummy value. *)
-      really_ensure_capacity v (length + 1) x
+      let dummy = x in
+      really_ensure_capacity v (length + 1) dummy
   in
   (* A physical array slot now exists. *)
   Array.unsafe_set data length x; (* safe *)
