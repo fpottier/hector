@@ -143,7 +143,7 @@ let[@inline] (* private *) unsafe_set v i x =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Popping, truncating, clearing. *)
+(* Popping, peeking, truncating, clearing. *)
 
 let (* public *) pop v =
   let { length; _ } = v in
@@ -177,6 +177,26 @@ let (* public *) drop v =
 
 let (* public *) remove_last =
   drop
+
+let (* public *) peek v =
+  let { length; _ } = v in
+  if length > 0 then
+    unsafe_get v (length - 1)
+  else
+    raise Not_found
+
+let (* public *) get_last =
+  peek
+
+let (* public *) peek_opt v =
+  let { length; _ } = v in
+  if length > 0 then
+    Some (unsafe_get v (length - 1))
+  else
+    None
+
+let (* public *) find_last =
+  peek_opt
 
 let[@inline] (* private *) truncate v n =
   let { length; _ } = v in

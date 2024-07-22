@@ -70,6 +70,22 @@ let pop v =
   | [] ->
       raise Not_found
 
+let peek v =
+  let xs = !v in
+  let n = List.length xs in
+  if n > 0 then
+    List.nth xs (n - 1)
+  else
+    raise Not_found
+
+let peek_opt v =
+  let xs = !v in
+  let n = List.length xs in
+  if n > 0 then
+    Some (List.nth xs (n - 1))
+  else
+    None
+
 let drop v =
   match pop v with
   | _

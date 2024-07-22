@@ -11,7 +11,7 @@
 (******************************************************************************)
 
 (**A vector is a mutable abstract data structure, which stores a sequence of
-   values. *)
+   values. The capacity of a vector cannot exceed [Sys.max_array_length]. *)
 type VECTOR
 
 type SYNONYM = VECTOR
@@ -30,11 +30,14 @@ val is_empty : VECTOR -> bool
 val create : unit -> VECTOR
 
 (**[make n x] creates a new vector of length and capacity [n]
-   and initializes it by storing the value [x] everywhere. *)
+   and initializes it by storing the value [x] everywhere.
+   [n] must be a valid capacity. *)
 val make : length -> ELEMENT -> VECTOR
 
 (**[init n f] creates a new vector of length and capacity [n]
-   and initializes it by storing the value [f i] at each index [i]. *)
+   and initializes it, from left to right, by storing
+   the value [f i] at each index [i].
+   [n] must be a valid capacity. *)
 val init : length -> (index -> ELEMENT) -> VECTOR
 
 (**[copy v] creates a new vector of length and capacity [length v]
@@ -95,6 +98,20 @@ val drop : VECTOR -> unit
 
 (**[remove_last] is a synonym for [drop]. *)
 val remove_last : VECTOR -> unit
+
+(**[peek v] returns the last element of the vector [v].
+   If the vector is empty, [Not_found] is raised. *)
+val peek : VECTOR -> ELEMENT
+
+(**[get_last] is a synonym for [peek]. *)
+val get_last : VECTOR -> ELEMENT
+
+(**[peek_opt v] returns the last element of the vector [v].
+   If the vector is empty, [None] is returned. *)
+val peek_opt : VECTOR -> ELEMENT option
+
+(**[find_last] is a synonym for [peek_opt]. *)
+val find_last : VECTOR -> ELEMENT option
 
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
