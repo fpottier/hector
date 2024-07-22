@@ -239,8 +239,8 @@ let[@inline] set_lower_capacity v new_capacity =
    capacity. The value [dummy] is used to initialize unused slots. *)
 
 let really_set_higher_capacity v new_capacity dummy : ELEMENT array =
-  let { length; capacity; data } = v in
-  assert (new_capacity > capacity);
+  let { length; data; _ } = v in
+  assert (length <= new_capacity);
   let new_data = A.alloc new_capacity dummy in
   A.blit data 0 new_data 0 length;
   v.capacity <- new_capacity;
