@@ -163,7 +163,7 @@ val append_iter :
    of the vector is unchanged. This is a constant-time operation. *)
 val truncate : VECTOR -> length -> unit
 
-(**[clear v] is equivalent to [truncate 0 v]. The length of the vector becomes
+(**[clear v] is equivalent to [truncate v 0]. The length of the vector becomes
    zero; its capacity remains unchanged. *)
 val clear : VECTOR -> unit
 
