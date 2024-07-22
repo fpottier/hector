@@ -455,3 +455,6 @@ let[@inline] (* public *) push_array_segment v xs ofs len =
   if defensive && not (0 <= ofs+len && ofs+len <= Array.length xs) then
     array_segment_end_failure xs ofs len;
   unsafe_push_array_segment v xs ofs len
+
+let (* public *) append_array_segment =
+  push_array_segment
