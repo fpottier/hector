@@ -338,21 +338,21 @@ let (* public *) add_last =
 
 let[@inline] (* public *) push_array v xs =
   let delta = Array.length xs in
-  if 0 < delta then begin
-    let { length; data; _ } = v in
-    let new_length = length + delta in
-    (* Ensure that sufficient space exists in the [data] array. *)
-    let data =
-      if new_length <= Array.length data then
-        data
-      else
-        let dummy = xs.(0) in
-        really_ensure_capacity v new_length dummy
-    in
-    (* Physical array slots now exist. *)
-    v.length <- new_length;
-    A.blit xs 0 data length delta
-  end
+  let { length; data; _ } = v in
+  let new_length = length + delta in
+  (* Ensure that sufficient space exists in the [data] array. *)
+  let data =
+    if new_length <= Array.length data then
+      data
+    else
+      (* If there is insufficient space, then it must be the case
+         that [delta] is nonzero, so reading [xs.(0)] is safe. *)
+      let dummy = assert (0 < delta); Array.unsafe_get xs 0 (* safe *) in
+      really_ensure_capacity v new_length dummy
+  in
+  (* Physical array slots now exist. *)
+  v.length <- new_length;
+  A.blit xs 0 data length delta
 
 (* -------------------------------------------------------------------------- *)
 
