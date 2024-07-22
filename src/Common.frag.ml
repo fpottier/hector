@@ -336,6 +336,24 @@ let[@inline] (* public *) push v x =
 let (* public *) add_last =
   push
 
+let[@inline] (* public *) push_array v xs =
+  let delta = Array.length xs in
+  if 0 < delta then begin
+    let { length; data; _ } = v in
+    let new_length = length + delta in
+    (* Ensure that sufficient space exists in the [data] array. *)
+    let data =
+      if new_length <= Array.length data then
+        data
+      else
+        let dummy = xs.(0) in
+        really_ensure_capacity v new_length dummy
+    in
+    (* Physical array slots now exist. *)
+    v.length <- new_length;
+    A.blit xs 0 data length delta
+  end
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)

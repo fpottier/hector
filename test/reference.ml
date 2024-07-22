@@ -54,6 +54,9 @@ let set v i x =
 let push v x =
   v := !v @ [x]
 
+let push_array v xs =
+  v := !v @ Array.to_list xs
+
 let pop_opt v =
   match List.rev !v with
   | x :: xs ->

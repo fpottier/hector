@@ -144,6 +144,9 @@ let () =
   let spec = vector ^> option element in
   declare "peek_opt" spec R.peek_opt C.peek_opt;
 
+  let spec = vector ^> array element ^> unit in
+  declare "push_array" spec R.push_array C.push_array;
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 
