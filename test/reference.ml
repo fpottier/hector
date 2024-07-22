@@ -54,14 +54,17 @@ let set v i x =
 let push v x =
   v := !v @ [x]
 
+let push_list v xs =
+  v := !v @ xs
+
 let push_array v xs =
-  v := !v @ Array.to_list xs
+  push_list v (Array.to_list xs)
 
 let push_array_segment v xs ofs len =
-  v := !v @ Array.to_list (Array.sub xs ofs len)
+  push_array v (Array.sub xs ofs len)
 
 let push_vector v v' =
-  v := !v @ !v'
+  push_list v !v'
 
 let pop_opt v =
   match List.rev !v with

@@ -131,6 +131,12 @@ val push_vector : VECTOR -> VECTOR -> unit
 (**[append] is a synonym for [push_vector]. *)
 val append : VECTOR -> VECTOR -> unit
 
+(**TODO*)
+val push_list : VECTOR -> ELEMENT list -> unit
+
+(**[append_list] is a synonym for [push_list]. *)
+val append_list : VECTOR -> ELEMENT list -> unit
+
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
    of the vector is unchanged. This is a constant-time operation. *)

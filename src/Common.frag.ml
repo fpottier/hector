@@ -381,6 +381,37 @@ let[@inline] (* public *) push_vector v v' =
 let (* public *) append =
   push_vector
 
+let (* public *) push_list v xs =
+  let len = List.length xs in
+  let { length; data; _ } = v in
+  let new_length = length + len in
+  (* Ensure that sufficient space exists in the [data] array. *)
+  let data =
+    if new_length <= Array.length data then
+      data
+    else
+      (* If there is insufficient space, then it must be the case
+         that [len] is nonzero, so calling [List.hd xs] is safe. *)
+      let dummy = assert (0 < len); List.hd xs (* safe *) in
+      really_ensure_capacity v new_length dummy
+  in
+  (* Physical array slots now exist. *)
+  v.length <- new_length;
+  (* We want to blit the list [xs], whose length is [len], into the array
+     [data] at offset [length]. This can be done with a loop. *)
+  let xs = ref xs
+  and dst = ref length in
+  for _ = 1 to len do
+    match !xs with [] -> assert false | x :: rest ->
+    Array.unsafe_set data !dst x; (* safe *)
+    dst := !dst + 1;
+    xs := rest
+  done;
+  assert (!xs = [])
+
+let (* public *) append_list =
+  push_list
+
 (* -------------------------------------------------------------------------- *)
 
 (* Iterating, searching, showing. *)

@@ -160,6 +160,9 @@ let () =
   let spec = vector ^> vector ^> unit in
   declare "push_vector" spec R.push_vector C.push_vector;
 
+  let spec = vector ^> list element ^> unit in
+  declare "push_list" spec R.push_list C.push_list;
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 
