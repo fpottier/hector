@@ -238,7 +238,7 @@ let[@inline] set_lower_capacity v new_capacity =
    immediately re-allocates the [data] array so as to match the new
    capacity. The value [dummy] is used to initialize unused slots. *)
 
-let really_set_higher_capacity v new_capacity dummy =
+let really_set_higher_capacity v new_capacity dummy : ELEMENT array =
   let { length; capacity; data } = v in
   assert (new_capacity > capacity);
   let new_data = A.alloc new_capacity dummy in
