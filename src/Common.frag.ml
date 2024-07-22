@@ -326,17 +326,21 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy
    (the common case) can be marked [@inline]. On the fast path, one test
    suffices. *)
 
+(* The macro [DATA(DUMMY)] returns a [data] array whose length is at
+   least [new_length]. The expression [DUMMY] is evaluated only if
+   there is insufficient space in the current [data] array. *)
+
+#define DATA(DUMMY) ( \
+  if new_length <= Array.length data then data \
+  else really_ensure_capacity v new_length (DUMMY) \
+)
+
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
   (* Ensure that sufficient space exists in the [data] array. *)
+  (* [x] is used as a dummy value. *)
   let new_length = length + 1 in
-  let data =
-    if new_length <= Array.length data then
-      data
-    else
-      let dummy = x in
-      really_ensure_capacity v new_length dummy
-  in
+  let data = DATA(x) in
   (* A physical array slot now exists. *)
   Array.unsafe_set data (new_length - 1) x; (* safe *)
   v.length <- new_length
@@ -349,15 +353,9 @@ let[@inline] (* private *) unsafe_push_array_segment v xs ofs len =
   let { length; data; _ } = v in
   let new_length = length + len in
   (* Ensure that sufficient space exists in the [data] array. *)
-  let data =
-    if new_length <= Array.length data then
-      data
-    else
-      (* If there is insufficient space, then it must be the case
-         that [len] is nonzero, so reading [xs.(0)] is safe. *)
-      let dummy = assert (0 < len); Array.unsafe_get xs 0 (* safe *) in
-      really_ensure_capacity v new_length dummy
-  in
+  (* If there is insufficient space, then it must be the case
+     that [len] is nonzero, so reading [xs.(0)] is safe. *)
+  let data = DATA(assert (0 < len); Array.unsafe_get xs 0 (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
   A.blit xs ofs data length len
@@ -387,15 +385,9 @@ let (* public *) push_list v xs =
   let { length; data; _ } = v in
   let new_length = length + len in
   (* Ensure that sufficient space exists in the [data] array. *)
-  let data =
-    if new_length <= Array.length data then
-      data
-    else
-      (* If there is insufficient space, then it must be the case
-         that [len] is nonzero, so calling [List.hd xs] is safe. *)
-      let dummy = assert (0 < len); List.hd xs (* safe *) in
-      really_ensure_capacity v new_length dummy
-  in
+  (* If there is insufficient space, then it must be the case
+     that [len] is nonzero, so calling [List.hd xs] is safe. *)
+  let data = DATA(assert (0 < len); List.hd xs (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
   (* We want to blit the list [xs], whose length is [len], into the array
