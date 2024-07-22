@@ -401,12 +401,12 @@ let (* public *) push_list v xs =
      [data] at offset [length]. This can be done with a loop. *)
   let xs = ref xs
   and dst = ref length in
-  for _ = 1 to len do
+  LOOP5(_, 0, len,
     match !xs with [] -> assert false | x :: rest ->
     Array.unsafe_set data !dst x; (* safe *)
     dst := !dst + 1;
     xs := rest
-  done;
+  );
   assert (!xs = [])
 
 let (* public *) append_list =
