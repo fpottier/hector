@@ -15,7 +15,7 @@ MAIN := \
 
 .PHONY: bench
 bench:
-	mkdir -p log
+	@ mkdir -p log
 	@ echo
 	@ $(MAIN) --push 10000 2>&1 | tee log/push.log
 	@ echo
@@ -27,7 +27,9 @@ bench:
 	@ echo
 	@ $(MAIN) --iteri 100000 2>&1 | tee log/iteri.log
 	@ echo
-	@ $(MAIN) --punk 10000 2>&1 | tee log/punk.log
+	@ $(MAIN) --pusha 10000 2>&1 | tee log/pusha.log
+	@ echo
+	@ $(MAIN) --pushl 10000 2>&1 | tee log/pushl.log
 
 ASSEMBLY=$(shell find ../_build -name '*Main.s')
 .PHONY: assembly

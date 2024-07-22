@@ -221,7 +221,7 @@ let iteris n =
 
 (* Push by chunks. *)
 
-#define PUNK(candidate,create,push_array,n,k) \
+#define PUSHA(candidate,create,push_array,n,k) \
 ( \
   let basis = n \
   and name = sprintf "push_array (size %d, chunk size %d) (%s)" n k candidate \
@@ -236,24 +236,51 @@ let iteris n =
   B.benchmark ~name ~quota ~basis ~run \
 )
 
-let punks k n =
+let pushas k n =
   let[@inline] naive_push_array v a =
     Array.iter (I.push v) a
   in
   [
-    PUNK("dynarray", R.create, R.append_array, n, k);
-    PUNK("poly", P.create, P.push_array, n, k);
-    PUNK("mono", M.create, M.push_array, n, k);
-    PUNK("int", I.create, I.push_array, n, k);
-    PUNK("int, naive iterated push", I.create, naive_push_array, n, k);
+    PUSHA("dynarray", R.create, R.append_array, n, k);
+    PUSHA("poly", P.create, P.push_array, n, k);
+    PUSHA("mono", M.create, M.push_array, n, k);
+    PUSHA("int, naive iterated push", I.create, naive_push_array, n, k);
+    PUSHA("int", I.create, I.push_array, n, k);
+  ]
+
+#define PUSHL(candidate,create,push_list,n,k) \
+( \
+  let basis = n \
+  and name = sprintf "push_list (size %d, chunk size %d) (%s)" n k candidate \
+  and run () = \
+    let xs = List.init k (fun i -> i) in \
+    fun () -> \
+    let v = create () in \
+    for _ = 0 to n-1 do \
+      push_list v xs \
+    done \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let pushls k n =
+  let[@inline] naive_push_list v xs =
+    List.iter (I.push v) xs
+  in
+  [
+    PUSHL("dynarray", R.create, R.append_list, n, k);
+    PUSHL("poly", P.create, P.push_list, n, k);
+    PUSHL("mono", M.create, M.push_list, n, k);
+    PUSHL("int, naive iterated push", I.create, naive_push_list, n, k);
+    PUSHL("int", I.create, I.push_list, n, k);
   ]
 
 (* -------------------------------------------------------------------------- *)
 
 (* Read the command line. *)
 
-let push, get, set, iter, iteri, punk =
-  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
+let push, get, set, iter, iteri, pusha, pushl =
+  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
@@ -262,11 +289,12 @@ let () =
     "--set", Arg.Set_int set, " <n> Benchmark set";
     "--iter", Arg.Set_int iter, " <n> Benchmark iter (and get)";
     "--iteri", Arg.Set_int iteri, " <n> Benchmark iteri (and set)";
-    "--punk", Arg.Set_int punk, " <n> Benchmark push by chunks";
+    "--pusha", Arg.Set_int pusha, " <n> Benchmark push_array";
+    "--pushl", Arg.Set_int pushl, " <n> Benchmark push_list";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set, iter, iteri, punk =
-  !push, !get, !set, !iter, !iteri, !punk
+let push, get, set, iter, iteri, pusha, pushl =
+  !push, !get, !set, !iter, !iteri, !pusha, !pushl
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -281,5 +309,6 @@ let () =
   possibly set sets;
   possibly iter iters;
   possibly iteri iteris;
-  possibly punk (let k = 10 in punks k);
+  possibly pusha (let k = 10 in pushas k);
+  possibly pushl (let k = 10 in pushls k);
   ()
