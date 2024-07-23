@@ -203,6 +203,9 @@ val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
 (**TODO*)
 val mapi : (index -> ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
 
+(**TODO*)
+val fold_left : ('s -> ELEMENT -> 's) -> 's -> VECTOR -> 's
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)

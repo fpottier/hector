@@ -93,6 +93,10 @@ let elements_of_iteri iteri v =
   iteri (fun i x -> ixs := (i, x) :: !ixs) v;
   List.rev !ixs
 
+let elements_of_fold_left fold_left v =
+  fold_left (fun xs x -> x :: xs) [] v
+  |> List.rev
+
 (* -------------------------------------------------------------------------- *)
 
 (* Declare the operations. *)
@@ -207,6 +211,10 @@ let () =
   let spec = vector ^> vector in
   declare "mapi (+)" spec (R.mapi (+)) (C.mapi (+));
 
+  let spec = vector ^> list element in
+  declare "elements_of_fold_left fold_left" spec
+    (elements_of_fold_left R.fold_left) (elements_of_fold_left C.fold_left);
+
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
@@ -222,6 +230,7 @@ let () =
     dprintf "          open Hector.Int;;\n";
     dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
     dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
+    dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
     ()
   in
   let fuel = 128 in

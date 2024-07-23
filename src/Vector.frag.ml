@@ -491,6 +491,13 @@ let (* public *) mapi f v =
   validate length data;
   init length (fun i -> f i (A.unsafe_get data i) (* safe *))
 
+let (* public *) fold_left f accu v =
+  let { length; data; _ } = v in
+  validate length data;
+  let accu = ref accu in
+  LOOP5(i, 0, length, accu := f !accu (A.unsafe_get data i) (* safe *));
+  !accu
+
 let rec find f length data i =
   if i = length then
     raise Not_found
