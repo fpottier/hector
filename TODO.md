@@ -2,13 +2,12 @@
 
 ## Soon
 
+* `next_capacity` should avoid exceeding the maximum array length
+  (which should be a field in the structure `A`).
+
 * Remove the comment that talks about hesitation.
 
-* Isolate our monomorphic-array modules: `IntArray`, `CharArray` (`bytes`), etc.
-  Possibly publish these modules (`Arrays.Int`, etc.),
-  but this requires renaming `blit` to `blit_disjoint`.
-
-* Implement a character vector, and compare its efficiency with `Buffer`.
+* Publish `Arrays.Int`, etc.
 
 * For optimum speed, in integer vectors, we need a way of initializing
   a freshly allocated array partly by copying data from an existing
@@ -39,7 +38,10 @@
 
 ## Maybe Later
 
-* Document `Make_`?
+* Generalize the signature `MONOARRAY` so that the type of arrays is
+  abstract. This requires distinguishing several variants of `sub`
+  and `blit_disjoint`. Then, implement `CharArray` using `bytes`.
+  Implement a character vector, and compare its efficiency with `Buffer`.
 
 * Can (should) the types `'a vector` and `'a t` be declared injective?
 
