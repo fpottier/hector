@@ -2,6 +2,8 @@
 
 ## Soon
 
+* Remove the comment that talks about hesitation.
+
 * Isolate our monomorphic-array modules: `IntArray`, `CharArray` (`bytes`), etc.
   Possibly publish these modules (`Arrays.Int`, etc.),
   but this requires renaming `blit` to `blit_disjoint`.
