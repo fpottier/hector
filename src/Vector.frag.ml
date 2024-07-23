@@ -508,12 +508,22 @@ let (* public *) fold_right f v accu =
 let (* public *) exists f v =
   let { length; data; _ } = v in
   validate length data;
-  let exception Exists in
+  let exception Break in
   try
-    LOOP5(i, 0, length, if f (A.unsafe_get data i) then raise Exists);
+    LOOP5(i, 0, length, if f (A.unsafe_get data i) then raise Break);
     false
-  with Exists ->
+  with Break ->
     true
+
+let (* public *) for_all f v =
+  let { length; data; _ } = v in
+  validate length data;
+  let exception Break in
+  try
+    LOOP5(i, 0, length, if not (f (A.unsafe_get data i)) then raise Break);
+    true
+  with Break ->
+    false
 
 let rec find f length data i =
   if i = length then

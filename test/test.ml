@@ -226,6 +226,10 @@ let () =
   let spec = vector ^> bool in
   declare "exists " spec (R.exists ((<=) 0)) (C.exists ((<=) 0));
 
+  (* [for_all] is applied specifically to the function [(<=) 0]. *)
+  let spec = vector ^> bool in
+  declare "for_all " spec (R.for_all ((<=) 0)) (C.for_all ((<=) 0));
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

@@ -212,6 +212,9 @@ val fold_right : (ELEMENT -> 's -> 's) -> VECTOR -> 's -> 's
 (**TODO*)
 val exists : (ELEMENT -> bool) -> VECTOR -> bool
 
+(**TODO*)
+val for_all : (ELEMENT -> bool) -> VECTOR -> bool
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)
