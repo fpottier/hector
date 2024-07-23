@@ -51,7 +51,7 @@ reinstall: uninstall
 show: reinstall
 	@ echo "#require \"hector\";;\n#show Hector;;" | ocaml
 
-ASSEMBLY=$(shell find . -name "hector__Mono.s")
+ASSEMBLY=$(shell find . -name "hector__Int.s")
 .PHONY: assembly
 assembly:
 	@ dune clean && dune build --profile=release
@@ -60,6 +60,8 @@ assembly:
 	| grep -vw "\.long" \
 	| grep -vw "\.short" \
 	| grep -vw "\.asciz" \
+	| grep -vw "\.globl" \
+	| grep -vw "\.quad" \
 	| gsed "s/L[[:digit:]]\+/L/g" \
 	> simplified.s
 	@ open -a /Applications/Emacs.app/ simplified.s
