@@ -23,6 +23,8 @@
 * Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
 
 * Make sure every interface file is commented. Review the documentation.
+  Document the fact that a vector must not be modified while iteration is
+  ongoing.
 
 * Benchmark more operations, if necessary.
   Double-check the performance claims
