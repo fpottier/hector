@@ -12,6 +12,10 @@
 
 #include "Loop.frag.ml"
 
+(* -------------------------------------------------------------------------- *)
+
+(* Integer vectors and monomorphic vectors. *)
+
 #define VECTOR   vector
 #define VECTOR'  vector
 #define SYNONYM  t
@@ -30,7 +34,7 @@ module Int = struct
 
   module A = IntArray
 
-  #include "Common.frag.ml"
+  #include "Vector.frag.ml"
 
 end
 
@@ -52,7 +56,7 @@ module Mono = struct
       #include "MonoArray.frag.ml"
     end
 
-    #include "Common.frag.ml"
+    #include "Vector.frag.ml"
 
   end (* Make_ *)
 
@@ -91,6 +95,6 @@ module Poly = struct
     let blit_disjoint = blit
   end
 
-  #include "Common.frag.ml"
+  #include "Vector.frag.ml"
 
 end
