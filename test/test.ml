@@ -222,7 +222,11 @@ let () =
   declare "elements_of_fold_right fold_right" spec
     (elements_of_fold_right R.fold_right) (elements_of_fold_right C.fold_right);
 
-  (* [find] is applied specifically to the function [(<=) 8]. *)
+  (* [exists] is applied specifically to the function [(<=) 0]. *)
+  let spec = vector ^> bool in
+  declare "exists " spec (R.exists ((<=) 0)) (C.exists ((<=) 0));
+
+  (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
 

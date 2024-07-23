@@ -505,6 +505,16 @@ let (* public *) fold_right f v accu =
   LOOP_DOWN(i, 0, length, accu := f (A.unsafe_get data i) (* safe *) !accu);
   !accu
 
+let (* public *) exists f v =
+  let { length; data; _ } = v in
+  validate length data;
+  let exception Exists in
+  try
+    LOOP5(i, 0, length, if f (A.unsafe_get data i) then raise Exists);
+    false
+  with Exists ->
+    true
+
 let rec find f length data i =
   if i = length then
     raise Not_found

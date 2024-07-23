@@ -160,6 +160,9 @@ let fold_left f accu v =
 let fold_right f v accu =
   List.fold_right f !v accu
 
+let exists f v =
+  List.exists f !v
+
 let rec index f xs i =
   match xs with
   | [] ->
