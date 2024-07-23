@@ -10,31 +10,67 @@
 (*                                                                            *)
 (******************************************************************************)
 
+#include "Loop.frag.ml"
+
+#define VECTOR   vector
+#define VECTOR'  vector
+#define SYNONYM  t
+#define ELEMENT  element
+#define ELEMENT' element
+#define ARRAY    A.t
 
 module type MONOVECTOR = sig
   type element
-  #undef VECTOR
-  #undef SYNONYM
-  #undef ELEMENT
-  #undef VECTOR'
-  #undef ELEMENT'
-  #define VECTOR   vector
-  #define SYNONYM  t
-  #define ELEMENT  element
-  #define VECTOR'  vector
-  #define ELEMENT' element
   #include "Signature.frag.mli"
 end
 
-module Int  = Int
+module Int = struct
 
-module Mono = Mono
+  type element = int
+
+  module A = IntArray
+
+  #include "Common.frag.ml"
+
+end
+
+module Mono = struct
+
+  module[@inline] Make_ (X : sig
+    type t
+    val alloc : int -> t -> t array
+    val make  : int -> t -> t array
+  end) = struct
+
+    type element = X.t
+
+    module A = struct
+      type t = element array
+      let empty = [||]
+      let alloc = X.alloc
+      let make  = X.make
+      #include "MonoArray.frag.ml"
+    end
+
+    #include "Common.frag.ml"
+
+  end (* Make_ *)
+
+  module[@inline] Make (X : sig type t end) =
+    Make_(struct
+      include X
+      let alloc = Array.make
+      let make = Array.make
+    end)
+
+end
 
 #undef VECTOR
+#undef VECTOR'
 #undef SYNONYM
 #undef ELEMENT
-#undef VECTOR'
 #undef ELEMENT'
+#undef ARRAY
 
 #define VECTOR   'a vector
 #define VECTOR'  'b vector
@@ -55,7 +91,6 @@ module Poly = struct
     let blit_disjoint = blit
   end
 
-  #include "Loop.frag.ml"
   #include "Common.frag.ml"
 
 end

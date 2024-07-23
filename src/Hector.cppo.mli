@@ -42,16 +42,25 @@ end
 module Int : MONOVECTOR with type element = int
 
 module Mono : sig
+
+  (**The functor [Make_] lets the user choose the type [element] as well as
+     the array allocation function [alloc]. The function call [alloc n x] is
+     expected to allocate an array of size [n], and is not required to
+     initialize this array. (The parameter [x] may be unused.) *)
   module Make_ (X : sig
     type t
     val alloc : int -> t -> t array
     val make  : int -> t -> t array
   end)
   : MONOVECTOR with type element = X.t
+
+  (**The functor [Make] lets the user choose the type [element].
+     The function [Array.make] is used to allocate arrays. *)
   module Make (X : sig
     type t
   end)
   : MONOVECTOR with type element = X.t
+
 end
 
 module Poly : POLYVECTOR

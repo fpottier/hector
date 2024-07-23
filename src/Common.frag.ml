@@ -363,6 +363,7 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy =
    least [new_length]. The expression [DUMMY] is evaluated only if
    there is insufficient space in the current [data] array. *)
 
+#undef  DATA
 #define DATA(DUMMY) ( \
   if new_length <= A.length data then data \
   else really_ensure_capacity v new_length (DUMMY) \
