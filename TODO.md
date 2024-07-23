@@ -36,6 +36,8 @@
   can be higher-order macros;
   no need to simulate them via unhygienic `#include`.
 
+* Reconsider the use of `LOOP5` in every loop.
+
 * Release.
 
 ## Maybe Later
