@@ -224,11 +224,15 @@ let () =
 
   (* [exists] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^> bool in
-  declare "exists " spec (R.exists ((<=) 0)) (C.exists ((<=) 0));
+  declare "exists" spec (R.exists ((<=) 0)) (C.exists ((<=) 0));
 
   (* [for_all] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^> bool in
-  declare "for_all " spec (R.for_all ((<=) 0)) (C.for_all ((<=) 0));
+  declare "for_all" spec (R.for_all ((<=) 0)) (C.for_all ((<=) 0));
+
+  (* [filter] is applied specifically to the function [(<=) 0]. *)
+  let spec = vector ^> vector in
+  declare "filter" spec (R.filter ((<=) 0)) (C.filter ((<=) 0));
 
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in

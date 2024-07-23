@@ -525,6 +525,15 @@ let (* public *) for_all f v =
   with Break ->
     false
 
+let (* public *) filter f v =
+  let { length; data; _ } = v in
+  validate length data;
+  let v' = create() in
+  LOOP5(i, 0, length,
+    let x = A.unsafe_get data i (* safe *) in
+    if f x then push v' x);
+  v'
+
 let rec find f length data i =
   if i = length then
     raise Not_found

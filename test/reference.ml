@@ -166,6 +166,9 @@ let exists f v =
 let for_all f v =
   List.for_all f !v
 
+let filter f v =
+  ref (List.filter f !v)
+
 let rec index f xs i =
   match xs with
   | [] ->
