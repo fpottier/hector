@@ -149,6 +149,20 @@ module A = struct
     blit a o a' 0 n;
     a'
 
+  (* [length], [unsafe_get], [unsafe_set] are unchanged. *)
+
+  (* Type annotations ensure that we perform monomorphic
+     array accesses only. (These produce better code.) *)
+
+  let length =
+    length
+
+  let[@inline] unsafe_get (a : element array) i =
+    unsafe_get a i
+
+  let[@inline] unsafe_set (a : element array) i x =
+    unsafe_set a i x
+
 end
 
 (* -------------------------------------------------------------------------- *)

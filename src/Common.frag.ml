@@ -11,11 +11,11 @@
 (******************************************************************************)
 
 (* We use a subset of the functionality of the [Array] module, namely
-   [length], [unsafe_get], [unsafe_set].
-
-   Furthermore, we use [alloc], [make], [init], [sub], [blit]. We take
-   these functions from a module named [A]. This allows them to be
-   possibly redefined.
+   [length], [unsafe_get], [unsafe_set], [alloc], [make], [init], [sub],
+   [blit]. We take these functions from a module named [A], and do not
+   make any reference to the standard library module [Array]. This makes
+   our code independent of the type of arrays that is used as a basis for
+   our vectors.
 
    We do *NOT* assume that [A.alloc n x] initializes every array slot
    with the value [x]. In fact, in this file, every call to [A.alloc]
@@ -37,10 +37,10 @@ let (* public *) check v =
   let { length; capacity; data } = v in
   assert (0 <= length);
   assert (length <= capacity);
-  assert (length = 0 || Array.length data = capacity);
-  assert (Array.length data = 0 || Array.length data = capacity);
+  assert (length = 0 || A.length data = capacity);
+  assert (A.length data = 0 || A.length data = capacity);
   (* The following assertion follows from the previous ones: *)
-  assert (length <= Array.length data)
+  assert (length <= A.length data)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -51,7 +51,7 @@ let (* public *) check v =
    We could also offer two variants of the module, an optimistic one and a
    defensive one, but that would also add complication.) *)
 
-(* Being defensive allows us to use [Array.unsafe_get] and [Array.unsafe_set], thus
+(* Being defensive allows us to use [A.unsafe_get] and [A.unsafe_set], thus
    bypassing array bounds checks. In most places, this is safe, because our
    defensive checks are strong enough. In [get] and [set], our defensive
    checks are strong enough if the data structure is used sequentially, but
@@ -74,21 +74,21 @@ let[@inline never] index_failure v i =
   fail "index %d is out of range [0, %d)" i v.length
 
 let[@inline never] array_segment_base_failure xs ofs =
-  fail "segment base index %d is out of range [0, %d]" ofs (Array.length xs)
+  fail "segment base index %d is out of range [0, %d]" ofs (A.length xs)
 
 let[@inline never] array_segment_end_failure xs ofs len =
   fail "segment end index %d+%d = %d is out of range [0, %d]"
-    ofs len (ofs+len) (Array.length xs)
+    ofs len (ofs+len) (A.length xs)
 
-(* [validate length data] checks [length <= Array.length data]. This property is
+(* [validate length data] checks [length <= A.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
 let[@inline never] violation length data =
   fail "length is %d, but data array has length %d (racy access?)"
-    length (Array.length data)
+    length (A.length data)
 
 let[@inline] validate length data =
-  if defensive && not (length <= Array.length data) then
+  if defensive && not (length <= A.length data) then
     violation length data
 
 (* -------------------------------------------------------------------------- *)
@@ -134,8 +134,8 @@ let (* public *) elements v =
   let { length; data; _ } = v in
   A.sub data 0 length
 
-(* In [unsafe_get] and [unsafe_set], our use of [Array.unsafe_get] and
-   [Array.unsafe_set] is NOT completely safe. We have validated the
+(* In [unsafe_get] and [unsafe_set], our use of [A.unsafe_get] and
+   [A.unsafe_set] is NOT completely safe. We have validated the
    index [i], but, if there is a data race, then by the time we read
    [v.data], we might find that [i] is not a valid index in this
    array. That would break memory safety! but we accept this risk. *)
@@ -143,10 +143,10 @@ let (* public *) elements v =
 (* [get] and [set] inherit this risk. *)
 
 let[@inline] (* private *) unsafe_get v i =
-  Array.unsafe_get v.data i (* not entirely safe *)
+  A.unsafe_get v.data i (* not entirely safe *)
 
 let[@inline] (* private *) unsafe_set v i x =
-  Array.unsafe_set v.data i x (* not entirely safe *)
+  A.unsafe_set v.data i x (* not entirely safe *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -236,7 +236,7 @@ let[@inline] set_lower_capacity v new_capacity =
      match the new capacity. If it is empty, then [v.length] must be zero,
      so neither [v.length] nor [v.data] needs to be updated. *)
   let { length; data; _ } = v in
-  if 0 < Array.length data then begin
+  if 0 < A.length data then begin
     v.length <- min length new_capacity;
     v.data <- A.sub data 0 new_capacity
   end
@@ -245,7 +245,7 @@ let[@inline] set_lower_capacity v new_capacity =
    immediately re-allocates the [data] array so as to match the new
    capacity. The value [dummy] is used to initialize unused slots. *)
 
-let really_set_higher_capacity v new_capacity dummy : ELEMENT array =
+let really_set_higher_capacity v new_capacity dummy =
   let { length; data; _ } = v in
   assert (length <= new_capacity);
   let new_data = A.alloc new_capacity dummy in
@@ -259,12 +259,12 @@ let really_set_higher_capacity v new_capacity dummy : ELEMENT array =
 
 let set_higher_capacity v new_capacity =
   let { data; _ } = v in
-  if Array.length data = 0 then
+  if A.length data = 0 then
     (* The allocation of an array of size [capacity] is delayed,
        because we do not have a value of type ['a] at hand. *)
     v.capacity <- new_capacity
   else
-    let dummy = Array.unsafe_get data 0 in (* safe *)
+    let dummy = A.unsafe_get data 0 in (* safe *)
     let _data = really_set_higher_capacity v new_capacity dummy in
     ()
 
@@ -308,8 +308,7 @@ let (* public *) fit_capacity v =
    capacity [request] really is available now in the [data] array, not
    just recorded in the [capacity] field. *)
 
-let[@inline never] (* private *) really_ensure_capacity v request dummy
-: ELEMENT array =
+let[@inline never] (* private *) really_ensure_capacity v request dummy =
   let { capacity; _ } = v in
   let new_capacity =
     if request <= capacity then capacity
@@ -331,7 +330,7 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy
    there is insufficient space in the current [data] array. *)
 
 #define DATA(DUMMY) ( \
-  if new_length <= Array.length data then data \
+  if new_length <= A.length data then data \
   else really_ensure_capacity v new_length (DUMMY) \
 )
 
@@ -342,27 +341,27 @@ let[@inline] (* public *) push v x =
   let new_length = length + 1 in
   let data = DATA(x) in
   (* A physical array slot now exists. *)
-  Array.unsafe_set data (new_length - 1) x; (* safe *)
+  A.unsafe_set data (new_length - 1) x; (* safe *)
   v.length <- new_length
 
 let (* public *) add_last =
   push
 
 let[@inline] (* private *) unsafe_push_array_segment v xs ofs len =
-  assert (0 <= ofs && 0 <= len && ofs + len <= Array.length xs);
+  assert (0 <= ofs && 0 <= len && ofs + len <= A.length xs);
   let { length; data; _ } = v in
   let new_length = length + len in
   (* Ensure that sufficient space exists in the [data] array. *)
   (* If there is insufficient space, then it must be the case
      that [len] is nonzero, so reading [xs.(0)] is safe. *)
-  let data = DATA(assert (0 < len); Array.unsafe_get xs 0 (* safe *)) in
+  let data = DATA(assert (0 < len); A.unsafe_get xs 0 (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
   A.blit xs ofs data length len
 
 let[@inline] (* public *) push_array v xs =
   let ofs = 0
-  and len = Array.length xs in
+  and len = A.length xs in
   unsafe_push_array_segment v xs ofs len
 
 let (* public *) append_array =
@@ -396,7 +395,7 @@ let (* public *) push_list v xs =
   and dst = ref length in
   LOOP5(_, 0, len,
     match !xs with [] -> assert false | x :: rest ->
-    Array.unsafe_set data !dst x; (* safe *)
+    A.unsafe_set data !dst x; (* safe *)
     dst := !dst + 1;
     xs := rest
   );
@@ -440,22 +439,22 @@ let (* public *) append_iter =
 let (* public *) iter f v =
   let { length; data; _ } = v in
   validate length data;
-  LOOP5(i, 0, length, f (Array.unsafe_get data i) (* safe *))
+  LOOP5(i, 0, length, f (A.unsafe_get data i) (* safe *))
 
 let (* public *) iteri f v =
   let { length; data; _ } = v in
   validate length data;
-  LOOP5(i, 0, length, f i (Array.unsafe_get data i) (* safe *))
+  LOOP5(i, 0, length, f i (A.unsafe_get data i) (* safe *))
 
 let (* public *) map f v =
   let { length; data; _ } = v in
   validate length data;
-  init length (fun i -> f (Array.unsafe_get data i) (* safe *))
+  init length (fun i -> f (A.unsafe_get data i) (* safe *))
 
-let rec find f length (data : ELEMENT array) i =
+let rec find f length data i =
   if i = length then
     raise Not_found
-  else if f (Array.unsafe_get data i) (* safe *) then
+  else if f (A.unsafe_get data i) (* safe *) then
     i
   else
     find f length data (i + 1)
@@ -515,11 +514,11 @@ let (* public *) ensure_extra_capacity v delta =
   ensure_extra_capacity v delta
 
 let[@inline] (* public *) push_array_segment v xs ofs len =
-  if defensive && not (0 <= ofs && ofs <= Array.length xs) then
+  if defensive && not (0 <= ofs && ofs <= A.length xs) then
     array_segment_base_failure xs ofs;
   if defensive && not (0 <= len) then
     length_failure len;
-  if defensive && not (0 <= ofs+len && ofs+len <= Array.length xs) then
+  if defensive && not (0 <= ofs+len && ofs+len <= A.length xs) then
     array_segment_end_failure xs ofs len;
   unsafe_push_array_segment v xs ofs len
 
