@@ -17,6 +17,45 @@
    makes our code independent of the type of arrays that is used as a
    basis for our vectors. *)
 
+(* We assume that the macros [VECTOR], [SYNONYM], and [ARRAY] are defined.
+
+   For polymorphic arrays, [VECTOR] is ['a vector], [SYNONYM] is ['a t],
+   and [ARRAY] is ['a A.t].
+
+   For monomorphic array, [VECTOR] is [vector], [SYNONYM] is [t],
+   and [ARRAY] is [A.t]. *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Types. *)
+
+type length = int
+type capacity = int
+type index = int
+
+(* In [create] and in [set_higher_capacity], the allocation of an array of
+   size [capacity] is delayed, because we do not have an array element at
+   hand. To tolerate this, we accept the possibility that, sometimes,
+   [capacity] is nonzero, while the [data] array is still empty. *)
+
+type VECTOR = {
+
+  (* The logical length of the vector. *)
+  mutable length   : int;
+
+  (* The desired physical capacity of the vector. We impose the invariant
+     [length = 0 || A.length data = capacity]. That is, unless the vector
+     is logically empty, [capacity] is the length of the [data] array. *)
+  mutable capacity : int;
+
+  (* The data array. *)
+  mutable data     : ARRAY;
+
+}
+
+type SYNONYM =
+  VECTOR
+
 (* -------------------------------------------------------------------------- *)
 
 (* Local copies of [min] and [max], with annotations. *)

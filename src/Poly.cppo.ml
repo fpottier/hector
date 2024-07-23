@@ -16,38 +16,8 @@ module A = struct
   let blit_disjoint = blit
 end
 
-(* -------------------------------------------------------------------------- *)
-
-(* Types. *)
-
-type length = int
-type capacity = int
-type index = int
-
-(* In [create] and in [set_higher_capacity], the allocation of an array of
-   size [capacity] is delayed, because we do not have a value of type ['a]
-   at hand. *)
-
-type 'a vector = {
-
-  (* The logical length of the vector. *)
-  mutable length   : int;
-
-  (* The desired physical capacity of the vector. We impose the invariant
-     [length = 0 || A.length data = capacity]. That is, unless the vector
-     is logically empty, [capacity] is the length of the [data] array. *)
-  mutable capacity : int;
-
-  (* The data array. *)
-  mutable data     : 'a array;
-
-}
-
-type 'a t =
-  'a vector
-
-(* -------------------------------------------------------------------------- *)
-
-#define ELEMENT _
+#define VECTOR  'a vector
+#define ARRAY   'a A.t
+#define SYNONYM 'a t
 #include "Loop.frag.ml"
 #include "Common.frag.ml"
