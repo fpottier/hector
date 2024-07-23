@@ -68,12 +68,21 @@ module Mono = struct
 
   end (* Make_ *)
 
-  module[@inline] Make (X : sig type t end) =
-    Make_(struct
-      include X
+  module[@inline] Make (X : sig type t end) = struct
+
+    type element = X.t
+
+    module A = struct
+      type t = element array
+      let empty = [||]
       let alloc = Array.make
-      let make = Array.make
-    end)
+      let make  = Array.make
+      #include "MonoArray.frag.ml"
+    end
+
+    #include "Vector.frag.ml"
+
+  end (* Make *)
 
 end
 
