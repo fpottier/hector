@@ -2,6 +2,11 @@
 
 ## Soon
 
+* Remove all dependencies of `Common` onto `Array`.
+
+* Isolate our monomorphic-array modules: `IntArray`, `CharArray` (`bytes`), etc.
+  Implement a character vector, and compare its efficiency with `Buffer`.
+
 * For optimum speed, in integer vectors, we need a way of initializing
   a freshly allocated array partly by copying data from an existing
   array, partly by filling the new array with arbitrary data (memset).
@@ -11,7 +16,7 @@
 
 * Test using `Dynarray` as a reference implementation.
 
-* Test all three implementations (`Poly`, `Mono`, `Int`) in parallel.
+* Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
 
 * Make sure every interface file is commented. Write documentation.
 
