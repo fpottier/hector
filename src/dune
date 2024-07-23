@@ -21,26 +21,6 @@
   (action (run %{bin:cppo} %{source} -o %{targets})))
 
 (rule
-  (targets Int.ml)
-  (deps Int.cppo.ml (glob_files *.frag.{ml,mli}))
-  (action (run %{bin:cppo} Int.cppo.ml -o %{targets})))
-
-(rule
-  (targets Int.mli)
-  (deps Int.cppo.mli (glob_files *.frag.{ml,mli}))
-  (action (run %{bin:cppo} Int.cppo.mli -o %{targets})))
-
-(rule
-  (targets Mono.ml)
-  (deps Mono.cppo.ml (glob_files *.frag.{ml,mli}))
-  (action (run %{bin:cppo} Mono.cppo.ml -o %{targets})))
-
-(rule
-  (targets Mono.mli)
-  (deps Mono.cppo.mli (glob_files *.frag.{ml,mli}))
-  (action (run %{bin:cppo} Mono.cppo.mli -o %{targets})))
-
-(rule
   (targets Hector.ml)
   (deps Hector.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Hector.cppo.ml -o %{targets})))
