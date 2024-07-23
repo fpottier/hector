@@ -13,6 +13,7 @@
 module A = struct
   include Array
   let alloc = make
+  let blit_disjoint = blit
 end
 
 (* -------------------------------------------------------------------------- *)

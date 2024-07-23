@@ -133,7 +133,7 @@ module A = struct
 
   #endif
 
-  let blit (src : element array) sofs dst dofs n =
+  let blit_disjoint (src : element array) sofs dst dofs n =
     validate src sofs n;
     validate dst dofs n;
     assert (src != dst || sofs + n <= dofs || dofs + n <= sofs);

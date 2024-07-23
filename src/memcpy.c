@@ -14,7 +14,7 @@
 #include <stdatomic.h>
 #include "caml/mlvalues.h"
 
-CAMLprim value hector_array_blit (
+CAMLprim value hector_array_blit_disjoint (
   value src, value sofs,
   value dst, value dofs,
   value n

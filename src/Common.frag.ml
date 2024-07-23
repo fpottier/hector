@@ -12,10 +12,10 @@
 
 (* We use a subset of the functionality of the [Array] module, namely
    [length], [unsafe_get], [unsafe_set], [alloc], [make], [init], [sub],
-   [blit]. We take these functions from a module named [A], and do not
-   make any reference to the standard library module [Array]. This makes
-   our code independent of the type of arrays that is used as a basis for
-   our vectors. *)
+   [blit_disjoint]. We take these functions from a module named [A], and
+   do not make any reference to the standard library module [Array]. This
+   makes our code independent of the type of arrays that is used as a
+   basis for our vectors. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -244,7 +244,7 @@ let really_set_higher_capacity v new_capacity dummy =
   let { length; data; _ } = v in
   assert (length <= new_capacity);
   let new_data = A.alloc new_capacity dummy in
-  A.blit data 0 new_data 0 length;
+  A.blit_disjoint data 0 new_data 0 length;
   v.capacity <- new_capacity;
   v.data <- new_data;
   new_data
@@ -352,7 +352,7 @@ let[@inline] (* private *) unsafe_push_array_segment v xs ofs len =
   let data = DATA(assert (0 < len); A.unsafe_get xs 0 (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
-  A.blit xs ofs data length len
+  A.blit_disjoint xs ofs data length len
 
 let[@inline] (* public *) push_array v xs =
   let ofs = 0
