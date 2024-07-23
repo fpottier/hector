@@ -201,6 +201,12 @@ let () =
   let spec = vector ^> vector in
   declare "map succ" spec (R.map succ) (C.map succ);
 
+  (* [mapi] is applied specifically to the function [(+)]. *)
+  (* We do not check that [mapi] calls [f x] at most once for each [x]
+     and from left to right. *)
+  let spec = vector ^> vector in
+  declare "mapi (+)" spec (R.mapi (+)) (C.mapi (+));
+
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

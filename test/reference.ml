@@ -151,6 +151,9 @@ let iteri f v =
 let map f v =
   ref (List.map f !v)
 
+let mapi f v =
+  ref (List.mapi f !v)
+
 let rec index f xs i =
   match xs with
   | [] ->

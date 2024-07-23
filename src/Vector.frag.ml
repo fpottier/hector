@@ -486,6 +486,11 @@ let (* public *) map f v =
   validate length data;
   init length (fun i -> f (A.unsafe_get data i) (* safe *))
 
+let (* public *) mapi f v =
+  let { length; data; _ } = v in
+  validate length data;
+  init length (fun i -> f i (A.unsafe_get data i) (* safe *))
+
 let rec find f length data i =
   if i = length then
     raise Not_found
