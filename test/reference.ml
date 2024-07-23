@@ -157,6 +157,9 @@ let mapi f v =
 let fold_left f accu v =
   List.fold_left f accu !v
 
+let fold_right f v accu =
+  List.fold_right f !v accu
+
 let rec index f xs i =
   match xs with
   | [] ->

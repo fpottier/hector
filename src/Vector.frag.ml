@@ -498,6 +498,13 @@ let (* public *) fold_left f accu v =
   LOOP5(i, 0, length, accu := f !accu (A.unsafe_get data i) (* safe *));
   !accu
 
+let (* public *) fold_right f v accu =
+  let { length; data; _ } = v in
+  validate length data;
+  let accu = ref accu in
+  LOOP_DOWN(i, 0, length, accu := f (A.unsafe_get data i) (* safe *) !accu);
+  !accu
+
 let rec find f length data i =
   if i = length then
     raise Not_found

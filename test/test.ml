@@ -97,6 +97,9 @@ let elements_of_fold_left fold_left v =
   fold_left (fun xs x -> x :: xs) [] v
   |> List.rev
 
+let elements_of_fold_right fold_right v =
+  fold_right (fun x xs -> x :: xs) v []
+
 (* -------------------------------------------------------------------------- *)
 
 (* Declare the operations. *)
@@ -215,6 +218,10 @@ let () =
   declare "elements_of_fold_left fold_left" spec
     (elements_of_fold_left R.fold_left) (elements_of_fold_left C.fold_left);
 
+  let spec = vector ^> list element in
+  declare "elements_of_fold_right fold_right" spec
+    (elements_of_fold_right R.fold_right) (elements_of_fold_right C.fold_right);
+
   (* [find] is applied specifically to the function [(<=) 8]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
@@ -231,6 +238,7 @@ let () =
     dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
     dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
     dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
+    dprintf "          let elements_of_fold_right fold_right v = fold_right (fun x xs -> x :: xs) v [];;\n";
     ()
   in
   let fuel = 128 in
