@@ -15,6 +15,7 @@ type dummy = element
 type t = element array
 type length = int
 type index = int
+type offset = int
 
 (* -------------------------------------------------------------------------- *)
 

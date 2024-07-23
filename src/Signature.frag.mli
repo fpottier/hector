@@ -11,7 +11,7 @@
 (******************************************************************************)
 
 (**A vector is a mutable abstract data structure, which stores a sequence of
-   values. The capacity of a vector cannot exceed [Sys.max_array_length]. *)
+   values. *)
 type VECTOR
 
 type SYNONYM = VECTOR
