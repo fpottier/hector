@@ -37,7 +37,8 @@
   no need to simulate them via unhygienic `#include`.
 
 * Reconsider the use of `LOOP5` in every loop.
-  `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
+  Some loops could use just `LOOP`; some loops could use `LOOPRW5`.
+  Also, `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Release.
 
