@@ -6,8 +6,10 @@
   (which should be a field in the structure `A`).
 
 * Remove the comment that talks about hesitation.
+  Use macros to offer a choice between multiple implementations of
+  `blit`, if necessary.
 
-* Publish `Arrays.Int`, etc.
+* Publish `Arrays.Int`.
 
 * For optimum speed, in integer vectors, we need a way of initializing
   a freshly allocated array partly by copying data from an existing
@@ -20,7 +22,7 @@
 
 * Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
 
-* Make sure every interface file is commented. Write documentation.
+* Make sure every interface file is commented. Review the documentation.
 
 * Benchmark more operations, if necessary.
   Double-check the performance claims
@@ -42,6 +44,10 @@
   abstract. This requires distinguishing several variants of `sub`
   and `blit_disjoint`. Then, implement `CharArray` using `bytes`.
   Implement a character vector, and compare its efficiency with `Buffer`.
+
+* Expose `MonoArray.frag.ml` as a functor that builds a complete
+  implementation of `MONOARRAY` out of just `empty`, `alloc`, and
+  `make`?
 
 * Can (should) the types `'a vector` and `'a t` be declared injective?
 
