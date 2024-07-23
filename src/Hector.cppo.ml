@@ -110,6 +110,7 @@ end
 module Poly = struct
   module A = struct
     include Array
+    let empty = [||]
     let alloc = make
     let blit_disjoint = blit
   end

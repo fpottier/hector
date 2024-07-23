@@ -3,6 +3,7 @@ type dummy = element
 type t = element array
 type length = int
 type index = int
+val empty : t
 val length : t -> length
 val unsafe_get : t -> index -> element
 val unsafe_set : t -> index -> element -> unit

@@ -11,11 +11,11 @@
 (******************************************************************************)
 
 (* We use a subset of the functionality of the [Array] module, namely
-   [length], [unsafe_get], [unsafe_set], [alloc], [make], [init], [sub],
-   [blit_disjoint]. We take these functions from a module named [A], and
-   do not make any reference to the standard library module [Array]. This
-   makes our code independent of the type of arrays that is used as a
-   basis for our vectors. *)
+   [empty], [length], [unsafe_get], [unsafe_set], [alloc], [make],
+   [init], [sub], [blit_disjoint]. We take these functions from a
+   module named [A], and do not make any reference to the standard
+   library module [Array]. This makes our code independent of the type
+   of arrays that is used as a basis for our vectors. *)
 
 (* We assume that the macros [VECTOR], [SYNONYM], and [ARRAY] are defined.
 
@@ -132,7 +132,7 @@ let[@inline] validate length data =
 let[@inline] (* public *) create () =
   let length = 0
   and capacity = 0
-  and data = [||] in
+  and data = A.empty in
   { length; capacity; data }
 
 let (* private *) init n f =
@@ -250,7 +250,7 @@ let[@inline] (* public *) clear v =
 let (* public *) reset v =
   v.length <- 0;
   v.capacity <- 0;
-  v.data <- [||]
+  v.data <- A.empty
 
 (* -------------------------------------------------------------------------- *)
 
