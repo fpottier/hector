@@ -169,6 +169,9 @@ let for_all f v =
 let filter f v =
   ref (List.filter f !v)
 
+let filter_map f v =
+  ref (List.filter_map f !v)
+
 let rec index f xs i =
   match xs with
   | [] ->

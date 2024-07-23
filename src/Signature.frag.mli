@@ -218,6 +218,9 @@ val for_all : (ELEMENT -> bool) -> VECTOR -> bool
 (**TODO*)
 val filter : (ELEMENT -> bool) -> VECTOR -> VECTOR
 
+(**TODO*)
+val filter_map : (ELEMENT -> ELEMENT' option) -> VECTOR -> VECTOR'
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)

@@ -534,6 +534,15 @@ let (* public *) filter f v =
     if f x then push v' x);
   v'
 
+let (* public *) filter_map f v =
+  let { length; data; _ } = v in
+  validate length data;
+  let v' = create() in
+  LOOP5(i, 0, length,
+    let x = A.unsafe_get data i (* safe *) in
+    match f x with Some y -> push v' y | None -> ());
+  v'
+
 let rec find f length data i =
   if i = length then
     raise Not_found

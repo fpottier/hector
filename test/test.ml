@@ -234,6 +234,13 @@ let () =
   let spec = vector ^> vector in
   declare "filter" spec (R.filter ((<=) 0)) (C.filter ((<=) 0));
 
+  (* [filter_map] is applied specifically to the function
+     [increment_if_positive]. *)
+  let spec = vector ^> vector in
+  let increment_if_positive x = if x < 0 then None else Some (x + 1) in
+  declare "filter_map increment_if_positive" spec
+    (R.filter_map increment_if_positive) (C.filter_map increment_if_positive);
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
@@ -251,6 +258,7 @@ let () =
     dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
     dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
     dprintf "          let elements_of_fold_right fold_right v = fold_right (fun x xs -> x :: xs) v [];;\n";
+    dprintf "          let increment_if_positive x = if x < 0 then None else Some (x + 1);;\n";
     ()
   in
   let fuel = 128 in
