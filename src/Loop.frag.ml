@@ -75,3 +75,12 @@
     __index := !__index + 1\
   done\
 )
+
+(* An ordinary loop, from [finish] (excluded) down to [start] (included).
+   The loop index is named [i], and can be used in the loop [body]. *)
+
+#define LOOP_DOWN(i, start, finish, body) (\
+  for i = finish-1 downto start do\
+    body\
+  done\
+)
