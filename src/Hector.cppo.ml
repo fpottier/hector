@@ -12,6 +12,8 @@
 
 #include "Loop.frag.ml"
 
+include ArraySignature
+
 (* -------------------------------------------------------------------------- *)
 
 (* Set up our macros for monomorphic vectors. *)
@@ -48,29 +50,17 @@ end
 
 module Mono = struct
 
-  module[@inline] Make_ (X : sig
-    type t
-    val alloc : int -> t -> t array
-    val make  : int -> t -> t array
-  end) = struct
+  module[@inline] OutOfArray (A : MONOARRAY) = struct
 
-    type element = X.t
-
-    module A = struct
-      type t = element array
-      let empty = [||]
-      let alloc = X.alloc
-      let make  = X.make
-      #include "MonoArray.frag.ml"
-    end
+    type element = A.element
 
     #include "Vector.frag.ml"
 
-  end (* Make_ *)
+  end (* OutOfArray *)
 
-  module[@inline] Make (X : sig type t end) = struct
+  module[@inline] Make (E : sig type t end) = struct
 
-    type element = X.t
+    type element = E.t
 
     module A = struct
       type t = element array

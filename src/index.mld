@@ -47,20 +47,26 @@ does not have.
 
 {1 Three Flavors of Vectors}
 
-Three implementations of vectors are offered:
+Three main implementations of vectors are offered:
 
 + The module {!Hector.Poly} offers polymorphic vectors:
   if elements have type ['a]
   then a vector has type ['a vector].
   The signature of this module is {!Hector.POLYVECTOR}.
 + The functor {!Hector.Mono.Make} offers monomorphic vectors:
-  the type of elements is fixed when this functor is applied,
+  the type of elements is fixed when this functor is applied to a module [E],
   and a vector has type [vector].
   The module produced by this functor has signature {!Hector.MONOVECTOR} [with type element = E.t].
 + The module {!Hector.Int} offers integer vectors:
   the type of elements is [int]
   and a vector has type [vector].
   The signature of this module is {!Hector.MONOVECTOR} [with type element = int].
+
+For power users,
+
++ The functor {!Hector.Mono.OutOfArray} offers monomorphic vectors.
+  The users provides not only the type of elements,
+  but also a set of basic operations on arrays of elements.
 
 {1 Installation and Usage}
 
