@@ -26,20 +26,36 @@ module type MONOVECTOR = sig
   #include "Signature.frag.mli"
 end
 
+module Int  = Int
+
+module Mono = Mono
+
+#undef VECTOR
+#undef SYNONYM
+#undef ELEMENT
+#undef VECTOR'
+#undef ELEMENT'
+
+#define VECTOR   'a vector
+#define VECTOR'  'b vector
+#define SYNONYM  'a t
+#define ELEMENT  'a
+#define ELEMENT' 'b
+#define ARRAY    'a A.t
+
 module type POLYVECTOR = sig
-  #undef VECTOR
-  #undef SYNONYM
-  #undef ELEMENT
-  #undef VECTOR'
-  #undef ELEMENT'
-  #define VECTOR   'a vector
-  #define SYNONYM  'a t
-  #define ELEMENT  'a
-  #define VECTOR'  'b vector
-  #define ELEMENT' 'b
   #include "Signature.frag.mli"
 end
 
-module Int  = Int
-module Mono = Mono
-module Poly = Poly
+module Poly = struct
+
+  module A = struct
+    include Array
+    let alloc = make
+    let blit_disjoint = blit
+  end
+
+  #include "Loop.frag.ml"
+  #include "Common.frag.ml"
+
+end
