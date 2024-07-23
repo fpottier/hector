@@ -15,12 +15,7 @@
    [blit]. We take these functions from a module named [A], and do not
    make any reference to the standard library module [Array]. This makes
    our code independent of the type of arrays that is used as a basis for
-   our vectors.
-
-   We do *NOT* assume that [A.alloc n x] initializes every array slot
-   with the value [x]. In fact, in this file, every call to [A.alloc]
-   is of the form [A.alloc n dummy], where [dummy] is a dummy
-   value. *)
+   our vectors. *)
 
 (* -------------------------------------------------------------------------- *)
 
