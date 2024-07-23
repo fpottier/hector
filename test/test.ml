@@ -241,6 +241,10 @@ let () =
   declare "filter_map increment_if_positive" spec
     (R.filter_map increment_if_positive) (C.filter_map increment_if_positive);
 
+  (* [equal] is applied specifically to the function [(=)]. *)
+  let spec = vector ^> vector ^> bool in
+  declare "equal (=)" spec (R.equal (=)) (C.equal (=));
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

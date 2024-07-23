@@ -221,6 +221,10 @@ val filter : (ELEMENT -> bool) -> VECTOR -> VECTOR
 (**TODO*)
 val filter_map : (ELEMENT -> ELEMENT' option) -> VECTOR -> VECTOR'
 
+(** [equal (=) a b] holds when [a] and [b] have the same length,
+    and for every index [i], the equality [get a i = get b i] holds. *)
+val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)

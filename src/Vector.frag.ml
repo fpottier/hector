@@ -543,6 +543,22 @@ let (* public *) filter_map f v =
     match f x with Some y -> push v' y | None -> ());
   v'
 
+let (* public *) equal equal v1 v2 =
+  let { length = length1; data = data1; _ } = v1
+  and { length = length2; data = data2; _ } = v2 in
+  length1 = length2 &&
+  let () = validate length1 data1
+  and () = validate length2 data2 in
+  let exception Break in
+  try
+    LOOP(i, 0, length1,
+      if not (equal (A.unsafe_get data1 i) (A.unsafe_get data2 i)) then
+        raise Break
+    );
+    true
+  with Break ->
+    false
+
 let rec find f length data i =
   if i = length then
     raise Not_found
