@@ -16,6 +16,11 @@
 ;; Some files require preprocessing by cppo.
 
 (rule
+  (targets IntArray.ml)
+  (deps (:source IntArray.cppo.ml) (glob_files *.frag.{ml,mli}))
+  (action (run %{bin:cppo} %{source} -o %{targets})))
+
+(rule
   (targets Int.ml)
   (deps Int.cppo.ml (glob_files *.frag.{ml,mli}))
   (action (run %{bin:cppo} Int.cppo.ml -o %{targets})))
