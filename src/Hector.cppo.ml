@@ -14,7 +14,7 @@
 
 (* -------------------------------------------------------------------------- *)
 
-(* Integer vectors and monomorphic vectors. *)
+(* Set up our macros for monomorphic vectors. *)
 
 #define VECTOR   vector
 #define VECTOR'  vector
@@ -23,20 +23,28 @@
 #define ELEMENT' element
 #define ARRAY    A.t
 
+(* -------------------------------------------------------------------------- *)
+
+(* The signature of monomorphic vectors. *)
+
 module type MONOVECTOR = sig
   type element
   #include "Signature.frag.mli"
 end
 
+(* -------------------------------------------------------------------------- *)
+
+(* Integer vectors are a special case of monomorphic vectors. *)
+
 module Int = struct
-
   type element = int
-
   module A = IntArray
-
   #include "Vector.frag.ml"
-
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Monomorphic vectors. *)
 
 module Mono = struct
 
@@ -69,6 +77,10 @@ module Mono = struct
 
 end
 
+(* -------------------------------------------------------------------------- *)
+
+(* Set up our macros for polymorphic vectors. *)
+
 #undef VECTOR
 #undef VECTOR'
 #undef SYNONYM
@@ -83,18 +95,23 @@ end
 #define ELEMENT' 'b
 #define ARRAY    'a A.t
 
+(* -------------------------------------------------------------------------- *)
+
+(* The signature of monomorphic vectors. *)
+
 module type POLYVECTOR = sig
   #include "Signature.frag.mli"
 end
 
-module Poly = struct
+(* -------------------------------------------------------------------------- *)
 
+(* Polymorphic vectors. *)
+
+module Poly = struct
   module A = struct
     include Array
     let alloc = make
     let blit_disjoint = blit
   end
-
   #include "Vector.frag.ml"
-
 end
