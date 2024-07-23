@@ -2,10 +2,11 @@
 
 ## Soon
 
-* Remove all dependencies of `Common` onto `Array`.
-
 * Isolate our monomorphic-array modules: `IntArray`, `CharArray` (`bytes`), etc.
-  Implement a character vector, and compare its efficiency with `Buffer`.
+  Possibly publish these modules (`Arrays.Int`, etc.),
+  but this requires renaming `blit` to `blit_disjoint`.
+
+* Implement a character vector, and compare its efficiency with `Buffer`.
 
 * For optimum speed, in integer vectors, we need a way of initializing
   a freshly allocated array partly by copying data from an existing
