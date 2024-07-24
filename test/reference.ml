@@ -184,6 +184,9 @@ let of_array a =
 let of_list xs =
   ref xs
 
+let to_list xs =
+  !xs
+
 let rec index f xs i =
   match xs with
   | [] ->

@@ -524,6 +524,13 @@ let (* public *) fold_right f v accu =
   LOOP_DOWN(i, 0, length, accu := f (A.unsafe_get data i) (* safe *) !accu);
   !accu
 
+let (* public *) to_list v =
+  let { length; data; _ } = v in
+  validate length data;
+  let accu = ref [] in
+  LOOP_DOWN(i, 0, length, accu := A.unsafe_get data i (* safe *) :: !accu);
+  !accu
+
 let (* public *) exists f v =
   let { length; data; _ } = v in
   validate length data;

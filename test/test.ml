@@ -256,6 +256,9 @@ let () =
   let spec = list element ^> vector in
   declare "of_list" spec R.of_list C.of_list;
 
+  let spec = vector ^> list element in
+  declare "to_list" spec R.to_list C.to_list;
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
