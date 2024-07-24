@@ -178,6 +178,9 @@ let equal equal v1 v2 =
 let compare compare v1 v2 =
   List.compare compare !v1 !v2
 
+let of_array a =
+  ref (Array.to_list a)
+
 let rec index f xs i =
   match xs with
   | [] ->

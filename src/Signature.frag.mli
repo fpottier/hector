@@ -228,6 +228,9 @@ val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
 (**TODO*)
 val compare : (ELEMENT -> ELEMENT -> int) -> VECTOR -> VECTOR -> int
 
+(**TODO*)
+val of_array : ELEMENT array -> VECTOR
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)

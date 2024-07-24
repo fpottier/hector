@@ -250,6 +250,9 @@ let () =
   declare "compare Int.compare" spec
     (R.compare Int.compare) (C.compare Int.compare);
 
+  let spec = array element ^> vector in
+  declare "of_array" spec R.of_array C.of_array;
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

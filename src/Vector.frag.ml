@@ -147,12 +147,22 @@ let (* private *) make n x =
   let data = A.make capacity x in
   { length; capacity; data }
 
-let (* public *) copy v =
+let (* private *) unsafe_of_array_segment a o k =
+  assert (0 <= o && 0 <= k && o + k <= A.length a);
+  (* The length of the array segment is the capacity of the new vector. *)
+  let length = k in
+  let capacity = length in
+  let data = A.sub a o k in
+  { length; capacity; data }
+
+let[@inline] (* public *) of_array a =
+  (* The length of the original array is the capacity of the new vector. *)
+  unsafe_of_array_segment a 0 (A.length a)
+
+let[@inline] (* public *) copy v =
   (* The length of the original vector is the capacity of the new vector. *)
   let { length; data; _ } = v in
-  let capacity = length in
-  let data = A.sub data 0 length in
-  { length; capacity; data }
+  unsafe_of_array_segment data 0 length
 
 (* -------------------------------------------------------------------------- *)
 
