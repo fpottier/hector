@@ -53,7 +53,8 @@ let empty =
    integer array. The arrays slots are uninitialized; they may contain
    arbitrary data. *)
 
-let alloc n (_x : int) : t =
+let alloc (n : length) (_dummy : element) : t =
+  assert (0 <= n);
   (* Allocate an uninitialized memory block, which the GC does not scan. *)
   let a = Obj.new_block Obj.abstract_tag n in
   (* Cast it to the type [int array]. *)
@@ -67,7 +68,8 @@ let alloc n (_x : int) : t =
   (* Done. *)
   a
 
-let make n (x : int) : t =
+let make (n : length) (x : element) : t =
+  assert (0 <= n);
   (* Allocate an uninitialized memory block, which the GC does not scan. *)
   let a = Obj.new_block Obj.abstract_tag n in
   (* Cast it to the type [int array]. *)
@@ -76,6 +78,19 @@ let make n (x : int) : t =
   (* As above, we cannot use [Array.fill]. There is no [memset64] in C.
      So, we use a loop. *)
   LOOP5(i, 0, n, Array.unsafe_set a i x (* safe *));
+  (* Done. *)
+  a
+
+let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
+  assert (0 <= k && k <= n);
+  (* Allocate an uninitialized memory block, which the GC does not scan. *)
+  let a = Obj.new_block Obj.abstract_tag n in
+  (* Cast it to the type [int array]. *)
+  let a : int array = Obj.obj a in
+  (* Initialize the lower segment by copying data from [s]. *)
+  LOOP5(i, 0, k, Array.unsafe_set a i (Array.unsafe_get s i));
+  (* Initialize the upper segment with arbitrary integer values. *)
+  unsafe_initialize_int_array_segment a k (n - k);
   (* Done. *)
   a
 

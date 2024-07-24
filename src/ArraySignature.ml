@@ -39,13 +39,21 @@ module type MONOARRAY = sig
 
   (**[alloc n d] returns a new array of length [n]. The dummy element [d]
      may be used to initialize this array, but this is not guaranteed.
-     Thus, {b this array should be considered uninitialized}: every slot
-     should be written before it is read. *)
+     Thus, {b this array must be considered uninitialized}: every slot
+     must be written before it is read. *)
   val alloc : length -> dummy -> t
 
   (**[make n x] returns a new array of length [n], where every slot contains
      the value [x]. *)
   val make : length -> element -> t
+
+  (**[grow n d a k] returns a new array of length [n]. The lower segment of
+     this array, determined by offset [0] and length [k], is initialized by
+     copying data from array [a], at offset [0] and length [k]. The inequality
+     [k <= n] must hold. {b The upper segment of this array, determined by
+     offset [k] and length [n - k], must be considered uninitialized}: every
+     slot must be written before it is read. *)
+  val grow : length -> element -> t -> length -> t
 
   (**[init n f] returns a new array of length [n], where the slot at index
      [i] contains the value [f i]. *)
