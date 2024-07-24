@@ -245,6 +245,11 @@ let () =
   let spec = vector ^> vector ^> bool in
   declare "equal (=)" spec (R.equal (=)) (C.equal (=));
 
+  (* [equal] is applied specifically to the function [Int.compare]. *)
+  let spec = vector ^> vector ^> int in
+  declare "compare Int.compare" spec
+    (R.compare Int.compare) (C.compare Int.compare);
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));

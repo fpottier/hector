@@ -175,6 +175,9 @@ let filter_map f v =
 let equal equal v1 v2 =
   List.equal equal !v1 !v2
 
+let compare compare v1 v2 =
+  List.compare compare !v1 !v2
+
 let rec index f xs i =
   match xs with
   | [] ->

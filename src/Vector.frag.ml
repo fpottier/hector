@@ -558,6 +558,22 @@ let (* public *) equal equal v1 v2 =
   with Break ->
     false
 
+let (* public *) compare compare v1 v2 =
+  let { length = length1; data = data1; _ } = v1
+  and { length = length2; data = data2; _ } = v2 in
+  validate length1 data1;
+  validate length2 data2;
+  let exception Break of int in
+  try
+    LOOP(i, 0, min length1 length2,
+      let c = compare (A.unsafe_get data1 i) (A.unsafe_get data2 i) in
+      if c <> 0 then
+        raise (Break c)
+    );
+    Stdlib.Int.compare length1 length2
+  with Break c ->
+    c
+
 let rec find f length data i =
   if i = length then
     raise Not_found
