@@ -30,14 +30,16 @@ external unsafe_fill_bytes :
   (* value:           *) char ->
   unit = "caml_fill_bytes"
 
-(* [unsafe_initialize_int_array a n] initializes the integer array [a],
-   whose length is [n], with arbitrary (valid) integer values. *)
+(* [unsafe_initialize_int_array_segment a o n] initializes the array segment
+   determined by array [a], offset [o], and length [n], with arbitrary (valid)
+   integer values. *)
 
-let unsafe_initialize_int_array (a : int array) (n : int) =
-  (* Compute a length in bytes. *)
+let unsafe_initialize_int_array_segment (a : int array) (o : int) (n : int) =
+  (* Translate offset and length into bytes. *)
+  let o = o * (Sys.word_size / 8) in
   let n = n * (Sys.word_size / 8) in
   (* Fill the array with odd bytes, which are valid integers. *)
-  unsafe_fill_bytes (Obj.magic a) 0 n '\001'
+  unsafe_fill_bytes (Obj.magic a) o n '\001'
 
 (* -------------------------------------------------------------------------- *)
 
@@ -61,7 +63,7 @@ let alloc n (_x : int) : t =
      interpret the previous content of the array. A simple loop would work,
      but would be a bit slow (not vectorized; with a safe point). [memset]
      is faster. *)
-  unsafe_initialize_int_array a n;
+  unsafe_initialize_int_array_segment a 0 n;
   (* Done. *)
   a
 
