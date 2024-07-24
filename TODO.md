@@ -11,12 +11,11 @@
 
 * Publish `Arrays.Int`.
 
-* For optimum speed, in integer vectors, we need a way of initializing
-  a freshly allocated array partly by copying data from an existing
-  array, partly by filling the new array with arbitrary data (memset).
-
 * Improve the compatibility with OCaml's `Dynarray`.
   In the documentation, say something about compatibility.
+
+* Check compatibility with the `Stack` API.
+  Also, benchmark against `Stack`.
 
 * Test using `Dynarray` as a reference implementation.
 
