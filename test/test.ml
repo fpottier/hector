@@ -170,10 +170,10 @@ let () =
   declare "drop" spec R.drop C.drop;
 
   let spec = vector ^!> element in
-  declare "peek" spec R.peek C.peek;
+  declare "top" spec R.top C.top;
 
   let spec = vector ^> option element in
-  declare "peek_opt" spec R.peek_opt C.peek_opt;
+  declare "top_opt" spec R.top_opt C.top_opt;
 
   let spec = vector ^> array element ^> unit in
   declare "push_array" spec R.push_array C.push_array;

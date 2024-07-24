@@ -99,16 +99,16 @@ val drop : VECTOR -> unit
 (**[remove_last] is a synonym for [drop]. *)
 val remove_last : VECTOR -> unit (* synonym *)
 
-(**[peek v] returns the last element of the vector [v].
+(**[top v] returns the last element of the vector [v].
    If the vector is empty, [Not_found] is raised. *)
-val peek : VECTOR -> ELEMENT
+val top : VECTOR -> ELEMENT
 
 (**[get_last] is a synonym for [peek]. *)
 val get_last : VECTOR -> ELEMENT (* synonym *)
 
 (**[peek_opt v] returns the last element of the vector [v].
    If the vector is empty, [None] is returned. *)
-val peek_opt : VECTOR -> ELEMENT option
+val top_opt : VECTOR -> ELEMENT option
 
 (**[find_last] is a synonym for [peek_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)

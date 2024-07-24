@@ -90,7 +90,7 @@ let pop v =
   | [] ->
       raise Not_found
 
-let peek v =
+let top v =
   let xs = !v in
   let n = List.length xs in
   if n > 0 then
@@ -98,7 +98,7 @@ let peek v =
   else
     raise Not_found
 
-let peek_opt v =
+let top_opt v =
   let xs = !v in
   let n = List.length xs in
   if n > 0 then

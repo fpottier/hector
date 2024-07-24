@@ -239,7 +239,7 @@ let (* public *) drop v =
 let (* public *) remove_last =
   drop
 
-let (* public *) peek v =
+let (* public *) top v =
   let { length; _ } = v in
   if length > 0 then
     unsafe_get v (length - 1)
@@ -247,9 +247,9 @@ let (* public *) peek v =
     raise Not_found
 
 let (* public *) get_last =
-  peek
+  top
 
-let (* public *) peek_opt v =
+let (* public *) top_opt v =
   let { length; _ } = v in
   if length > 0 then
     Some (unsafe_get v (length - 1))
@@ -257,7 +257,7 @@ let (* public *) peek_opt v =
     None
 
 let (* public *) find_last =
-  peek_opt
+  top_opt
 
 let[@inline] (* private *) truncate v n =
   let { length; _ } = v in
