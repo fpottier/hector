@@ -240,6 +240,9 @@ val to_list : VECTOR -> ELEMENT list
 (**TODO*)
 val of_seq : ELEMENT Seq.t -> VECTOR
 
+  (* [to_seq] and [to_seq_rev] produce sequences which are valid only as
+     long as the vector is not mutated. *)
+
 (**TODO*)
 val to_seq : VECTOR -> ELEMENT Seq.t
 
