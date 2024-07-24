@@ -14,13 +14,15 @@ open Monolith
 
 module R = Reference
 
-(* Choose one of the following candidate implementations. *)
+(* Choose one of the following four candidate implementations. *)
 
 module CPoly = Hector.Poly
 
 module CMono = Hector.Mono.Make(struct type t = int end)
 
 module CInt  = Hector.Int
+
+module CDynarray = CDynarray (* see separate file *)
 
 module C = CInt
 
