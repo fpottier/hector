@@ -50,12 +50,16 @@ module I = Hector.Int
   B.benchmark ~name ~quota ~basis ~run \
 )
 
+let[@inline] stack_push x s =
+  Stack.push s x
+
 let pushes n =
   [
     PUSH("dynarray", R.create, R.add_last, n);
     PUSH("poly", P.create, P.push, n);
     PUSH("mono", M.create, M.push, n);
     PUSH("int", I.create, I.push, n);
+    PUSH("stack", Stack.create, stack_push, n);
   ]
 
 (* -------------------------------------------------------------------------- *)
