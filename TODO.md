@@ -4,6 +4,7 @@
 
 * Maybe remove all calls to `validate length data`,
   which are not placed consistently.
+  Or ensure that they are used consistently.
 
 * `next_capacity` should avoid exceeding the maximum array length
   (which should be a field in the structure `A`).
