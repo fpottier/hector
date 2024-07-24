@@ -9,10 +9,12 @@
   Use macros to offer a choice between multiple implementations of
   `blit`, if necessary.
 
-* Publish `Arrays.Int`.
+* Publish `IntArray` as `Arrays.Int`.
 
 * Improve the compatibility with OCaml's `Dynarray`.
   In the documentation, say something about compatibility.
+  Our `compare` has the semantics of `List.compare`,
+  not `Dynarray.compare`.
 
 * Check compatibility with the `Stack` API.
   Also, benchmark against `Stack`.
@@ -39,6 +41,7 @@
 
 * Reconsider the use of `LOOP5` in every loop.
   Some loops could use just `LOOP`; some loops could use `LOOPRW5`.
+  If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Release.
