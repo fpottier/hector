@@ -547,6 +547,20 @@ let (* public *) to_seq v =
   validate length data;
   array_segment_to_seq data 0 length
 
+let rec (* private *) array_segment_to_seq_rev a i n =
+  assert (0 <= i && i <= n && i <= A.length a);
+  if i = n then
+    Seq.empty
+  else
+    fun () ->
+      let n = n - 1 in
+      Seq.Cons (A.unsafe_get a n, array_segment_to_seq_rev a i n)
+
+let (* public *) to_seq_rev v =
+  let { length; data; _ } = v in
+  validate length data;
+  array_segment_to_seq_rev data 0 length
+
 let (* public *) exists f v =
   let { length; data; _ } = v in
   validate length data;

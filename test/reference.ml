@@ -193,6 +193,9 @@ let of_seq xs =
 let to_seq v =
   List.to_seq !v
 
+let to_seq_rev v =
+  List.to_seq (List.rev !v)
+
 let rec index f xs i =
   match xs with
   | [] ->

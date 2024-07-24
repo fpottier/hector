@@ -265,6 +265,9 @@ let () =
   let spec = vector ^> seq_element in
   declare "to_seq" spec R.to_seq C.to_seq;
 
+  let spec = vector ^> seq_element in
+  declare "to_seq_rev" spec R.to_seq_rev C.to_seq_rev;
+
   (* [find] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^!> int in
   declare "find ((<=) 0)" spec (R.find ((<=) 0)) (C.find ((<=) 0));
