@@ -458,12 +458,16 @@ let (* public *) push_list v xs =
 let (* public *) append_list =
   push_list
 
-let[@inline] (* public *) push_seq v xs =
+let (* public *) push_seq v xs =
   push_list v (List.of_seq xs)
     (* I do not feel the need to optimize this function for speed. *)
 
 let (* public *) append_seq =
   push_seq
+
+let (* public *) of_seq xs =
+  let v = create() in push_seq v xs; v
+    (* I do not feel the need to optimize this function for speed. *)
 
 (* In [push_iter], assuming that we are not allowed to call [iter] twice,
    the best and simplest implementation is to just iterate [push]. Using

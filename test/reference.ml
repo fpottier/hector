@@ -187,6 +187,9 @@ let of_list xs =
 let to_list xs =
   !xs
 
+let of_seq xs =
+  ref (List.of_seq xs)
+
 let rec index f xs i =
   match xs with
   | [] ->

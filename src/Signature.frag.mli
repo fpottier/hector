@@ -237,6 +237,9 @@ val of_list : ELEMENT list -> VECTOR
 (**TODO*)
 val to_list : VECTOR -> ELEMENT list
 
+(**TODO*)
+val of_seq : ELEMENT Seq.t -> VECTOR
+
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
    [Not_found] is raised. *)
