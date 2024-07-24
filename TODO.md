@@ -17,18 +17,18 @@
 
 * Publish `IntArray` as `Arrays.Int`.
 
-* Improve the compatibility with OCaml's `Dynarray`.
-  In the documentation, say something about compatibility.
+* In the documentation, describe Hector's compatibility with `Dynarray`.
+  Our `append` allows `append v v`.
+  Our `get_last` can be applied to an empty vector.
   Our `compare` has the semantics of `List.compare`,
   not `Dynarray.compare`.
   `to_seq_reentrant` and `to_seq_rev_reentrant`
   are intentionally not supported.
   `capacity` is intentionally not supported.
+  `find`, `unsafe_get`, `unsafe_set` are not supported by `Dynarray`.
 
 * Check compatibility with the `Stack` API.
   Also, benchmark against `Stack`.
-
-* Test using `Dynarray` as a reference implementation.
 
 * Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
 
@@ -54,7 +54,7 @@
   Also, `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Once a new version of Monolith is released,
-  use its new combinator `naive_seq`.
+  use its new combinators `naive_array` and `naive_seq`.
 
 * Release.
 
