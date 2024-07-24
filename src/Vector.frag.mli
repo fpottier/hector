@@ -263,3 +263,24 @@ val show : (ELEMENT -> string) -> VECTOR -> string
 (**[check] is used only during testing. *)
 val check : VECTOR -> unit
 (**/**)
+
+module Stack : sig
+  type SYNONYM
+  exception Empty
+  val create : unit -> SYNONYM
+  val push : ELEMENT -> SYNONYM -> unit
+  val pop : SYNONYM -> ELEMENT
+  val pop_opt : SYNONYM -> ELEMENT option
+  val drop : SYNONYM -> unit
+  val top : SYNONYM -> ELEMENT
+  val top_opt : SYNONYM -> ELEMENT option
+  val clear : SYNONYM -> unit
+  val copy : SYNONYM -> SYNONYM
+  val is_empty : SYNONYM -> bool
+  val length : SYNONYM -> int
+  val iter : (ELEMENT -> unit) -> SYNONYM -> unit
+  val fold : ('s -> ELEMENT -> 's) -> 's -> SYNONYM -> 's
+  val to_seq : SYNONYM -> ELEMENT Seq.t
+  val add_seq : SYNONYM -> ELEMENT Seq.t -> unit
+  val of_seq : ELEMENT Seq.t -> SYNONYM
+end

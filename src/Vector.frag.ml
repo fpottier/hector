@@ -499,6 +499,11 @@ let (* public *) iter f v =
   validate length data;
   LOOP5(i, 0, length, f (A.unsafe_get data i) (* safe *))
 
+let (* public *) iter_down f v =
+  let { length; data; _ } = v in
+  validate length data;
+  LOOP_DOWN(i, 0, length, f (A.unsafe_get data i) (* safe *))
+
 let (* public *) iteri f v =
   let { length; data; _ } = v in
   validate length data;
@@ -704,3 +709,50 @@ let[@inline] (* public *) push_array_segment v xs ofs len =
 
 let (* public *) append_array_segment =
   push_array_segment
+
+(* -------------------------------------------------------------------------- *)
+
+(* An emulation of the [Stack] API. *)
+
+module Stack = struct
+
+  type SYNONYM = VECTOR
+
+  (* Our functions [pop] and [top] raise [Not_found] if the vector is empty. *)
+  exception Empty = Not_found
+
+  let create = create
+  let push x v = push v x (* reversed arguments *)
+  let pop = pop
+  let pop_opt = pop_opt
+
+  (* Our [drop] does nothing if the vector is empty. *)
+  let drop v = if is_empty v then raise Empty else drop v
+
+  let top = top
+  let top_opt = top_opt
+  let clear = clear
+  let copy = copy
+  let is_empty = is_empty
+  let length = length
+
+  (* The stack API offers iteration from top to bottom. *)
+  let iter = iter_down
+
+  (* [Stack.fold] has the type of a [fold_left] function,
+     but iterates from top to bottom. *)
+  let fold f accu v =
+    let { length; data; _ } = v in
+    validate length data;
+    let accu = ref accu in
+    LOOP_DOWN(i, 0, length, accu := f !accu (A.unsafe_get data i));
+    !accu
+
+  (* [Stack.to_seq] takes a snapshot (at no cost) of the stack when
+     it is called, so the stack can be modified, without affecting
+     iteration. We simulate this (at a cost) by making a copy. *)
+  let to_seq v = to_seq_rev (copy v)
+  let add_seq = push_seq
+  let of_seq = of_seq
+
+end
