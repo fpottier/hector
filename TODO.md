@@ -27,7 +27,7 @@
   `capacity` is intentionally not supported.
   `find`, `unsafe_get`, `unsafe_set` are not supported by `Dynarray`.
 
-* Check compatibility with the `Stack` API.
+* Test our emulated `Stack` API.
   Also, benchmark against `Stack`.
 
 * Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
@@ -51,7 +51,7 @@
 * Reconsider the use of `LOOP5` in every loop.
   Some loops could use just `LOOP`; some loops could use `LOOPRW5`.
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
-  Also, `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
+  Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Once a new version of Monolith is released,
   use its new combinators `naive_array` and `naive_seq`.
@@ -59,6 +59,8 @@
 * Release.
 
 ## Maybe Later
+
+* Publish `iter_down`.
 
 * Add an in-place `reverse` function,
   as well as `rev` (an instance of `mapi`).
