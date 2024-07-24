@@ -181,6 +181,9 @@ let compare compare v1 v2 =
 let of_array a =
   ref (Array.to_list a)
 
+let of_list xs =
+  ref xs
+
 let rec index f xs i =
   match xs with
   | [] ->

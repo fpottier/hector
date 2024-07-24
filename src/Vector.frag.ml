@@ -135,19 +135,19 @@ let[@inline] (* public *) create () =
   and data = A.empty in
   { length; capacity; data }
 
-let (* private *) init n f =
+let[@inline] (* private *) init n f =
   let length = n
   and capacity = n in
   let data = A.init capacity f in
   { length; capacity; data }
 
-let (* private *) make n x =
+let[@inline] (* private *) make n x =
   let length = n
   and capacity = n in
   let data = A.make capacity x in
   { length; capacity; data }
 
-let (* private *) unsafe_of_array_segment a o k =
+let[@inline] (* private *) unsafe_of_array_segment a o k =
   assert (0 <= o && 0 <= k && o + k <= A.length a);
   (* The length of the array segment is the capacity of the new vector. *)
   let length = k in
@@ -163,6 +163,16 @@ let[@inline] (* public *) copy v =
   (* The length of the original vector is the capacity of the new vector. *)
   let { length; data; _ } = v in
   unsafe_of_array_segment data 0 length
+
+let[@inline] (* private *) unsafe_steal_array a =
+  let k = A.length a in
+  let length = k in
+  let capacity = length in
+  let data = a in (* no copy *)
+  { length; capacity; data }
+
+let[@inline] (* public *) of_list xs =
+  unsafe_steal_array (Array.of_list xs)
 
 (* -------------------------------------------------------------------------- *)
 
