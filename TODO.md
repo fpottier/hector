@@ -23,6 +23,7 @@
   not `Dynarray.compare`.
   `to_seq_reentrant` and `to_seq_rev_reentrant`
   are intentionally not supported.
+  `capacity` is intentionally not supported.
 
 * Check compatibility with the `Stack` API.
   Also, benchmark against `Stack`.
@@ -51,6 +52,9 @@
   Some loops could use just `LOOP`; some loops could use `LOOPRW5`.
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, `fold_right` uses `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
+
+* Once a new version of Monolith is released,
+  use its new combinator `naive_seq`.
 
 * Release.
 
