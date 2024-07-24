@@ -33,7 +33,7 @@ let init n f =
 let copy v =
   ref !v
 
-let elements v =
+let to_array v =
   Array.of_list !v
 
 let get v i =

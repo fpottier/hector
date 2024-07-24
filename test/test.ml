@@ -126,7 +126,7 @@ let () =
   declare "copy" spec R.copy C.copy;
 
   let spec = vector ^> array element in
-  declare "elements" spec R.elements C.elements;
+  declare "to_array" spec R.to_array C.to_array;
 
   let spec = vector ^>> fun v -> index v ^> element in
   declare "get" spec R.get C.get;

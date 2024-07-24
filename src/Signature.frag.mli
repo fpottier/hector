@@ -44,9 +44,9 @@ val init : length -> (index -> ELEMENT) -> VECTOR
    and initializes it with a copy of the data stored in [v]. *)
 val copy : VECTOR -> VECTOR
 
-(**[elements v] creates a new array of [length v] whose elements are the
+(**[to_array v] creates a new array of [length v] whose elements are the
    elements of the vector [v]. The vector [v] is unaffected. *)
-val elements : VECTOR -> ELEMENT array
+val to_array : VECTOR -> ELEMENT array
 
 (**[get v i] fetches the element at index [i] in vector [v].
    [i] must be comprised in the semi-open interval of 0 to [length v]. *)

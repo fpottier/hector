@@ -174,7 +174,7 @@ let[@inline] (* public *) length v =
 let[@inline] (* public *) is_empty v =
   length v = 0
 
-let (* public *) elements v =
+let (* public *) to_array v =
   let { length; data; _ } = v in
   A.sub data 0 length
 
