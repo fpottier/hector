@@ -60,8 +60,27 @@ let vector =
 let element =
   semi_open_interval 0 32
 
-let seq_element =
-  declare_seq element
+(* We can produce and read sequences of elements. *)
+
+(* [to_seq] and [to_seq_rev] produce sequences that are valid only as
+   long as the vector is not mutated. This could be expressed, with
+   some work, but it is not really worth the trouble. Instead, we
+   immediately convert the sequence to a list. This is good enough. *)
+
+let seq ?length:(length=Gen.lt 16) element =
+  ifpol
+
+    (* The construction side. *)
+    begin
+      list ~length element
+      |> map_outof List.to_seq (List.to_seq, constant "List.to_seq")
+    end
+
+    (* The deconstruction side. *)
+    begin
+      list element
+      |> map_into List.of_seq (List.of_seq, constant "List.of_seq")
+    end
 
 (* We draw random integer capacities and lengths. *)
 
@@ -173,7 +192,7 @@ let () =
   let spec = vector ^> list element ^> unit in
   declare "push_list" spec R.push_list C.push_list;
 
-  let spec = vector ^> seq_element ^> unit in
+  let spec = vector ^> seq element ^> unit in
   declare "push_seq" spec R.push_seq C.push_seq;
 
   (* [push_iter] is not tested. *)
@@ -259,13 +278,13 @@ let () =
   let spec = vector ^> list element in
   declare "to_list" spec R.to_list C.to_list;
 
-  let spec = seq_element ^> vector in
+  let spec = seq element ^> vector in
   declare "of_seq" spec R.of_seq C.of_seq;
 
-  let spec = vector ^> seq_element in
+  let spec = vector ^> seq element in
   declare "to_seq" spec R.to_seq C.to_seq;
 
-  let spec = vector ^> seq_element in
+  let spec = vector ^> seq element in
   declare "to_seq_rev" spec R.to_seq_rev C.to_seq_rev;
 
   (* [find] is applied specifically to the function [(<=) 0]. *)
