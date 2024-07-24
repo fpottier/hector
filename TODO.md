@@ -2,6 +2,8 @@
 
 ## Soon
 
+* Add `of_array_segment`.
+
 * Maybe remove all calls to `validate length data`,
   which are not placed consistently.
   Or ensure that they are used consistently.
@@ -51,6 +53,15 @@
 * Release.
 
 ## Maybe Later
+
+* Add an in-place `reverse` function,
+  as well as `rev` (an instance of `mapi`).
+
+* Add `push_list_segment` and `push_seq_segment`
+  to push a sequence whose length is known in advance.
+
+* Add `push_rev_*` variants to reverse the extra sequence
+  on the fly before appending it.
 
 * Generalize the signature `MONOARRAY` so that the type of arrays is
   abstract. This requires distinguishing several variants of `sub`
