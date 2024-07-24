@@ -21,6 +21,8 @@
   In the documentation, say something about compatibility.
   Our `compare` has the semantics of `List.compare`,
   not `Dynarray.compare`.
+  `to_seq_reentrant` and `to_seq_rev_reentrant`
+  are intentionally not supported.
 
 * Check compatibility with the `Stack` API.
   Also, benchmark against `Stack`.
