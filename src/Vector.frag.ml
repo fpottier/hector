@@ -535,6 +535,18 @@ let (* public *) to_list v =
   LOOP_DOWN(i, 0, length, accu := A.unsafe_get data i (* safe *) :: !accu);
   !accu
 
+let rec (* private *) array_segment_to_seq a i n =
+  assert (0 <= i && i <= n && i <= A.length a);
+  if i = n then
+    Seq.empty
+  else
+    fun () -> Seq.Cons (A.unsafe_get a i, array_segment_to_seq a (i + 1) n)
+
+let (* public *) to_seq v =
+  let { length; data; _ } = v in
+  validate length data;
+  array_segment_to_seq data 0 length
+
 let (* public *) exists f v =
   let { length; data; _ } = v in
   validate length data;
