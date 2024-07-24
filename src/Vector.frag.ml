@@ -11,7 +11,7 @@
 (******************************************************************************)
 
 (* We use a subset of the functionality of the [Array] module, namely
-   [empty], [length], [unsafe_get], [unsafe_set], [alloc], [make],
+   [empty], [length], [unsafe_get], [unsafe_set], [grow], [make],
    [init], [sub], [blit_disjoint]. We take these functions from a
    module named [A], and do not make any reference to the standard
    library module [Array]. This makes our code independent of the type
@@ -282,9 +282,8 @@ let[@inline] set_lower_capacity v new_capacity =
 let really_set_higher_capacity v new_capacity dummy =
   let { length; data; _ } = v in
   assert (length <= new_capacity);
-  let new_data = A.alloc new_capacity dummy in
-  A.blit_disjoint data 0 new_data 0 length;
   v.capacity <- new_capacity;
+  let new_data = A.grow new_capacity dummy data length in
   v.data <- new_data;
   new_data
 
