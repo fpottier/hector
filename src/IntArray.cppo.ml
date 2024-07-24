@@ -81,6 +81,16 @@ let make (n : length) (x : element) : t =
   (* Done. *)
   a
 
+(* -------------------------------------------------------------------------- *)
+
+(* Then comes our implementation of monomorphic arrays. *)
+
+#define USE_MEMCPY
+
+#include "MonoArray.frag.ml"
+
+(* -------------------------------------------------------------------------- *)
+
 let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
   assert (0 <= k && k <= n);
   (* Allocate an uninitialized memory block, which the GC does not scan. *)
@@ -88,16 +98,8 @@ let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
   (* Cast it to the type [int array]. *)
   let a : int array = Obj.obj a in
   (* Initialize the lower segment by copying data from [s]. *)
-  LOOP5(i, 0, k, Array.unsafe_set a i (Array.unsafe_get s i));
+  blit_disjoint s 0 a 0 k;
   (* Initialize the upper segment with arbitrary integer values. *)
   unsafe_initialize_int_array_segment a k (n - k);
   (* Done. *)
   a
-
-(* -------------------------------------------------------------------------- *)
-
-(* The rest is our implementation of monomorphic arrays. *)
-
-#define USE_MEMCPY
-
-#include "MonoArray.frag.ml"
