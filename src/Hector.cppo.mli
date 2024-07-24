@@ -24,7 +24,7 @@ module type MONOVECTOR = sig
   #define ELEMENT  element
   #define VECTOR'  vector
   #define ELEMENT' element
-  #include "Signature.frag.mli"
+  #include "Vector.frag.mli"
 end
 
 module type POLYVECTOR = sig
@@ -38,7 +38,7 @@ module type POLYVECTOR = sig
   #define ELEMENT  'a
   #define VECTOR'  'b vector
   #define ELEMENT' 'b
-  #include "Signature.frag.mli"
+  #include "Vector.frag.mli"
 end
 
 module Int : MONOVECTOR with type element = int

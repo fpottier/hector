@@ -31,7 +31,7 @@ include ArraySignature
 
 module type MONOVECTOR = sig
   type element
-  #include "Signature.frag.mli"
+  #include "Vector.frag.mli"
 end
 
 (* -------------------------------------------------------------------------- *)
@@ -103,7 +103,7 @@ end
 (* The signature of monomorphic vectors. *)
 
 module type POLYVECTOR = sig
-  #include "Signature.frag.mli"
+  #include "Vector.frag.mli"
 end
 
 (* -------------------------------------------------------------------------- *)
