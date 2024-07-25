@@ -722,7 +722,7 @@ module Stack = struct
   exception Empty = Not_found
 
   let create = create
-  let push x v = push v x (* reversed arguments *)
+  let[@inline] push x v = push v x (* reversed arguments *)
   let pop = pop
   let pop_opt = pop_opt
 
