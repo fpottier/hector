@@ -27,8 +27,8 @@
   `capacity` is intentionally not supported.
   `find`, `unsafe_get`, `unsafe_set` are not supported by `Dynarray`.
 
-* Test our emulated `Stack` API.
-  Also, benchmark against `Stack`.
+* Add a benchmark that mixes `push` and `pop`.
+  Include `Stack` in the benchmark.
 
 * Test all candidate implementations (`Poly`, `Mono`, `Int`, `Dynarray`)
   in parallel. Also, test the Stack API separately. Thus, we can run 8
