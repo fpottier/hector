@@ -30,7 +30,9 @@
 * Test our emulated `Stack` API.
   Also, benchmark against `Stack`.
 
-* Test all implementations (`Poly`, `Mono`, `Int`) in parallel.
+* Test all candidate implementations (`Poly`, `Mono`, `Int`, `Dynarray`)
+  in parallel. Also, test the Stack API separately. Thus, we can run 8
+  tests in parallel.
 
 * Make sure every interface file is commented. Review the documentation.
   Document the fact that a vector must not be modified while iteration is
@@ -61,6 +63,8 @@
 ## Maybe Later
 
 * Publish `iter_down`.
+
+* Add in-place `transform`.
 
 * Add an in-place `reverse` function,
   as well as `rev` (an instance of `mapi`).
