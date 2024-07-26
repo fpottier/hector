@@ -128,6 +128,8 @@ let () =
   let spec = vector ^> length in
   declare "length" spec R.length C.length;
 
+  (* [unsafe_borrow] is not tested. *)
+
   let spec = vector ^> bool in
   declare "is_empty" spec R.is_empty C.is_empty;
 

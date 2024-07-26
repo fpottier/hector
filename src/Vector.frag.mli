@@ -20,8 +20,16 @@ type length = int
 type capacity = int
 type index = int
 
-(***[length v] is the (logical) length of the vector [v]. *)
+(**[length v] is the (logical) length of the vector [v]. *)
 val length : VECTOR -> length
+
+(**[unsafe_borrow v] returns the data array that is part of the internal
+   representation of the vector [v]. The length of this data array is at
+   least [length v], and can be greater than [length v]. As long as the
+   vector [v] is not modified, the segment of the data array delimited by
+   the semi-open interval [\[0, length v)] can be safely read and
+   written. *)
+val unsafe_borrow : VECTOR -> ELEMENT array
 
 (**[s_empty v] is equivalent to [length v = 0]. *)
 val is_empty : VECTOR -> bool
