@@ -12,6 +12,7 @@
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Publish `IntArray` as `Arrays.Int`.
+  Document and publish `ArraySegment`.
 
 * In the documentation, describe Hector's compatibility with `Dynarray`.
   Hector does not guarantee the absence of memory leaks.
@@ -56,14 +57,11 @@
 * Isolate a module `ArraySegment` containing all of the operations
   on array segments that we need.
 
-  The operations on segments that we already use are
-  `iter`, `iter_down`, `iteri`, `fold_left`, `fold_right`,
-  `to_list`, `array_segment_to_seq`, `array_segment_to_seq_rev`,
-  `exists`, `for_all`, `equal`, `compare`, `find`, `show`.
-
   Should this module be placed *inside* `Vector.frag.ml` so
   that it depends only on `A` and is specialized for integers?
-  Or *outside* it, so as to avoid code size explosion?
+  Or *outside* it, so as to avoid code size explosion,
+  and so as to make it public?
+  Or both?
 
 * Add new operations taken from the `Array` API:
   `concat`,
