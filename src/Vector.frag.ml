@@ -117,6 +117,11 @@ let[@inline never] array_segment_end_failure xs ofs len =
 (* [validate length data] checks [length <= A.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
+(* Every time we read both the [length] and [data] fields of a vector, we
+   call [validate length data], so as to protect the user against violations
+   caused by data races. (That said, [unsafe_borrow], [unsafe_get], and
+   [unsafe_set], which read just the [data] field, are still unsafe.) *)
+
 let[@inline never] violation length data =
   fail "length is %d, but data array has length %d (racy access?)"
     length (A.length data)
@@ -162,6 +167,7 @@ let[@inline] (* public *) of_array a =
 let[@inline] (* public *) copy v =
   (* The length of the original vector is the capacity of the new vector. *)
   let { length; data; _ } = v in
+  validate length data;
   unsafe_of_array_segment data 0 length
 
 let[@inline] (* private *) unsafe_steal_array a =
@@ -189,6 +195,7 @@ let[@inline] (* public *) unsafe_borrow v =
 
 let (* public *) to_array v =
   let { length; data; _ } = v in
+  validate length data;
   A.sub data 0 length
 
 (* In [unsafe_get] and [unsafe_set], our use of [A.unsafe_get] and
@@ -210,11 +217,13 @@ let[@inline] (* private *) unsafe_set v i x =
 (* Popping, peeking, truncating, clearing. *)
 
 let (* public *) pop v =
-  let { length; _ } = v in
-  if length > 0 then
+  let { length; data; _ } = v in
+  if length > 0 then begin
+    validate length data;
     let i = length - 1 in
     v.length <- i;
-    unsafe_get v i
+    A.unsafe_get data i (* safe *)
+  end
   else
     raise Not_found
 
@@ -222,11 +231,13 @@ let (* public *) pop_last =
   pop
 
 let (* public *) pop_opt v =
-  let { length; _ } = v in
-  if length > 0 then
+  let { length; data; _ } = v in
+  if length > 0 then begin
+    validate length data;
     let i = length - 1 in
     v.length <- i;
-    Some (unsafe_get v i)
+    Some (A.unsafe_get data i)
+  end
   else
     None
 
@@ -243,9 +254,11 @@ let (* public *) remove_last =
   drop
 
 let (* public *) top v =
-  let { length; _ } = v in
-  if length > 0 then
-    unsafe_get v (length - 1)
+  let { length; data; _ } = v in
+  if length > 0 then begin
+    validate length data;
+    A.unsafe_get data (length - 1) (* safe *)
+  end
   else
     raise Not_found
 
@@ -253,9 +266,11 @@ let (* public *) get_last =
   top
 
 let (* public *) top_opt v =
-  let { length; _ } = v in
-  if length > 0 then
-    Some (unsafe_get v (length - 1))
+  let { length; data; _ } = v in
+  if length > 0 then begin
+    validate length data;
+    Some (A.unsafe_get data (length - 1))
+  end
   else
     None
 
@@ -293,6 +308,7 @@ let[@inline] set_lower_capacity v new_capacity =
      match the new capacity. If it is empty, then [v.length] must be zero,
      so neither [v.length] nor [v.data] needs to be updated. *)
   let { length; data; _ } = v in
+  (* No need to call [validate], as we do not access the [data] array. *)
   if 0 < A.length data then begin
     v.length <- min length new_capacity;
     v.data <- A.sub data 0 new_capacity
@@ -304,6 +320,7 @@ let[@inline] set_lower_capacity v new_capacity =
 
 let really_set_higher_capacity v new_capacity dummy =
   let { length; data; _ } = v in
+  validate length data;
   assert (length <= new_capacity);
   v.capacity <- new_capacity;
   let new_data = A.grow new_capacity dummy data length in
@@ -399,6 +416,9 @@ let[@inline never] (* private *) really_ensure_capacity v request dummy =
   if new_length <= A.length data then data \
   else really_ensure_capacity v new_length (DUMMY) \
 )
+
+(* Calling [validate] is not necessary here; the code is written in
+   such a way that our accesses to the [data] array are safe. *)
 
 let[@inline] (* public *) push v x =
   let { length; data; _ } = v in
