@@ -26,6 +26,9 @@ module CDynarray = CDynarray (* see separate file *)
 
 module C = CInt
 
+let () =
+  dprintf "          open Hector.Int;;\n"
+
 (* -------------------------------------------------------------------------- *)
 
 (* A Monolith combinator for arrays. *)
@@ -300,14 +303,10 @@ let () =
 (* Start the engine! *)
 
 let () =
-  let prologue () =
-    dprintf "          open Hector.Int;;\n";
-    dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
-    dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
-    dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
-    dprintf "          let elements_of_fold_right fold_right v = fold_right (fun x xs -> x :: xs) v [];;\n";
-    dprintf "          let increment_if_positive x = if x < 0 then None else Some (x + 1);;\n";
-    ()
-  in
+  dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
+  dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
+  dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
+  dprintf "          let elements_of_fold_right fold_right v = fold_right (fun x xs -> x :: xs) v [];;\n";
+  dprintf "          let increment_if_positive x = if x < 0 then None else Some (x + 1);;\n";
   let fuel = 128 in
-  main ~prologue fuel
+  main fuel
