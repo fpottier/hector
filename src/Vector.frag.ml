@@ -336,6 +336,15 @@ let[@inline] (* private *) set_capacity v new_capacity =
 (* We jump to size at least 8 in all situations; we grow by a factor of 2
    under a certain threshold, and by a factor of 3/2 beyond this threshold. *)
 
+(* This strategy is taken from the standard library's [Dynarray] module. *)
+
+(* Whereas [Dynarray] ensures that the result of [next_capacity] is at most
+   [Sys.max_array_length], we do not. On 64 bit machines, the value of
+   [Sys.max_array_length] is so high (about 128,000 terabytes) that this
+   limit is unlikely to be exceeded. If (in the future) we wanted to take
+   explicit precautions about this limit, we should make it a field in the
+   module [A], so as to remain independent of the details of OCaml's arrays. *)
+
 let[@inline] next_capacity capacity =
   max 8 (
     if capacity <= 512 then capacity * 2
