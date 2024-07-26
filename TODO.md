@@ -30,10 +30,6 @@
 * Add a benchmark that mixes `push` and `pop`.
   Include `Stack` in the benchmark.
 
-* Test all candidate implementations (`Poly`, `Mono`, `Int`, `Dynarray`)
-  in parallel. Also, test the Stack API separately. Thus, we can run 8
-  tests in parallel.
-
 * Make sure every interface file is commented. Review the documentation.
   Document the fact that a vector must not be modified while iteration is
   ongoing.
