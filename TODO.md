@@ -2,18 +2,9 @@
 
 ## Soon
 
-* Add `of_array_segment`.
-
 * Maybe remove all calls to `validate length data`,
   which are not placed consistently.
   Or ensure that they are used consistently.
-
-* `next_capacity` should avoid exceeding the maximum array length
-  (which should be a field in the structure `A`).
-
-* Remove the comment that talks about hesitation.
-  Use macros to offer a choice between multiple implementations of
-  `blit`, if necessary.
 
 * Publish `IntArray` as `Arrays.Int`.
 
@@ -25,7 +16,8 @@
   `to_seq_reentrant` and `to_seq_rev_reentrant`
   are intentionally not supported.
   `capacity` is intentionally not supported.
-  `find`, `unsafe_get`, `unsafe_set` are not supported by `Dynarray`.
+  Features not supported by `Dynarray`:
+  `find`, `unsafe_get`, `unsafe_set`, `unsafe_borrow`, the Stack API.
 
 * Add a benchmark that mixes `push` and `pop`.
   Include `Stack` in the benchmark.
@@ -58,9 +50,38 @@
 
 ## Maybe Later
 
-* Publish `iter_down`.
+* Add `of_array_segment`.
 
-* Add in-place `transform`.
+* Isolate a submodule `ArraySegment` containing all of the operations
+  on array segments that we need. Do it *inside* `Vector.frag.ml` so
+  that it depends only on `A` and is specialized for integers.
+
+* Add new operations taken from the `Array` API:
+  `concat`,
+  `sub`,
+  `fill`,
+  `blit`,
+  `map_inplace`,
+  `mapi_inplace`,
+  `fold_left_map`,
+  `iter2`,
+  `map2`,
+  `for_all2`,
+  `exists2`,
+  `mem` and `memq` (?),
+  `find_opt`,
+  `find_index`,
+  `find_map`,
+  `find_mapi`,
+  `split`,
+  `combine`,
+  `sort`,
+  `stable_sort`,
+  `fast_sort`,
+  `shuffle`,
+  `to_seqi`.
+
+* Publish `iter_down`.
 
 * Add an in-place `reverse` function,
   as well as `rev` (an instance of `mapi`).
@@ -71,10 +92,20 @@
 * Add `push_rev_*` variants to reverse the extra sequence
   on the fly before appending it.
 
-* Generalize the signature `MONOARRAY` so that the type of arrays is
-  abstract. This requires distinguishing several variants of `sub`
-  and `blit_disjoint`. Then, implement `CharArray` using `bytes`.
-  Implement a character vector, and compare its efficiency with `Buffer`.
+* It may seem tempting to generalize our implementation of vectors so that it
+  does not rely on the knowledge that the data array is an array. For example,
+  we may want to implement bit vectors and character vectors, where the data
+  array actually has type `bytes`.
+
+  Perhaps, instead of generalizing our implementation, we could develop a
+  separate implementation (with some shared code) where the type `A.t` is
+  abstract. It would be necessary to distinguish several variants of `A.sub`
+  and `A.blit_disjoint`. it would be necessary to remove the public operation
+  `unsafe_borrow`.
+
+  Then, implement `BitArray` and `CharArray` using a compact representation,
+  based on the type `bytes`. Implement a bit vector and a character vector.
+  Compare the efficiency of the character vector with `Buffer`.
 
 * Expose `MonoArray.frag.ml` as a functor that builds a complete
   implementation of `MONOARRAY` out of just `empty`, `alloc`, and
