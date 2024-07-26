@@ -12,22 +12,17 @@
 
 open Monolith
 
+(* -------------------------------------------------------------------------- *)
+
+(* A reference implementation of vectors. *)
+
 module R = Reference
 
-(* Choose one of the following four candidate implementations. *)
+(* -------------------------------------------------------------------------- *)
 
-module CPoly = Hector.Poly
+(* A candidate implementation. *)
 
-module CMono = Hector.Mono.Make(struct type t = int end)
-
-module CInt  = Hector.Int
-
-module CDynarray = CDynarray (* see separate file *)
-
-module C = CInt
-
-let () =
-  dprintf "          open Hector.Int;;\n"
+module C = Candidate
 
 (* -------------------------------------------------------------------------- *)
 

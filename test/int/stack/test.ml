@@ -26,10 +26,7 @@ end
 
 (* The candidate implementation. *)
 
-module C = Hector.Int.Stack
-
-let () =
-  dprintf "          open Hector.Int.Stack;;\n"
+module C = Candidate.Stack
 
 (* -------------------------------------------------------------------------- *)
 
