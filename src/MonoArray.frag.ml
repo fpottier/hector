@@ -72,20 +72,31 @@ external unsafe_blit_disjoint :
 
 #else
 
-(* I have hesitated between using [Array.blit] and re-implementing it. One
-   advantage of re-implementing it might be that [unsafe_set] is then our
-   sole way of writing an array, so we can safely use truly initialized
-   arrays (where an uninitialized slot contains arbitrary bits). But this
-   seems too dangerous anyway. *)
+(* Should we use [Array.blit], or re-implement it using a loop? *)
+
+(* One advantage of re-implementing it might be that [unsafe_set] is
+   then our sole way of writing an array, so we can safely use truly
+   initialized arrays (where an uninitialized slot contains arbitrary
+   bits). But this seems too dangerous anyway. We do not currently use
+   uninitialized arrays. *)
 
 (* In the case of integer arrays, a loop can be 3 times faster than
    [Array.blit]. In the case of polymorphic arrays, a loop can be 30%
-   slower than [Array.blit]. So, here, a loop seems advantageous if
-   the code is specialized for a known immediate type; otherwise,
-   using [Array.blit] is advantageous. *)
+   slower than [Array.blit]. So, a loop seems advantageous if the code
+   is specialized for a known immediate type; otherwise, [Array.blit]
+   is advantageous. *)
 
 (* The parallel loop LOOPRW5 is not noticeably faster than the ordinary
    loop LOOP5. *)
+
+(* Unfortunately, we do not know in which situation we are: this code
+   is used as part of the functor [Mono.Make], which can be applied
+   either to an immediate type, or to a pointer type. Furthermore,
+   this code could be compiled either by the maintream OCaml compiler,
+   which ignores [@inline] annotations on functors, or by the Flambda2
+   compiler, which does specialize functors. *)
+
+(* In the end, it seems preferable to always use [Array.blit]. *)
 
 let[@inline] unsafe_blit_disjoint (src : t) sofs dst dofs n =
  (* LOOP5(j, 0, n, unsafe_set dst (dofs + j) (unsafe_get src (sofs + j))) *)
