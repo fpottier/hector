@@ -1,0 +1,5 @@
+(executable
+  (name stack)
+  (libraries monolith hector)
+  (enabled_if (= %{profile} dev))
+)
