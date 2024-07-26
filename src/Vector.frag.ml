@@ -522,6 +522,14 @@ let (* public *) append_iter =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Operations on array segments. *)
+
+module ArraySegment = struct
+  #include "ArraySegment.frag.ml"
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (* Iterating, searching, showing. *)
 
 (* Calling [validate] ensures that our use of [unsafe_get] is safe. *)
@@ -529,17 +537,17 @@ let (* public *) append_iter =
 let (* public *) iter f v =
   let { length; data; _ } = v in
   validate length data;
-  LOOP5(i, 0, length, f (A.unsafe_get data i) (* safe *))
+  ArraySegment.iter f data 0 length
 
 let (* public *) iter_down f v =
   let { length; data; _ } = v in
   validate length data;
-  LOOP_DOWN(i, 0, length, f (A.unsafe_get data i) (* safe *))
+  ArraySegment.iter_down f data 0 length
 
 let (* public *) iteri f v =
   let { length; data; _ } = v in
   validate length data;
-  LOOP5(i, 0, length, f i (A.unsafe_get data i) (* safe *))
+  ArraySegment.iteri f data 0 length
 
 let (* public *) map f v =
   let { length; data; _ } = v in
@@ -554,69 +562,37 @@ let (* public *) mapi f v =
 let (* public *) fold_left f accu v =
   let { length; data; _ } = v in
   validate length data;
-  let accu = ref accu in
-  LOOP5(i, 0, length, accu := f !accu (A.unsafe_get data i) (* safe *));
-  !accu
+  ArraySegment.fold_left f accu data 0 length
 
 let (* public *) fold_right f v accu =
   let { length; data; _ } = v in
   validate length data;
-  let accu = ref accu in
-  LOOP_DOWN(i, 0, length, accu := f (A.unsafe_get data i) (* safe *) !accu);
-  !accu
+  ArraySegment.fold_right f data 0 length accu
 
 let (* public *) to_list v =
   let { length; data; _ } = v in
   validate length data;
-  let accu = ref [] in
-  LOOP_DOWN(i, 0, length, accu := A.unsafe_get data i (* safe *) :: !accu);
-  !accu
-
-let rec (* private *) array_segment_to_seq a i n =
-  assert (0 <= i && i <= n && i <= A.length a);
-  if i = n then
-    Seq.empty
-  else
-    fun () -> Seq.Cons (A.unsafe_get a i, array_segment_to_seq a (i + 1) n)
+  ArraySegment.to_list data 0 length
 
 let (* public *) to_seq v =
   let { length; data; _ } = v in
   validate length data;
-  array_segment_to_seq data 0 length
-
-let rec (* private *) array_segment_to_seq_rev a i n =
-  assert (0 <= i && i <= n && i <= A.length a);
-  if i = n then
-    Seq.empty
-  else
-    fun () ->
-      let n = n - 1 in
-      Seq.Cons (A.unsafe_get a n, array_segment_to_seq_rev a i n)
+  ArraySegment.to_seq data 0 length
 
 let (* public *) to_seq_rev v =
   let { length; data; _ } = v in
   validate length data;
-  array_segment_to_seq_rev data 0 length
+  ArraySegment.to_seq_rev data 0 length
 
 let (* public *) exists f v =
   let { length; data; _ } = v in
   validate length data;
-  let exception Break in
-  try
-    LOOP5(i, 0, length, if f (A.unsafe_get data i) then raise Break);
-    false
-  with Break ->
-    true
+  ArraySegment.exists f data 0 length
 
 let (* public *) for_all f v =
   let { length; data; _ } = v in
   validate length data;
-  let exception Break in
-  try
-    LOOP5(i, 0, length, if not (f (A.unsafe_get data i)) then raise Break);
-    true
-  with Break ->
-    false
+  ArraySegment.for_all f data 0 length
 
 let (* public *) filter f v =
   let { length; data; _ } = v in
@@ -642,44 +618,19 @@ let (* public *) equal equal v1 v2 =
   length1 = length2 &&
   let () = validate length1 data1
   and () = validate length2 data2 in
-  let exception Break in
-  try
-    LOOP(i, 0, length1,
-      if not (equal (A.unsafe_get data1 i) (A.unsafe_get data2 i)) then
-        raise Break
-    );
-    true
-  with Break ->
-    false
+  ArraySegment.equal equal data1 0 length1 data2 0 length2
 
 let (* public *) compare compare v1 v2 =
   let { length = length1; data = data1; _ } = v1
   and { length = length2; data = data2; _ } = v2 in
   validate length1 data1;
   validate length2 data2;
-  let exception Break of int in
-  try
-    LOOP(i, 0, min length1 length2,
-      let c = compare (A.unsafe_get data1 i) (A.unsafe_get data2 i) in
-      if c <> 0 then
-        raise (Break c)
-    );
-    Stdlib.Int.compare length1 length2
-  with Break c ->
-    c
-
-let rec find f length data i =
-  if i = length then
-    raise Not_found
-  else if f (A.unsafe_get data i) (* safe *) then
-    i
-  else
-    find f length data (i + 1)
+  ArraySegment.compare compare data1 0 length1 data2 0 length2
 
 let (* public *) find f v =
   let { length; data; _ } = v in
   validate length data;
-  find f length data 0
+  ArraySegment.find f data 0 length
 
 let (* public *) show show v =
   let opening, separator, closing = "[|", "; ", "|]" in
