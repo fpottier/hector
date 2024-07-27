@@ -11,10 +11,17 @@ efficient {b random access} functions, [get] and [set]. Furthermore, a vector
 can {b grow and shrink}; elements can be pushed or popped at its right end.
 
 The logical {b length} of a vector is the length of the sequence.
-The physical {b capacity} of a vector is the length of the data array
-where the vector's elements are stored.
+
+Furthermore, a vector has a physical {b capacity}.
 A vector's capacity is at least equal to its length,
 and can be greater than its length.
+Almost always, the capacity of a vector
+is the length of the data array
+where the vector's elements are stored.
+As an exception to the previous sentence,
+if a vector has logical length 0
+then its data array can be empty
+even if its capacity is nonzero.
 
 [hector]'s vectors are {b not thread-safe} and {b do not include a protection
 against data races}: concurrent accesses to a vector, where at least one
