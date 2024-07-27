@@ -734,5 +734,7 @@ let (* public *) concat vs =
 
 let (* public *) sub v ofs len =
   GET_LENGTH_DATA(length, data, v);
+  (* Validate this array segment with respect to the logical length
+     of the vector [v]. *)
   validate_array_segment length ofs len;
   unsafe_steal_array (A.sub data ofs len)
