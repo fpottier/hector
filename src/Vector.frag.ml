@@ -739,3 +739,15 @@ module Stack = struct
   let of_seq = of_seq
 
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* An emulation of the [Array] API. *)
+
+let (* public *) concat vs =
+  let v = create() in
+  let n = List.fold_left (fun n a -> n + length a) 0 vs in
+  set_capacity v n;
+  List.iter (push_vector v) vs;
+  assert (length v = n);
+  v

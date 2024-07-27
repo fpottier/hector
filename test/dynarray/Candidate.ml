@@ -54,6 +54,16 @@ let top = get_last
 let top_opt = find_last
 let drop = remove_last
 
+(* The following operations do not exist in [Dynarray]. *)
+
+let concat vs =
+  vs
+  |> List.map to_array
+  |> Array.concat
+  |> of_array
+
+(* -------------------------------------------------------------------------- *)
+
 open Monolith
 
 let () =

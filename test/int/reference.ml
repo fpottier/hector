@@ -74,6 +74,12 @@ let rec push_seq v xs =
       push v x;
       push_seq v xs
 
+let concat xss =
+  xss
+  |> List.map (!)
+  |> List.flatten
+  |> ref
+
 let pop_opt v =
   match List.rev !v with
   | x :: xs ->

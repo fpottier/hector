@@ -199,6 +199,9 @@ let () =
 
   (* [push_iter] is not tested. *)
 
+  let spec = list vector ^> vector in
+  declare "concat" spec R.concat C.concat;
+
   let spec = vector ^> length ^> unit in
   declare "truncate" spec R.truncate C.truncate;
 
