@@ -10,8 +10,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**A vector is a mutable abstract data structure, which stores a sequence of
-   values. *)
+(**A vector is a mutable data structure, which stores a sequence of values. *)
 type VECTOR
 
 type SYNONYM = VECTOR
@@ -23,102 +22,104 @@ type index = int
 (**[length v] is the (logical) length of the vector [v]. *)
 val length : VECTOR -> length
 
-(**[unsafe_borrow v] returns the data array that is part of the internal
-   representation of the vector [v]. The length of this data array is at
-   least [length v], and can be greater than [length v]. As long as the
-   vector [v] is not modified, the segment of the data array delimited by
-   the semi-open interval [\[0, length v)] can be safely read and
-   written. *)
-val unsafe_borrow : VECTOR -> ELEMENT array
-
 (**[s_empty v] is equivalent to [length v = 0]. *)
 val is_empty : VECTOR -> bool
+
+(**[unsafe_borrow v] returns the data array that is part of the internal
+   representation of the vector [v]. The length of this data array is at
+   least [length v], and can be greater than [length v]. Beyond this
+   guarantee, the length of this data array is unspecified; it is not
+   necessarily the capacity of the vector. As long as the vector [v] is not
+   modified, the segment of the data array delimited by the semi-open
+   interval [\[0, length v)] can be safely read and written. *)
+val unsafe_borrow : VECTOR -> ELEMENT array
 
 (**[create()] creates a new vector of length 0 and capacity 0. *)
 val create : unit -> VECTOR
 
-(**[make n x] creates a new vector of length and capacity [n]
-   and initializes it by storing the value [x] everywhere.
+(**[make n x] creates a new vector of length [n] and capacity [n]
+   and initializes this vector by storing the value [x] everywhere.
    [n] must be a valid capacity. *)
 val make : length -> ELEMENT -> VECTOR
 
-(**[init n f] creates a new vector of length and capacity [n]
-   and initializes it, from left to right, by storing
-   the value [f i] at each index [i].
-   [n] must be a valid capacity. *)
+(**[init n f] creates a new vector of length [n] and capacity [n]
+   and initializes it, from left to right, by computing and storing
+   the value [f i] at index [i]. [n] must be a valid capacity. *)
 val init : length -> (index -> ELEMENT) -> VECTOR
 
-(**[copy v] creates a new vector of length and capacity [length v]
-   and initializes it with a copy of the data stored in [v]. *)
+(**[copy v] creates a new vector whose length and capacity are [length v]
+   and initializes it with a copy of the data stored in the vector [v]. *)
 val copy : VECTOR -> VECTOR
 
-(**[to_array v] creates a new array of [length v] whose elements are the
-   elements of the vector [v]. The vector [v] is unaffected. *)
+(**[to_array v] creates a new array of length [length v] and initializes it
+   with a copy of the data stored in the vector [v]. *)
 val to_array : VECTOR -> ELEMENT array
 
-(**[get v i] fetches the element at index [i] in vector [v].
-   [i] must be comprised in the semi-open interval of 0 to [length v]. *)
+(**[get v i] fetches the element that lies at index [i] in the vector [v].
+   [i] must be comprised in the semi-open interval [\[0, length v)]. *)
 val get : VECTOR -> index -> ELEMENT
 
-(**[unsafe_get v i] fetches the element at index [i] in vector [v].
-   [i] must be comprised in the semi-open interval of 0 to [length v].
-   {b No bounds check is performed.} If the index [i] is out of bounds,
-   memory safety can be compromised. Use at your own risk! *)
+(**[unsafe_get v i] fetches the element that lies at index [i] in the vector
+   [v]. [i] must be comprised in the semi-open interval [\[0, length v)]. {b
+   No bounds check is performed.} If the index [i] is out of bounds, memory
+   safety can be compromised. Use at your own risk! *)
 val unsafe_get : VECTOR -> index -> ELEMENT
 
-(**[set v i x] overwrites the element at index [i] in vector [v] with the
-   value [x]. [i] must be comprised in the semi-open interval of 0 to
-   [length v]. *)
+(**[set v i x] overwrites the element that lies at index [i] in the vector
+   [v] with the value [x]. [i] must be comprised in the semi-open interval
+   [\[0, length v)]. *)
 val set : VECTOR -> index -> ELEMENT -> unit
 
-(**[unsafe_set v i x] overwrites the element at index [i] in vector
-   [v] with the value [x]. [i] must be comprised in the semi-open
-   interval of 0 to [length v].
+(**[unsafe_set v i x] overwrites the element that lies at index [i]
+   in the vector [v] with the value [x].
+   [i] must be comprised in the semi-open interval [\[0, length v)].
    {b No bounds check is performed.} If the index [i] is out of bounds,
    memory safety can be compromised. Use at your own risk! *)
 val unsafe_set : VECTOR -> index -> ELEMENT -> unit
 
-(**[push v x] appends the element [x] at the end of the vector [v],
-   that is, at offset [length v]. If necessary, the capacity of the
-   vector is increased. *)
+(**[push v x] appends the element [x] at the end of the vector [v], that is,
+   at offset [length v]. Thus, the length of the vector is increased by one.
+   If necessary, the capacity of the vector is increased. *)
 val push : VECTOR -> ELEMENT -> unit
 
 (**[add_last] is a synonym for [push]. *)
 val add_last : VECTOR -> ELEMENT -> unit (* synonym *)
 
-(**[pop_opt v] removes and returns the last element of the vector [v].
-   If the vector is empty, [None] is returned. *)
-val pop_opt : VECTOR -> ELEMENT option
-
-(**[pop_last_opt] is a synonym for [pop_opt]. *)
-val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
-
-(**[pop v] removes and returns the last element of the vector [v].
-   If the vector is empty, [Not_found] is raised. *)
+(**If the vector [v] is nonempty, [pop v] removes and returns its last
+   element. The length of the vector is decreased by one; its capacity is
+   unchanged. If the vector [v] is empty, [pop v] raises [Not_found]. *)
 val pop : VECTOR -> ELEMENT
 
 (**[pop_last] is a synonym for [pop]. *)
 val pop_last : VECTOR -> ELEMENT (* synonym *)
 
-(**[drop v] removes the last element of the vector [v].
+(**If the vector [v] is nonempty, [pop_opt v] removes and returns its last
+   element. The length of the vector is decreased by one; its capacity is
+   unchanged. If the vector [v] is empty, [pop_opt v] returns [None]. *)
+val pop_opt : VECTOR -> ELEMENT option
+
+(**[pop_last_opt] is a synonym for [pop_opt]. *)
+val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
+
+(**If the vector [v] is nonempty, [drop v] removes its last element.
    If the vector [v] is empty, [drop v] has no effect. *)
 val drop : VECTOR -> unit
 
 (**[remove_last] is a synonym for [drop]. *)
 val remove_last : VECTOR -> unit (* synonym *)
 
-(**[top v] returns the last element of the vector [v].
-   If the vector is empty, [Not_found] is raised. *)
+(**If the vector [v] is nonempty, [top v] returns its last element.
+   If the vector [v] is empty, [top v] raises [Not_found]. *)
 val top : VECTOR -> ELEMENT
 
-(**[get_last] is a synonym for [peek]. *)
+(**[get_last] is a synonym for [top]. *)
 val get_last : VECTOR -> ELEMENT (* synonym *)
 
-(**[peek_opt v] returns the last element of the vector [v].
-   If the vector is empty, [None] is returned. *)
+(**If the vector [v] is nonempty, [top_opt v] returns its last element.
+   If the vector [v] is empty, [top_opt v] returns [None]. *)
 val top_opt : VECTOR -> ELEMENT option
 
-(**[find_last] is a synonym for [peek_opt]. *)
+(**[find_last] is a synonym for [top_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)
 
 (**TODO*)
