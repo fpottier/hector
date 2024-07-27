@@ -141,6 +141,11 @@ let[@inline] validate length data =
   if defensive && not (length <= A.length data) then
     violation length data
 
+#undef  GET_LENGTH_DATA
+#define GET_LENGTH_DATA(l, d, v) \
+  let { length = l; data = d; _ } = v in \
+  validate l d
+
 (* -------------------------------------------------------------------------- *)
 
 (* Construction. *)
@@ -177,8 +182,7 @@ let[@inline] (* public *) of_array a =
 
 let[@inline] (* public *) copy v =
   (* The length of the original vector is the capacity of the new vector. *)
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   unsafe_of_array_segment data 0 length
 
 let[@inline] (* private *) unsafe_steal_array a =
@@ -205,8 +209,7 @@ let[@inline] (* public *) unsafe_borrow v =
   v.data
 
 let (* public *) to_array v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   A.sub data 0 length
 
 (* In [unsafe_get] and [unsafe_set], our use of [A.unsafe_get] and
@@ -228,9 +231,8 @@ let[@inline] (* private *) unsafe_set v i x =
 (* Popping, peeking, truncating, clearing. *)
 
 let (* public *) pop v =
-  let { length; data; _ } = v in
+  GET_LENGTH_DATA(length, data, v);
   if length > 0 then begin
-    validate length data;
     let i = length - 1 in
     v.length <- i;
     A.unsafe_get data i (* safe *)
@@ -242,9 +244,8 @@ let (* public *) pop_last =
   pop
 
 let (* public *) pop_opt v =
-  let { length; data; _ } = v in
+  GET_LENGTH_DATA(length, data, v);
   if length > 0 then begin
-    validate length data;
     let i = length - 1 in
     v.length <- i;
     Some (A.unsafe_get data i)
@@ -265,11 +266,9 @@ let (* public *) remove_last =
   drop
 
 let (* public *) top v =
-  let { length; data; _ } = v in
-  if length > 0 then begin
-    validate length data;
+  GET_LENGTH_DATA(length, data, v);
+  if length > 0 then
     A.unsafe_get data (length - 1) (* safe *)
-  end
   else
     raise Not_found
 
@@ -277,11 +276,9 @@ let (* public *) get_last =
   top
 
 let (* public *) top_opt v =
-  let { length; data; _ } = v in
-  if length > 0 then begin
-    validate length data;
+  GET_LENGTH_DATA(length, data, v);
+  if length > 0 then
     Some (A.unsafe_get data (length - 1))
-  end
   else
     None
 
@@ -330,8 +327,7 @@ let[@inline] set_lower_capacity v new_capacity =
    capacity. The value [dummy] is used to initialize unused slots. *)
 
 let really_set_higher_capacity v new_capacity dummy =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   assert (length <= new_capacity);
   v.capacity <- new_capacity;
   let new_data = A.grow new_capacity dummy data length in
@@ -465,8 +461,7 @@ let (* public *) append_array =
   push_array
 
 let[@inline] (* public *) push_vector v v' =
-  let { length; data; _ } = v' in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v');
   unsafe_push_array_segment v data 0 length
     (* This works even if [v] and [v'] are the same vector. In all cases, we
        are reading from a data array and writing to a data array (which may
@@ -546,68 +541,55 @@ end
 (* Calling [validate] ensures that our use of [unsafe_get] is safe. *)
 
 let (* public *) iter f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.iter f data 0 length
 
 let (* public *) iter_down f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.iter_down f data 0 length
 
 let (* public *) iteri f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.iteri f data 0 length
 
 let (* public *) map f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   init length (fun i -> f (A.unsafe_get data i) (* safe *))
 
 let (* public *) mapi f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   init length (fun i -> f i (A.unsafe_get data i) (* safe *))
 
 let (* public *) fold_left f accu v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.fold_left f accu data 0 length
 
 let (* public *) fold_right f v accu =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.fold_right f data 0 length accu
 
 let (* public *) to_list v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.to_list data 0 length
 
 let (* public *) to_seq v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.to_seq data 0 length
 
 let (* public *) to_seq_rev v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.to_seq_rev data 0 length
 
 let (* public *) exists f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.exists f data 0 length
 
 let (* public *) for_all f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.for_all f data 0 length
 
 let (* public *) filter f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   let v' = create() in
   LOOP5(i, 0, length,
     let x = A.unsafe_get data i (* safe *) in
@@ -615,8 +597,7 @@ let (* public *) filter f v =
   v'
 
 let (* public *) filter_map f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   let v' = create() in
   LOOP5(i, 0, length,
     let x = A.unsafe_get data i (* safe *) in
@@ -624,23 +605,17 @@ let (* public *) filter_map f v =
   v'
 
 let (* public *) equal equal v1 v2 =
-  let { length = length1; data = data1; _ } = v1
-  and { length = length2; data = data2; _ } = v2 in
-  length1 = length2 &&
-  let () = validate length1 data1
-  and () = validate length2 data2 in
+  GET_LENGTH_DATA(length1, data1, v1);
+  GET_LENGTH_DATA(length2, data2, v2);
   ArraySegment.equal equal data1 0 length1 data2 0 length2
 
 let (* public *) compare compare v1 v2 =
-  let { length = length1; data = data1; _ } = v1
-  and { length = length2; data = data2; _ } = v2 in
-  validate length1 data1;
-  validate length2 data2;
+  GET_LENGTH_DATA(length1, data1, v1);
+  GET_LENGTH_DATA(length2, data2, v2);
   ArraySegment.compare compare data1 0 length1 data2 0 length2
 
 let (* public *) find f v =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   ArraySegment.find f data 0 length
 
 let (* public *) show show v =
@@ -731,8 +706,7 @@ module Stack = struct
   (* [Stack.fold] has the type of a [fold_left] function,
      but iterates from top to bottom. *)
   let fold f accu v =
-    let { length; data; _ } = v in
-    validate length data;
+    GET_LENGTH_DATA(length, data, v);
     let accu = ref accu in
     LOOP_DOWN(i, 0, length, accu := f !accu (A.unsafe_get data i));
     !accu
@@ -759,7 +733,6 @@ let (* public *) concat vs =
   v
 
 let (* public *) sub v ofs len =
-  let { length; data; _ } = v in
-  validate length data;
+  GET_LENGTH_DATA(length, data, v);
   validate_array_segment length ofs len;
   unsafe_steal_array (A.sub data ofs len)
