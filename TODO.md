@@ -48,6 +48,8 @@
 * Once a new version of Monolith is released,
   use its new combinators `naive_array` and `naive_seq`.
 
+* Benchmark `fill` and decide whether a loop should be used.
+
 * Release.
 
 ## Maybe Later
@@ -64,7 +66,6 @@
   Or both?
 
 * Add new operations taken from the `Array` API:
-  `fill`,
   `blit`, -- use `memmove` for integer arrays!
   `map_inplace`,
   `mapi_inplace`,
