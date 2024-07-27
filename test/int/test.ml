@@ -197,6 +197,16 @@ let () =
   in
   declare "sub" spec R.sub C.sub;
 
+  let spec =
+    vector ^>> fun v ->
+    let n = R.length v in
+    closed_interval 0 n ^>> fun ofs ->
+    closed_interval 0 (n - ofs) ^>
+    element ^>
+    unit
+  in
+  declare "fill" spec R.fill C.fill;
+
   let spec = vector ^> vector ^> unit in
   declare "push_vector" spec R.push_vector C.push_vector;
 

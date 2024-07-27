@@ -77,4 +77,8 @@ module type MONOARRAY = sig
      [a1 != a2 || o1 + k <= o2 || o2 + k <= o1] must hold. *)
   val blit_disjoint : t -> offset -> t -> offset -> length -> unit
 
+  (**[fill a o k x] fills the array segment identified by array [a],
+     offset [o], and length [k] with the value [x]. *)
+  val fill : t -> int -> int -> element -> unit
+
 end

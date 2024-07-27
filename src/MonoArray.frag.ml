@@ -134,3 +134,10 @@ let sub a o n =
   let a' = alloc n dummy in
   blit_disjoint a o a' 0 n;
   a'
+
+(* -------------------------------------------------------------------------- *)
+
+(* [fill] is taken from [Stdlib.Array]. *)
+
+let[@inline] fill (a : t) o k x =
+  Array.fill a o k x

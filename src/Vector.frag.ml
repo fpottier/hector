@@ -10,12 +10,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* We use a subset of the functionality of the [Array] module, namely
-   [empty], [length], [unsafe_get], [unsafe_set], [grow], [make],
-   [init], [sub], [blit_disjoint]. We take these functions from a
-   module named [A], and do not make any reference to the standard
-   library module [Array]. This makes our code independent of the type
-   of arrays that is used as a basis for our vectors. *)
+(* We use a subset of the functionality of the [Array] module, namely [empty],
+   [length], [unsafe_get], [unsafe_set], [make], [grow], [init], [sub],
+   [blit_disjoint], and [fill]. We take these functions from a module named
+   [A], and do not make any reference to the standard library module [Array].
+   This makes our code largely independent of the type of arrays that is used
+   as a basis for our vectors. (Not completely independent, though, because we
+   still rely on the ability to convert, without any code, from an internal
+   array to an external array.) *)
 
 (* We assume that the macros [VECTOR], [SYNONYM], and [ARRAY] are defined.
 
@@ -738,3 +740,10 @@ let (* public *) sub v ofs len =
      of the vector [v]. *)
   validate_array_segment length ofs len;
   unsafe_steal_array (A.sub data ofs len)
+
+let (* public *) fill v ofs len x =
+  GET_LENGTH_DATA(length, data, v);
+  (* Validate this array segment with respect to the logical length
+     of the vector [v]. *)
+  validate_array_segment length ofs len;
+  A.fill data ofs len x

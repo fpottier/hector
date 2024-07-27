@@ -217,3 +217,8 @@ let sub v ofs len =
   |> to_array
   |> (fun a -> Array.sub a ofs len)
   |> of_array
+
+let fill v ofs len x =
+  for i = ofs to ofs + len - 1 do
+    set v i x
+  done
