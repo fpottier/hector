@@ -107,12 +107,12 @@ let[@inline never] length_failure n =
 let[@inline never] index_failure v i =
   fail "index %d is out of range [0, %d)" i v.length
 
-let[@inline never] array_segment_base_failure xs ofs =
-  fail "segment base index %d is out of range [0, %d]" ofs (A.length xs)
+let[@inline never] array_segment_base_failure a ofs =
+  fail "segment base index %d is out of range [0, %d]" ofs (A.length a)
 
-let[@inline never] array_segment_end_failure xs ofs len =
+let[@inline never] array_segment_end_failure a ofs len =
   fail "segment end index %d+%d = %d is out of range [0, %d]"
-    ofs len (ofs+len) (A.length xs)
+    ofs len (ofs+len) (A.length a)
 
 (* [validate length data] checks [length <= A.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
@@ -433,30 +433,30 @@ let[@inline] (* public *) push v x =
 let (* public *) add_last =
   push
 
-let[@inline] (* private *) unsafe_push_array_segment v xs ofs len =
-  assert (0 <= ofs && 0 <= len && ofs + len <= A.length xs);
+let[@inline] (* private *) unsafe_push_array_segment v a ofs len =
+  assert (0 <= ofs && 0 <= len && ofs + len <= A.length a);
   let { length; data; _ } = v in
   let new_length = length + len in
   (* Ensure that sufficient space exists in the [data] array. *)
   (* If there is insufficient space, then it must be the case
-     that [len] is nonzero, so reading [xs.(0)] is safe. *)
-  let data = DATA(assert (0 < len); A.unsafe_get xs 0 (* safe *)) in
+     that [len] is nonzero, so reading [a.(0)] is safe. *)
+  let data = DATA(assert (0 < len); A.unsafe_get a 0 (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
-  A.blit_disjoint xs ofs data length len
+  A.blit_disjoint a ofs data length len
 
-let[@inline] (* public *) push_array v xs =
+let[@inline] (* public *) push_array v a =
   let ofs = 0
-  and len = A.length xs in
-  unsafe_push_array_segment v xs ofs len
+  and len = A.length a in
+  unsafe_push_array_segment v a ofs len
 
 let (* public *) append_array =
   push_array
 
 let[@inline] (* public *) push_vector v v' =
-  let { data = xs; length = len; _ } = v' in
-  let ofs = 0 in
-  unsafe_push_array_segment v xs ofs len
+  let { length; data; _ } = v' in
+  validate length data;
+  unsafe_push_array_segment v data 0 length
     (* This works even if [v] and [v'] are the same vector. In all cases, we
        are reading from a data array and writing to a data array (which may
        or may not be the same array), and the source and destination ranges
@@ -681,14 +681,14 @@ let (* public *) ensure_extra_capacity v delta =
   if defensive && delta < 0 then capacity_failure delta;
   ensure_extra_capacity v delta
 
-let[@inline] (* public *) push_array_segment v xs ofs len =
-  if defensive && not (0 <= ofs && ofs <= A.length xs) then
-    array_segment_base_failure xs ofs;
+let[@inline] (* public *) push_array_segment v a ofs len =
+  if defensive && not (0 <= ofs && ofs <= A.length a) then
+    array_segment_base_failure a ofs;
   if defensive && not (0 <= len) then
     length_failure len;
-  if defensive && not (0 <= ofs+len && ofs+len <= A.length xs) then
-    array_segment_end_failure xs ofs len;
-  unsafe_push_array_segment v xs ofs len
+  if defensive && not (0 <= ofs+len && ofs+len <= A.length a) then
+    array_segment_end_failure a ofs len;
+  unsafe_push_array_segment v a ofs len
 
 let (* public *) append_array_segment =
   push_array_segment
