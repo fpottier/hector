@@ -51,10 +51,6 @@ val init : length -> (index -> ELEMENT) -> VECTOR
    and initializes it with a copy of the data stored in the vector [v]. *)
 val copy : VECTOR -> VECTOR
 
-(**[to_array v] creates a new array of length [length v] and initializes it
-   with a copy of the data stored in the vector [v]. *)
-val to_array : VECTOR -> ELEMENT array
-
 (**[get v i] fetches the element that lies at index [i] in the vector [v].
    [i] must be comprised in the semi-open interval [\[0, length v)]. *)
 val get : VECTOR -> index -> ELEMENT
@@ -77,9 +73,9 @@ val set : VECTOR -> index -> ELEMENT -> unit
    memory safety can be compromised. Use at your own risk! *)
 val unsafe_set : VECTOR -> index -> ELEMENT -> unit
 
-(**[push v x] appends the element [x] at the end of the vector [v], that is,
-   at offset [length v]. Thus, the length of the vector is increased by one.
-   If necessary, the capacity of the vector is increased. *)
+(**[push v x] extends the vector [v] with the element [x]. The length of the
+   vector [v] is increased by one. If necessary, the capacity of the vector
+   [v] is increased. *)
 val push : VECTOR -> ELEMENT -> unit
 
 (**[add_last] is a synonym for [push]. *)
@@ -122,31 +118,44 @@ val top_opt : VECTOR -> ELEMENT option
 (**[find_last] is a synonym for [top_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)
 
-(**TODO*)
+(**[push_array v a] extends the vector [v] with the elements of the array [a].
+   The length of the vector [v] is increased by the length of the array [a].
+   If necessary, the capacity of the vector [v] is increased. *)
 val push_array : VECTOR -> ELEMENT array -> unit
 
 (**[append_array] is a synonym for [push_array]. *)
 val append_array : VECTOR -> ELEMENT array -> unit (* synonym *)
 
-(**TODO*)
+(**[push_array_segment v a ofs len] extends the vector [v] with the elements
+   of the array segment determined by array [a], offset [ofs], and length
+   [len]. The length of the vector [v] is increased by [len]. If necessary,
+   the capacity of the vector [v] is increased. [ofs] and [len] must describe
+   a valid segment of the array [a]. *)
 val push_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit
 
 (**[append_array_segment] is a synonym for [push_array_segment]. *)
 val append_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit (* synonym *)
 
-(**TODO*)
+(**[push_vector v v'] extends the vector [v] with the elements of the vector
+   [v']. The length of the vector [v] is increased by the length of the array
+   [v']. If necessary, the capacity of the vector [v] is increased. *)
 val push_vector : VECTOR -> VECTOR -> unit
 
 (**[append] is a synonym for [push_vector]. *)
 val append : VECTOR -> VECTOR -> unit (* synonym *)
 
-(**TODO*)
+(**[push_list v xs] extends the vector [v] with the elements of the list [xs].
+   The length of the vector [v] is increased by the length of the list [xs].
+   If necessary, the capacity of the vector [v] is increased. *)
 val push_list : VECTOR -> ELEMENT list -> unit
 
 (**[append_list] is a synonym for [push_list]. *)
 val append_list : VECTOR -> ELEMENT list -> unit (* synonym *)
 
-(**TODO*)
+(**[push_seq v xs] extends the vector [v] with the elements of the sequence
+   [xs]. The length of the vector [v] is increased by the length of the
+   sequence [xs]. If necessary, the capacity of the vector [v] is increased.
+   The sequence [xs] is demanded just once. *)
 val push_seq : VECTOR -> ELEMENT Seq.t -> unit
 
 (**[append_seq] is a synonym for [push_seq]. *)
@@ -167,44 +176,51 @@ val append_iter : (* synonym *)
   ((ELEMENT -> unit) -> 'c -> unit) ->
   'c -> unit
 
-(**TODO*)
+(**[concat vs] produces a new vector whose sequence of elements is
+   the concatenation of the sequences of elements of the vectors
+   in the list [vs]. *)
 val concat : VECTOR list -> VECTOR
 
-(**TODO*)
+(**[sub v ofs len] produces a new vector whose elements are the elements of
+   the vector segment determined by vector [v], offset [ofs], and length
+   [len].
+   [ofs] and [len] must describe a valid segment of the vector [v]. *)
 val sub : VECTOR -> index -> length -> VECTOR
 
-(**TODO*)
+(**[fill v ofs len x] writes the value [x] into every slot of the vector
+   segment determined by vector [v], offset [ofs], and length [len].
+   [ofs] and [len] must describe a valid segment of the vector [v]. *)
 val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
-   of the vector is unchanged. This is a constant-time operation. *)
+   of the vector [v] is unchanged. This is a constant-time operation. *)
 val truncate : VECTOR -> length -> unit
 
-(**[clear v] is equivalent to [truncate v 0]. The length of the vector becomes
-   zero; its capacity remains unchanged. *)
+(**[clear v] is equivalent to [truncate v 0]. The length of the vector [v]
+   becomes zero; its capacity remains unchanged. *)
 val clear : VECTOR -> unit
 
 (**[reset v] sets both the length and the capacity of the vector [v] to zero. *)
 val reset : VECTOR -> unit
 
-(**[ensure_capacity v c] ensures that the capacity of the vector [v]
-   is at least [c]. *)
+(**[ensure_capacity v c] ensures that the capacity of the vector [v] is at
+   least [c]. If necessary, the capacity of the vector [v] is increased. *)
 val ensure_capacity : VECTOR -> capacity -> unit
 
 (**[ensure_capacity v delta] ensures that the capacity of the vector [v] is at
-   least [length v + delta]. The increment [delta] must be nonnegative. *)
+   least [length v + delta]. If necessary, the capacity of the vector [v] is
+   increased. The increment [delta] must be nonnegative. *)
 val ensure_extra_capacity : VECTOR -> capacity -> unit
 
-(**[fit_capacity v] ensures that the capacity of the vector [v] matches
-   its length. If necessary, the capacity of the vector is decreased. *)
+(**[fit_capacity v] ensures that the capacity of the vector [v] matches its
+   length. If necessary, the capacity of the vector [v] is decreased. *)
 val fit_capacity : VECTOR -> unit
 
 (**[set_capacity v c] ensures that the capacity of the vector [v] is exactly
-   [c]. If [c] is less than [length v], then the vector is truncated: that is,
-   some elements are lost. Otherwise, the elements of the vector are
-   preserved, and the capacity of the vector is decreased or increased as
-   necessary. *)
+   [c]. If [c] is less than [length v], then the vector [v] is truncated: some
+   elements are lost. Otherwise, the elements of the vector [v] are preserved,
+   and its capacity is decreased or increased as necessary. *)
 val set_capacity : VECTOR -> capacity -> unit
 
 (**[iter f v] applies the function [f] in turn, from left to right, to each
@@ -246,30 +262,48 @@ val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
 (**TODO*)
 val compare : (ELEMENT -> ELEMENT -> int) -> VECTOR -> VECTOR -> int
 
-(**TODO*)
+(**[of_array a] returns a new vector whose elements are the elements of
+   the array [a]. The length and capacity of the new vector are the length
+   of the array [a]. *)
 val of_array : ELEMENT array -> VECTOR
 
-(**TODO*)
+(**[of_list xs] returns a new vector whose elements are the elements of
+   the list [xs]. The length and capacity of the new vector are the length
+   of the list [xs]. *)
 val of_list : ELEMENT list -> VECTOR
 
-(**TODO*)
-val to_list : VECTOR -> ELEMENT list
-
-(**TODO*)
+(**[of_seq xs] returns a new vector whose elements are the elements of the
+   sequence [xs]. The length and capacity of the new vector are the length
+   of the sequence [xs]. *)
 val of_seq : ELEMENT Seq.t -> VECTOR
 
-  (* [to_seq] and [to_seq_rev] produce sequences which are valid only as
-     long as the vector is not mutated. *)
+(**[to_array v] creates a new array whose elements are the elements of the
+   vector [v]. The length of the new array is the length of the vector [v]. *)
+val to_array : VECTOR -> ELEMENT array
 
-(**TODO*)
+(**[to_list v] creates a new list whose elements are the elements of the
+   vector [v]. The length of the new list is the length of the vector [v]. *)
+val to_list : VECTOR -> ELEMENT list
+
+(**[to_seq v] creates a sequence whose elements are the elements of the
+   vector [v]. The length of this sequence is the length of the vector
+   [v]. This sequence can be demanded as many times as one wishes.
+   However, this sequence is valid only as long as the vector [v] is not
+   modified. As soon as [v] is modified, this sequence must no longer be
+   used. *)
 val to_seq : VECTOR -> ELEMENT Seq.t
 
-(**TODO*)
+(**[to_seq_rev v] creates a sequence whose elements are the elements of
+   the vector [v], in reverse order. The length of this sequence is the
+   length of the vector [v]. This sequence can be demanded as many times
+   as one wishes. However, this sequence is valid only as long as the
+   vector [v] is not modified. As soon as [v] is modified, this sequence
+   must no longer be used. *)
 val to_seq_rev : VECTOR -> ELEMENT Seq.t
 
 (**[find f v] finds the leftmost element [x] of the vector [v] such that
    [f x] is true, and returns its index. If no such element exists, then
-   [Not_found] is raised. *)
+   [find f v] raises [Not_found]. *)
 val find : (ELEMENT -> bool) -> VECTOR -> int
 
 (**[show f v] returns a textual representation of the contents of the
