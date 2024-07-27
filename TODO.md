@@ -64,10 +64,8 @@
   Or both?
 
 * Add new operations taken from the `Array` API:
-  `concat`,
-  `sub`,
   `fill`,
-  `blit`,
+  `blit`, -- use `memmove` for integer arrays!
   `map_inplace`,
   `mapi_inplace`,
   `fold_left_map`,
