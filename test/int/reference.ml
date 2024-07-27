@@ -211,3 +211,9 @@ let rec index f xs i =
 
 let find f v =
   index f !v 0
+
+let sub v ofs len =
+  v
+  |> to_array
+  |> (fun a -> Array.sub a ofs len)
+  |> of_array

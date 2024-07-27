@@ -56,10 +56,18 @@ let drop = remove_last
 
 (* The following operations do not exist in [Dynarray]. *)
 
+(* We provide vanilla implementations. *)
+
 let concat vs =
   vs
   |> List.map to_array
   |> Array.concat
+  |> of_array
+
+let sub v ofs len =
+  v
+  |> to_array
+  |> (fun a -> Array.sub a ofs len)
   |> of_array
 
 (* -------------------------------------------------------------------------- *)

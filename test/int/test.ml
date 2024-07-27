@@ -188,6 +188,15 @@ let () =
   in
   declare "push_array_segment" spec R.push_array_segment C.push_array_segment;
 
+  let spec =
+    vector ^>> fun v ->
+    let n = R.length v in
+    closed_interval 0 n ^>> fun ofs ->
+    closed_interval 0 (n - ofs) ^>
+    vector
+  in
+  declare "sub" spec R.sub C.sub;
+
   let spec = vector ^> vector ^> unit in
   declare "push_vector" spec R.push_vector C.push_vector;
 

@@ -169,6 +169,9 @@ val append_iter : (* synonym *)
 (**TODO*)
 val concat : VECTOR list -> VECTOR
 
+(**TODO*)
+val sub : VECTOR -> index -> length -> VECTOR
+
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
    of the vector is unchanged. This is a constant-time operation. *)

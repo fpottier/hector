@@ -757,3 +757,9 @@ let (* public *) concat vs =
   List.iter (push_vector v) vs;
   assert (length v = n);
   v
+
+let (* public *) sub v ofs len =
+  let { length; data; _ } = v in
+  validate length data;
+  validate_array_segment length ofs len;
+  unsafe_steal_array (A.sub data ofs len)
