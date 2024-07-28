@@ -120,8 +120,9 @@ val unsafe_set : VECTOR -> index -> ELEMENT -> unit
    least [length v], and can be greater than [length v]. Beyond this
    guarantee, the length of this data array is unspecified; it is not
    necessarily the capacity of the vector. {b As long as the vector [v] is
-   not modified,} the segment of the data array delimited by the semi-open
-   interval [\[0, length v)] can be safely read and written. *)
+   not modified by other means,} the segment of the data array delimited by
+   the semi-open interval [\[0, length v)] can be safely read and
+   written. *)
 val unsafe_borrow : VECTOR -> ELEMENT array
 
 (* -------------------------------------------------------------------------- *)
