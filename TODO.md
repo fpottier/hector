@@ -62,14 +62,8 @@
 
 * Add `of_array_segment`.
 
-* Isolate a module `ArraySegment` containing all of the operations
-  on array segments that we need.
-
-  Should this module be placed *inside* `Vector.frag.ml` so
-  that it depends only on `A` and is specialized for integers?
-  Or *outside* it, so as to avoid code size explosion,
-  and so as to make it public?
-  Or both?
+* Look at the `List` API and
+  check which operations should be supported by our vectors.
 
 * Add new operations taken from the `Array` API:
   `blit`, -- use `memmove` for integer arrays!
