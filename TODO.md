@@ -2,10 +2,6 @@
 
 ## Soon
 
-* Make sure every interface file is commented. Review the documentation.
-  Document the fact that a vector must not be modified while iteration is
-  ongoing.
-
 * Reconsider the use of `LOOP5` in every loop.
   Some loops could use just `LOOP`; some loops could use `LOOPRW5`.
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
@@ -19,22 +15,6 @@
 
 * Publish `IntArray` as `Arrays.Int`.
   Document and publish `ArraySegment`.
-
-* In the documentation, describe Hector's compatibility with `Dynarray`.
-  Hector does not guarantee the absence of memory leaks.
-  On the upside, Hector is faster, simpler,
-  and offers several low-level operations (`unsafe_get`, `unsafe_set`, `unsafe_borrow`)
-  that allow fast access.
-  Hector does not detect iterator invalidation.
-  Our `append` allows `append v v`.
-  Our `get_last` can be applied to an empty vector.
-  Our `compare` has the semantics of `List.compare`,
-  not `Dynarray.compare`.
-  `to_seq_reentrant` and `to_seq_rev_reentrant`
-  are intentionally not supported.
-  `capacity` is intentionally not supported.
-  Features not supported by `Dynarray`:
-  `find`, `unsafe_get`, `unsafe_set`, `unsafe_borrow`, the Stack API.
 
 * Add a benchmark that mixes `push` and `pop`.
   Include `Stack` in the benchmark.
