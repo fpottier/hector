@@ -38,7 +38,7 @@ type index = int
 
 (* -------------------------------------------------------------------------- *)
 
-(** {1:creation Creation} *)
+(** {1:creating Creating} *)
 
 (**[create()] creates a new vector of length 0 and capacity 0. *)
 val create : unit -> VECTOR
@@ -116,7 +116,7 @@ val unsafe_borrow : VECTOR -> ELEMENT array
 
 (* -------------------------------------------------------------------------- *)
 
-(** {1:push Pushing} *)
+(** {1:pushing Pushing} *)
 
 (**[push v x] extends the vector [v] with the element [x]. The length of the
    vector [v] is increased by one. If necessary, the capacity of the vector
@@ -186,7 +186,7 @@ val append_iter : (* synonym *)
 
 (* -------------------------------------------------------------------------- *)
 
-(** {1:pop Popping} *)
+(** {1:popping Popping} *)
 
 (**If the vector [v] is nonempty, [pop v] removes and returns its last
    element. The length of the vector is decreased by one; its capacity is
@@ -205,11 +205,16 @@ val pop_opt : VECTOR -> ELEMENT option
 val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
 
 (**If the vector [v] is nonempty, [drop v] removes its last element.
-   If the vector [v] is empty, [drop v] has no effect. *)
+   If the vector [v] is empty, [drop v] has no effect.
+   [drop v] is equivalent to [if is_empty v then () else ignore (pop v)]. *)
 val drop : VECTOR -> unit
 
 (**[remove_last] is a synonym for [drop]. *)
 val remove_last : VECTOR -> unit (* synonym *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* TODO *)
 
 (**[concat vs] produces a new vector whose sequence of elements is
    the concatenation of the sequences of elements of the vectors
@@ -227,25 +232,29 @@ val sub : VECTOR -> index -> length -> VECTOR
    [ofs] and [len] must describe a valid segment of the vector [v]. *)
 val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
+(* -------------------------------------------------------------------------- *)
+
+(** {1:managing Length and capacity} *)
+
 (**If [n] is less than [length v], then [truncate v n] sets the length of the
    vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
    of the vector [v] is unchanged. This is a constant-time operation. *)
 val truncate : VECTOR -> length -> unit
 
 (**[clear v] is equivalent to [truncate v 0]. The length of the vector [v]
-   becomes zero; its capacity remains unchanged. *)
+   becomes zero. Its capacity is unchanged. *)
 val clear : VECTOR -> unit
 
-(**[reset v] sets both the length and the capacity of the vector [v] to zero. *)
+(**[reset v] sets the length and the capacity of the vector [v] to zero. *)
 val reset : VECTOR -> unit
 
 (**[ensure_capacity v c] ensures that the capacity of the vector [v] is at
    least [c]. If necessary, the capacity of the vector [v] is increased. *)
 val ensure_capacity : VECTOR -> capacity -> unit
 
-(**[ensure_capacity v delta] ensures that the capacity of the vector [v] is at
-   least [length v + delta]. If necessary, the capacity of the vector [v] is
-   increased. The increment [delta] must be nonnegative. *)
+(**[ensure_extra_capacity v delta] ensures that the capacity of the vector
+   [v] is at least [length v + delta]. If necessary, the capacity of the
+   vector [v] is increased. The increment [delta] must be nonnegative. *)
 val ensure_extra_capacity : VECTOR -> capacity -> unit
 
 (**[fit_capacity v] ensures that the capacity of the vector [v] matches its
@@ -253,10 +262,14 @@ val ensure_extra_capacity : VECTOR -> capacity -> unit
 val fit_capacity : VECTOR -> unit
 
 (**[set_capacity v c] ensures that the capacity of the vector [v] is exactly
-   [c]. If [c] is less than [length v], then the vector [v] is truncated: some
-   elements are lost. Otherwise, the elements of the vector [v] are preserved,
-   and its capacity is decreased or increased as necessary. *)
+   [c]. If [c] is less than [length v], then the vector [v] is truncated:
+   some elements are lost. Otherwise, the elements of the vector [v] are
+   preserved, and its capacity is decreased or increased as necessary. *)
 val set_capacity : VECTOR -> capacity -> unit
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:iterating Iterating} *)
 
 (**[iter f v] applies the function [f] in turn, from left to right, to each
    element [x] of the vector [v]. *)
@@ -282,6 +295,10 @@ val fold_left : ('s -> ELEMENT -> 's) -> 's -> VECTOR -> 's
    returned. *)
 val fold_right : (ELEMENT -> 's -> 's) -> VECTOR -> 's -> 's
 
+(* -------------------------------------------------------------------------- *)
+
+(** {1:transforming Transforming} *)
+
 (**[map f v] applies the function [f] in turn, from left to right, to each
    element [x] of the vector [v], and constructs a new vector of the results
    of these calls. *)
@@ -292,14 +309,6 @@ val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
    new vector of the results of these calls. *)
 val mapi : (index -> ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
 
-(**[exists f v] determines whether at least one element [x] of the vector [v]
-   satisfies the predicate [f]. The vector is scanned from left to right. *)
-val exists : (ELEMENT -> bool) -> VECTOR -> bool
-
-(**[for_all f v] determines whether all elements [x] of the vector [v] satisfy
-   the predicate [f]. The vector is scanned from left to right. *)
-val for_all : (ELEMENT -> bool) -> VECTOR -> bool
-
 (**[filter f v] applies the function [f] in turn, from left to right, to each
    element [x] of the vector [v], and constructs a new vector containing just
    the elements [x] such that [f x] returned [true]. *)
@@ -309,6 +318,27 @@ val filter : (ELEMENT -> bool) -> VECTOR -> VECTOR
    each element [x] of the vector [v], and constructs a new vector containing
    just the values [y] such that [f x] returned [Some y]. *)
 val filter_map : (ELEMENT -> ELEMENT' option) -> VECTOR -> VECTOR'
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:searching Searching} *)
+
+(**[exists f v] determines whether at least one element [x] of the vector [v]
+   satisfies the predicate [f]. The vector is scanned from left to right. *)
+val exists : (ELEMENT -> bool) -> VECTOR -> bool
+
+(**[for_all f v] determines whether all elements [x] of the vector [v] satisfy
+   the predicate [f]. The vector is scanned from left to right. *)
+val for_all : (ELEMENT -> bool) -> VECTOR -> bool
+
+(**[find f v] finds the leftmost element [x] of the vector [v] such that
+   [f x] is true, and returns its index. If no such element exists, then
+   [find f v] raises [Not_found]. *)
+val find : (ELEMENT -> bool) -> VECTOR -> int
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:comparing Comparing} *)
 
 (**Provided [eq] is an equality on elements, [equal eq] is the pointwise
    equality of vectors. In other words, [equal eq v v'] determines whether
@@ -327,6 +357,10 @@ val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
    [Dynarray.compare] implements a preorder on vectors
    that is not is the lexicographic preorder. *)
 val compare : (ELEMENT -> ELEMENT -> int) -> VECTOR -> VECTOR -> int
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:converting Converting} *)
 
 (**[of_array a] returns a new vector whose elements are the elements of
    the array [a]. The length and capacity of the new vector are the length
@@ -367,10 +401,9 @@ val to_seq : VECTOR -> ELEMENT Seq.t
    must no longer be used. *)
 val to_seq_rev : VECTOR -> ELEMENT Seq.t
 
-(**[find f v] finds the leftmost element [x] of the vector [v] such that
-   [f x] is true, and returns its index. If no such element exists, then
-   [find f v] raises [Not_found]. *)
-val find : (ELEMENT -> bool) -> VECTOR -> int
+(* -------------------------------------------------------------------------- *)
+
+(** {1:showing Showing} *)
 
 (**[show f v] returns a textual representation of the contents of the
    vector [v]. The user-supplied function [f] is used to obtain a
@@ -382,8 +415,14 @@ val show : (ELEMENT -> string) -> VECTOR -> string
 val check : VECTOR -> unit
 (**/**)
 
+(* -------------------------------------------------------------------------- *)
+
+(* The Stack API. *)
+
+(**This module offers the same API as the standard library module
+   [Stdlib.Stack], but is implemented using vectors. *)
 module Stack : sig
-  type SYNONYM
+  type SYNONYM = VECTOR
   exception Empty
   val create : unit -> SYNONYM
   val push : ELEMENT -> SYNONYM -> unit
