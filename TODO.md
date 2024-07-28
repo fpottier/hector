@@ -11,6 +11,12 @@
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
+* Benchmark `map`.
+  Examine the generated assembly code for `map` and `mapi`.
+  Do we pay two function calls per loop iteration?
+    (one call to `f` plus one call to `fun i -> ...`)
+  If so, consider exporting `A.init` as a macro.
+
 * Publish `IntArray` as `Arrays.Int`.
   Document and publish `ArraySegment`.
 
@@ -87,7 +93,7 @@
   `shuffle`,
   `to_seqi`.
 
-* Publish `iter_down`.
+* Define `iteri_down`, `foldi_left`, `foldi_right`.
 
 * Add an in-place `reverse` function,
   as well as `rev` (an instance of `mapi`).
