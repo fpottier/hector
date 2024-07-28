@@ -227,6 +227,10 @@ val remove_last : VECTOR -> unit (* synonym *)
 
 (** {1:iterating Iterating} *)
 
+(**While iteration is ongoing, the vector must not be modified. For example,
+   in [iter f v], the function [f] is not allowed to modify the vector [v].
+   This rule applies to all iteration functions. *)
+
 (**[iter f v] applies the function [f] in turn, from left to right, to each
    element [x] of the vector [v]. *)
 val iter : (ELEMENT -> unit) -> VECTOR -> unit
@@ -255,6 +259,10 @@ val fold_right : (ELEMENT -> 's -> 's) -> VECTOR -> 's -> 's
 
 (** {1:transforming Transforming} *)
 
+(**While transformation is ongoing, the vector must not be modified. For
+   example, in [map f v], the function [f] is not allowed to modify the
+   vector [v]. This rule applies to all transformation functions. *)
+
 (**[map f v] applies the function [f] in turn, from left to right, to each
    element [x] of the vector [v], and constructs a new vector of the results
    of these calls. *)
@@ -279,6 +287,10 @@ val filter_map : (ELEMENT -> ELEMENT' option) -> VECTOR -> VECTOR'
 
 (** {1:searching Searching} *)
 
+(**While searching is in progress, the vector must not be modified. For
+   example, in [exists f v], the function [f] is not allowed to modify the
+   vector [v]. This rule applies to all search functions. *)
+
 (**[exists f v] determines whether at least one element [x] of the vector [v]
    satisfies the predicate [f]. The vector is scanned from left to right. *)
 val exists : (ELEMENT -> bool) -> VECTOR -> bool
@@ -295,6 +307,10 @@ val find : (ELEMENT -> bool) -> VECTOR -> int
 (* -------------------------------------------------------------------------- *)
 
 (** {1:comparing Comparing} *)
+
+(**While comparison is in progress, the vector must not be modified. For
+   example, in [equal eq v v'], the function [eq] is not allowed to modify
+   the vector [v]. This rule applies to all comparison functions. *)
 
 (**Provided [eq] is an equality on elements, [equal eq] is the pointwise
    equality of vectors. In other words, [equal eq v v'] determines whether
@@ -362,8 +378,8 @@ val to_seq_rev : VECTOR -> ELEMENT Seq.t
 (** {1:showing Showing} *)
 
 (**[show f v] returns a textual representation of the contents of the
-   vector [v]. The user-supplied function [f] is used to obtain a
-   textual representation of each element. *)
+   vector [v]. The user-supplied function [f] is used to obtain a textual
+   representation of each element. *)
 val show : (ELEMENT -> string) -> VECTOR -> string
 
 (**/**)
