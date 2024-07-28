@@ -10,29 +10,35 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**A vector is a mutable data structure, which stores a sequence of values. *)
+(**This module offers an implementation of vectors. A vector is a mutable
+   data structure, which stores a sequence of values. *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Types. *)
+
+(**The type of a vector. *)
 type VECTOR
 
+(**A synonym for the type of a vector. *)
 type SYNONYM = VECTOR
 
+(**An integer value of type [length] represents the length of a sequence.
+   For example, it can be the length of an array, the length of a vector,
+   or the length of a segment of an array of vector. A length is nonnegative. *)
 type length = int
+
+(**An integer value of type [capacity] represents the capacity of a vector.
+   A capacity is nonnegative. *)
 type capacity = int
+
+(**An integer value of type [index] represents an index into a sequence of
+   elements.*)
 type index = int
 
-(**[length v] is the (logical) length of the vector [v]. *)
-val length : VECTOR -> length
+(* -------------------------------------------------------------------------- *)
 
-(**[s_empty v] is equivalent to [length v = 0]. *)
-val is_empty : VECTOR -> bool
-
-(**[unsafe_borrow v] returns the data array that is part of the internal
-   representation of the vector [v]. The length of this data array is at
-   least [length v], and can be greater than [length v]. Beyond this
-   guarantee, the length of this data array is unspecified; it is not
-   necessarily the capacity of the vector. As long as the vector [v] is not
-   modified, the segment of the data array delimited by the semi-open
-   interval [\[0, length v)] can be safely read and written. *)
-val unsafe_borrow : VECTOR -> ELEMENT array
+(** {1:creation Creation} *)
 
 (**[create()] creates a new vector of length 0 and capacity 0. *)
 val create : unit -> VECTOR
@@ -51,58 +57,24 @@ val init : length -> (index -> ELEMENT) -> VECTOR
    and initializes it with a copy of the data stored in the vector [v]. *)
 val copy : VECTOR -> VECTOR
 
+(* -------------------------------------------------------------------------- *)
+
+(** {1:access Reading and writing} *)
+
+(**[length v] is the (logical) length of the vector [v]. *)
+val length : VECTOR -> length
+
+(**[s_empty v] is equivalent to [length v = 0]. *)
+val is_empty : VECTOR -> bool
+
 (**[get v i] fetches the element that lies at index [i] in the vector [v].
    [i] must be comprised in the semi-open interval [\[0, length v)]. *)
 val get : VECTOR -> index -> ELEMENT
-
-(**[unsafe_get v i] fetches the element that lies at index [i] in the vector
-   [v]. [i] must be comprised in the semi-open interval [\[0, length v)]. {b
-   No bounds check is performed.} If the index [i] is out of bounds, memory
-   safety can be compromised. Use at your own risk! *)
-val unsafe_get : VECTOR -> index -> ELEMENT
 
 (**[set v i x] overwrites the element that lies at index [i] in the vector
    [v] with the value [x]. [i] must be comprised in the semi-open interval
    [\[0, length v)]. *)
 val set : VECTOR -> index -> ELEMENT -> unit
-
-(**[unsafe_set v i x] overwrites the element that lies at index [i]
-   in the vector [v] with the value [x].
-   [i] must be comprised in the semi-open interval [\[0, length v)].
-   {b No bounds check is performed.} If the index [i] is out of bounds,
-   memory safety can be compromised. Use at your own risk! *)
-val unsafe_set : VECTOR -> index -> ELEMENT -> unit
-
-(**[push v x] extends the vector [v] with the element [x]. The length of the
-   vector [v] is increased by one. If necessary, the capacity of the vector
-   [v] is increased. *)
-val push : VECTOR -> ELEMENT -> unit
-
-(**[add_last] is a synonym for [push]. *)
-val add_last : VECTOR -> ELEMENT -> unit (* synonym *)
-
-(**If the vector [v] is nonempty, [pop v] removes and returns its last
-   element. The length of the vector is decreased by one; its capacity is
-   unchanged. If the vector [v] is empty, [pop v] raises [Not_found]. *)
-val pop : VECTOR -> ELEMENT
-
-(**[pop_last] is a synonym for [pop]. *)
-val pop_last : VECTOR -> ELEMENT (* synonym *)
-
-(**If the vector [v] is nonempty, [pop_opt v] removes and returns its last
-   element. The length of the vector is decreased by one; its capacity is
-   unchanged. If the vector [v] is empty, [pop_opt v] returns [None]. *)
-val pop_opt : VECTOR -> ELEMENT option
-
-(**[pop_last_opt] is a synonym for [pop_opt]. *)
-val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
-
-(**If the vector [v] is nonempty, [drop v] removes its last element.
-   If the vector [v] is empty, [drop v] has no effect. *)
-val drop : VECTOR -> unit
-
-(**[remove_last] is a synonym for [drop]. *)
-val remove_last : VECTOR -> unit (* synonym *)
 
 (**If the vector [v] is nonempty, [top v] returns its last element.
    If the vector [v] is empty, [top v] raises [Not_found]. *)
@@ -117,6 +89,42 @@ val top_opt : VECTOR -> ELEMENT option
 
 (**[find_last] is a synonym for [top_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)
+
+(** {2:access_unsafe Unsafe access} *)
+
+(**[unsafe_get v i] fetches the element that lies at index [i] in the vector
+   [v]. [i] must be comprised in the semi-open interval [\[0, length v)]. {b
+   No bounds check is performed.} If the index [i] is out of bounds, memory
+   safety can be compromised. Use at your own risk! *)
+val unsafe_get : VECTOR -> index -> ELEMENT
+
+(**[unsafe_set v i x] overwrites the element that lies at index [i]
+   in the vector [v] with the value [x].
+   [i] must be comprised in the semi-open interval [\[0, length v)].
+   {b No bounds check is performed.} If the index [i] is out of bounds,
+   memory safety can be compromised. Use at your own risk! *)
+val unsafe_set : VECTOR -> index -> ELEMENT -> unit
+
+(**[unsafe_borrow v] returns the data array that is part of the internal
+   representation of the vector [v]. The length of this data array is at
+   least [length v], and can be greater than [length v]. Beyond this
+   guarantee, the length of this data array is unspecified; it is not
+   necessarily the capacity of the vector. {b As long as the vector [v] is
+   not modified,} the segment of the data array delimited by the semi-open
+   interval [\[0, length v)] can be safely read and written. *)
+val unsafe_borrow : VECTOR -> ELEMENT array
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:push Pushing} *)
+
+(**[push v x] extends the vector [v] with the element [x]. The length of the
+   vector [v] is increased by one. If necessary, the capacity of the vector
+   [v] is increased. *)
+val push : VECTOR -> ELEMENT -> unit
+
+(**[add_last] is a synonym for [push]. *)
+val add_last : VECTOR -> ELEMENT -> unit (* synonym *)
 
 (**[push_array v a] extends the vector [v] with the elements of the array [a].
    The length of the vector [v] is increased by the length of the array [a].
@@ -175,6 +183,33 @@ val append_iter : (* synonym *)
   VECTOR ->
   ((ELEMENT -> unit) -> 'c -> unit) ->
   'c -> unit
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:pop Popping} *)
+
+(**If the vector [v] is nonempty, [pop v] removes and returns its last
+   element. The length of the vector is decreased by one; its capacity is
+   unchanged. If the vector [v] is empty, [pop v] raises [Not_found]. *)
+val pop : VECTOR -> ELEMENT
+
+(**[pop_last] is a synonym for [pop]. *)
+val pop_last : VECTOR -> ELEMENT (* synonym *)
+
+(**If the vector [v] is nonempty, [pop_opt v] removes and returns its last
+   element. The length of the vector is decreased by one; its capacity is
+   unchanged. If the vector [v] is empty, [pop_opt v] returns [None]. *)
+val pop_opt : VECTOR -> ELEMENT option
+
+(**[pop_last_opt] is a synonym for [pop_opt]. *)
+val pop_last_opt : VECTOR -> ELEMENT option (* synonym *)
+
+(**If the vector [v] is nonempty, [drop v] removes its last element.
+   If the vector [v] is empty, [drop v] has no effect. *)
+val drop : VECTOR -> unit
+
+(**[remove_last] is a synonym for [drop]. *)
+val remove_last : VECTOR -> unit (* synonym *)
 
 (**[concat vs] produces a new vector whose sequence of elements is
    the concatenation of the sequences of elements of the vectors
