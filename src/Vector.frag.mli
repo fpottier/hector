@@ -57,6 +57,17 @@ val init : length -> (index -> ELEMENT) -> VECTOR
    and initializes it with a copy of the data stored in the vector [v]. *)
 val copy : VECTOR -> VECTOR
 
+(**[sub v ofs len] produces a new vector whose elements are the elements of
+   the vector segment determined by vector [v], offset [ofs], and length
+   [len].
+   [ofs] and [len] must describe a valid segment of the vector [v]. *)
+val sub : VECTOR -> index -> length -> VECTOR
+
+(**[concat vs] produces a new vector whose sequence of elements is
+   the concatenation of the sequences of elements of the vectors
+   in the list [vs]. *)
+val concat : VECTOR list -> VECTOR
+
 (* -------------------------------------------------------------------------- *)
 
 (** {1:access Reading and writing} *)
@@ -89,6 +100,11 @@ val top_opt : VECTOR -> ELEMENT option
 
 (**[find_last] is a synonym for [top_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)
+
+(**[fill v ofs len x] writes the value [x] into every slot of the vector
+   segment determined by vector [v], offset [ofs], and length [len].
+   [ofs] and [len] must describe a valid segment of the vector [v]. *)
+val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
 (** {2:access_unsafe Unsafe access} *)
 
@@ -211,26 +227,6 @@ val drop : VECTOR -> unit
 
 (**[remove_last] is a synonym for [drop]. *)
 val remove_last : VECTOR -> unit (* synonym *)
-
-(* -------------------------------------------------------------------------- *)
-
-(* TODO *)
-
-(**[concat vs] produces a new vector whose sequence of elements is
-   the concatenation of the sequences of elements of the vectors
-   in the list [vs]. *)
-val concat : VECTOR list -> VECTOR
-
-(**[sub v ofs len] produces a new vector whose elements are the elements of
-   the vector segment determined by vector [v], offset [ofs], and length
-   [len].
-   [ofs] and [len] must describe a valid segment of the vector [v]. *)
-val sub : VECTOR -> index -> length -> VECTOR
-
-(**[fill v ofs len x] writes the value [x] into every slot of the vector
-   segment determined by vector [v], offset [ofs], and length [len].
-   [ofs] and [len] must describe a valid segment of the vector [v]. *)
-val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
 (* -------------------------------------------------------------------------- *)
 
@@ -417,7 +413,7 @@ val check : VECTOR -> unit
 
 (* -------------------------------------------------------------------------- *)
 
-(* The Stack API. *)
+(** {1:stack The Stack API} *)
 
 (**This module offers the same API as the standard library module
    [Stdlib.Stack], but is implemented using vectors. *)
