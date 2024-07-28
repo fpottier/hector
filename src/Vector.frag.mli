@@ -257,23 +257,40 @@ val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
    new vector of the results of these calls. *)
 val mapi : (index -> ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
 
-(**TODO*)
+(**[exists f v] determines whether at least one element [x] of the vector [v]
+   satisfies the predicate [f]. The vector is scanned from left to right. *)
 val exists : (ELEMENT -> bool) -> VECTOR -> bool
 
-(**TODO*)
+(**[for_all f v] determines whether all elements [x] of the vector [v] satisfy
+   the predicate [f]. The vector is scanned from left to right. *)
 val for_all : (ELEMENT -> bool) -> VECTOR -> bool
 
-(**TODO*)
+(**[filter f v] applies the function [f] in turn, from left to right, to each
+   element [x] of the vector [v], and constructs a new vector containing just
+   the elements [x] such that [f x] returned [true]. *)
 val filter : (ELEMENT -> bool) -> VECTOR -> VECTOR
 
-(**TODO*)
+(**[filter_map f v] applies the function [f] in turn, from left to right, to
+   each element [x] of the vector [v], and constructs a new vector containing
+   just the values [y] such that [f x] returned [Some y]. *)
 val filter_map : (ELEMENT -> ELEMENT' option) -> VECTOR -> VECTOR'
 
-(** [equal (=) a b] holds when [a] and [b] have the same length,
-    and for every index [i], the equality [get a i = get b i] holds. *)
+(**Provided [eq] is an equality on elements, [equal eq] is the pointwise
+   equality of vectors. In other words, [equal eq v v'] determines whether
+   the sequences of elements of the vectors [v] and [v'] are pointwise
+   equal, using the function [eq] to test whether two elements are equal. *)
 val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
 
-(**TODO*)
+(**Provided [cmp] is a preorder on elements, [compare cmp] is the
+   lexicographic preorder on vectors. In other words, [compare cmp v v']
+   compares the sequences of elements of the vectors [v] and [v'], according
+   to the lexicographic preorder, and using the function [cmp] to compare
+   two elements.
+
+   {b Caution:} [compare] behaves like [List.compare],
+   not like [Dynarray.compare].
+   [Dynarray.compare] implements a preorder on vectors
+   that is not is the lexicographic preorder. *)
 val compare : (ELEMENT -> ELEMENT -> int) -> VECTOR -> VECTOR -> int
 
 (**[of_array a] returns a new vector whose elements are the elements of
