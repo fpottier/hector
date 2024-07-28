@@ -1,7 +1,14 @@
 {0 Hector}
 
-[hector] is an OCaml library that offers vectors (also known as dynamic
-arrays, or resizeable arrays).
+[hector] is an OCaml library that offers {b vectors} (also known as
+dynamic arrays, or resizeable arrays).
+
+{1 Installation and Usage}
+
+Type [opam install hector].
+
+In your [dune] file, add [(libraries hector)] to the description of
+your [library] or [executable].
 
 {1 What is a Vector?}
 
@@ -20,64 +27,141 @@ is the length of the data array
 where the vector's elements are stored.
 As an exception to the previous sentence,
 if a vector has logical length 0
-then its data array can be empty
+then its data array can be empty,
 even if its capacity is nonzero.
+
+{1 Three Flavors of Vectors}
+
+Three main implementations of vectors are offered:
+
++ The module {!Hector.Poly} offers {b polymorphic vectors}:
+  if elements have type ['a]
+  then a vector has type ['a vector].
+  The signature of this module is {!Hector.POLYVECTOR}.
++ The functor {!Hector.Mono.Make} offers {b monomorphic vectors}:
+  the type of elements is fixed when this functor is applied to a module [E],
+  and a vector has type [vector].
+  The module produced by this functor has signature {!Hector.MONOVECTOR} [with type element = E.t].
++ The module {!Hector.Int} offers {b integer vectors}:
+  the type of elements is [int]
+  and a vector has type [vector].
+  The signature of this module is {!Hector.MONOVECTOR} [with type element = int].
+  This module can be significantly faster
+  than the equivalent module [Hector.Mono.Make(Int)].
+
+For power users,
+
++ The functor {!Hector.Mono.OutOfArray} offers monomorphic vectors.
+  The user provides not only the type of elements,
+  but also a set of basic operations on arrays of elements.
+
+{1:caution Words of Caution}
 
 [hector]'s vectors are {b not thread-safe} and {b do not include a protection
 against data races}: concurrent accesses to a vector, where at least one
 thread attempts to modify the vector, are forbidden and {b can compromise
 memory safety} (that is, they can cause a hard crash or silent memory
 corruption). Concurrent read accesses are safe.
+OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+also offers non-thread-safe vectors,
+and guarantees that data races cannot compromise memory safety,
+whereas [hector] does not.
 
 [hector]'s vectors do {b not include a protection against memory leaks}. If a
 vector's capacity is greater than its length, then the logically empty slots
-in its data array can contain stale values, which in the eyes of the garbage
-collector remain reachable. This problem can be avoided by explicitly calling
+in its data array contain stale values, which in the eyes of the garbage
+collector are reachable. This problem can be avoided by explicitly calling
 [reset] or [fit_capacity].
+In contrast,
+OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+does guarantee the absence of memory leaks.
+
+[hector]'s higher-order operations {b do not detect an attempt to modify a
+vector while an operation is in progress}. For example, in [iter f v], the
+function [f] must not modify the vector [v], but a violation of this rule
+is not detected by [hector].
+In contrast,
+OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+detects some (albeit not all) violations of this rule at runtime.
+
+{1 Comparison with OCaml's Dynamic Arrays}
 
 [hector]'s vectors are similar to those offered by OCaml's
-{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library,
-and are faster.
-[hector]'s polymorphic vectors and monomorphic vectors
-can be {b up to 2x faster}
-than OCaml's dynamic arrays.
-[hector]'s integer vectors
-can be {b up to 5x faster}
-than OCaml's dynamic arrays.
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library.
 
-Furthermore,
-[hector] offers fast (but dangerous) unchecked random access operations,
+Compared with [hector],
+OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+offers stronger guarantees:
+see {!section:caution} above.
+
+[hector]'s polymorphic vectors and monomorphic vectors
+are {b generally slightly faster}
+than OCaml's dynamic arrays,
+and on some operations,
+can be {b up to 2x faster}.
+[hector]'s integer vectors
+are {b generally significantly faster}
+than OCaml's dynamic arrays,
+and on some operations,
+can be {b up to 5x faster}.
+
+[hector] offers fast (but dangerous) {b unchecked random access operations},
 [unsafe_get] and [unsafe_set],
 which OCaml's
 {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
 does not have.
 
-{1 Three Flavors of Vectors}
+Via [unsafe_borrow],
+[hector] offers direct access to the data array,
+allowing {b direct read and write operations};
+OCaml's
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
+does not (and cannot) offer this feature.
 
-Three main implementations of vectors are offered:
+A few operations have different behavior in
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}
+and in [hector]:
++ [hector]'s [compare] behaves like [List.compare],
+   not like [Dynarray.compare].
+   [Dynarray.compare] implements a preorder on vectors
+   that is not is the lexicographic preorder.
++ [hector] allows [append v v],
+  which
+  {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}
+  forbids.
++ [hector] allows applying [get_last] to an empty vector,
+  which
+  {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}
+  forbids.
 
-+ The module {!Hector.Poly} offers polymorphic vectors:
-  if elements have type ['a]
-  then a vector has type ['a vector].
-  The signature of this module is {!Hector.POLYVECTOR}.
-+ The functor {!Hector.Mono.Make} offers monomorphic vectors:
-  the type of elements is fixed when this functor is applied to a module [E],
-  and a vector has type [vector].
-  The module produced by this functor has signature {!Hector.MONOVECTOR} [with type element = E.t].
-+ The module {!Hector.Int} offers integer vectors:
-  the type of elements is [int]
-  and a vector has type [vector].
-  The signature of this module is {!Hector.MONOVECTOR} [with type element = int].
+A few operations exist in
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}
+but not in [hector]:
++ [hector] does not offer [to_seq_reentrant] and [to_seq_rev_reentrant].
+  This is intentional.
+  The semantics of these operations is, in my opinion, unclear.
+  A user who needs these operations can implement them outside [hector].
++ [hector] does not offer [capacity].
+  This is intentional.
+  Because [hector] does not guarantee that a vector's capacity
+  is equal to the length of its data array,
+  it might be confusing to expose the function [capacity].
 
-For power users,
-
-+ The functor {!Hector.Mono.OutOfArray} offers monomorphic vectors.
-  The users provides not only the type of elements,
-  but also a set of basic operations on arrays of elements.
-
-{1 Installation and Usage}
-
-Type [opam install hector].
-
-In your [dune] file, add [(libraries hector)] to the description of
-your [library] or [executable].
+Several operations exist in [hector]
+but not in
+{{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}:
++ [sub],
++ [concat],
++ [fill],
++ [unsafe_get],
++ [unsafe_set],
++ [unsafe_borrow],
++ [push_array_segment],
++ [iter_down],
++ [find],
++ [show],
++ the submodule [Stack].
