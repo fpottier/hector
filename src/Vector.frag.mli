@@ -223,29 +223,39 @@ val fit_capacity : VECTOR -> unit
    and its capacity is decreased or increased as necessary. *)
 val set_capacity : VECTOR -> capacity -> unit
 
-(**[iter f v] applies the function [f] to each element [x] of the vector [v]
-   in turn, from left to right. *)
+(**[iter f v] applies the function [f] in turn, from left to right, to each
+   element [x] of the vector [v]. *)
 val iter : (ELEMENT -> unit) -> VECTOR -> unit
 
-(**[iter_down f v] applies the function [f] to each element [x] of the vector
-   [v] in turn, from right to left. *)
+(**[iter_down f v] applies the function [f] in turn, from right to left, to
+   each element [x] of the vector [v]. *)
 val iter_down : (ELEMENT -> unit) -> VECTOR -> unit
 
 (**[iteri f v] applies the function [f] in turn, from left to right, to each
-   index [i] and element [x] in the vector [v]. *)
+   index [i] and corresponding element [x] of the vector [v]. *)
 val iteri : (int -> ELEMENT -> unit) -> VECTOR -> unit
 
-(**TODO*)
-val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
-
-(**TODO*)
-val mapi : (index -> ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
-
-(**TODO*)
+(**[fold_left f s v] applies the function [f] in turn, from left to right, to
+   each element [x] of the vector [v]. A state, whose initial value is [s], is
+   threaded through this sequence of function invocations, and is eventually
+   returned. *)
 val fold_left : ('s -> ELEMENT -> 's) -> 's -> VECTOR -> 's
 
-(**TODO*)
+(**[fold_right f v s] applies the function [f] in turn, from right to left, to
+   each element [x] of the vector [v]. A state, whose initial value is [s], is
+   threaded through this sequence of function invocations, and is eventually
+   returned. *)
 val fold_right : (ELEMENT -> 's -> 's) -> VECTOR -> 's -> 's
+
+(**[map f v] applies the function [f] in turn, from left to right, to each
+   element [x] of the vector [v], and constructs a new vector of the results
+   of these calls. *)
+val map : (ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
+
+(**[mapi f v] applies the function [f] in turn, from left to right, to each
+   index [i] and corresponding element [x] of the vector [v], and constructs a
+   new vector of the results of these calls. *)
+val mapi : (index -> ELEMENT -> ELEMENT') -> VECTOR -> VECTOR'
 
 (**TODO*)
 val exists : (ELEMENT -> bool) -> VECTOR -> bool
