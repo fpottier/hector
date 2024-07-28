@@ -72,12 +72,6 @@ val concat : VECTOR list -> VECTOR
 
 (** {1:access Reading and writing} *)
 
-(**[length v] is the (logical) length of the vector [v]. *)
-val length : VECTOR -> length
-
-(**[s_empty v] is equivalent to [length v = 0]. *)
-val is_empty : VECTOR -> bool
-
 (**[get v i] fetches the element that lies at index [i] in the vector [v].
    [i] must be comprised in the semi-open interval [\[0, length v)]. *)
 val get : VECTOR -> index -> ELEMENT
@@ -230,41 +224,6 @@ val remove_last : VECTOR -> unit (* synonym *)
 
 (* -------------------------------------------------------------------------- *)
 
-(** {1:managing Length and capacity} *)
-
-(**If [n] is less than [length v], then [truncate v n] sets the length of the
-   vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
-   of the vector [v] is unchanged. This is a constant-time operation. *)
-val truncate : VECTOR -> length -> unit
-
-(**[clear v] is equivalent to [truncate v 0]. The length of the vector [v]
-   becomes zero. Its capacity is unchanged. *)
-val clear : VECTOR -> unit
-
-(**[reset v] sets the length and the capacity of the vector [v] to zero. *)
-val reset : VECTOR -> unit
-
-(**[ensure_capacity v c] ensures that the capacity of the vector [v] is at
-   least [c]. If necessary, the capacity of the vector [v] is increased. *)
-val ensure_capacity : VECTOR -> capacity -> unit
-
-(**[ensure_extra_capacity v delta] ensures that the capacity of the vector
-   [v] is at least [length v + delta]. If necessary, the capacity of the
-   vector [v] is increased. The increment [delta] must be nonnegative. *)
-val ensure_extra_capacity : VECTOR -> capacity -> unit
-
-(**[fit_capacity v] ensures that the capacity of the vector [v] matches its
-   length. If necessary, the capacity of the vector [v] is decreased. *)
-val fit_capacity : VECTOR -> unit
-
-(**[set_capacity v c] ensures that the capacity of the vector [v] is exactly
-   [c]. If [c] is less than [length v], then the vector [v] is truncated:
-   some elements are lost. Otherwise, the elements of the vector [v] are
-   preserved, and its capacity is decreased or increased as necessary. *)
-val set_capacity : VECTOR -> capacity -> unit
-
-(* -------------------------------------------------------------------------- *)
-
 (** {1:iterating Iterating} *)
 
 (**[iter f v] applies the function [f] in turn, from left to right, to each
@@ -410,6 +369,51 @@ val show : (ELEMENT -> string) -> VECTOR -> string
 (**[check] is used only during testing. *)
 val check : VECTOR -> unit
 (**/**)
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:length Length} *)
+
+(**[length v] is the (logical) length of the vector [v]. *)
+val length : VECTOR -> length
+
+(**[s_empty v] is equivalent to [length v = 0]. *)
+val is_empty : VECTOR -> bool
+
+(**If [n] is less than [length v], then [truncate v n] sets the length of the
+   vector [v] to [n]. Otherwise, nothing happens. In either case, the capacity
+   of the vector [v] is unchanged. This is a constant-time operation. *)
+val truncate : VECTOR -> length -> unit
+
+(**[clear v] is equivalent to [truncate v 0]. The length of the vector [v]
+   becomes zero. Its capacity is unchanged. *)
+val clear : VECTOR -> unit
+
+(* -------------------------------------------------------------------------- *)
+
+(** {1:capacity Capacity} *)
+
+(**[reset v] sets the length and the capacity of the vector [v] to zero. *)
+val reset : VECTOR -> unit
+
+(**[ensure_capacity v c] ensures that the capacity of the vector [v] is at
+   least [c]. If necessary, the capacity of the vector [v] is increased. *)
+val ensure_capacity : VECTOR -> capacity -> unit
+
+(**[ensure_extra_capacity v delta] ensures that the capacity of the vector
+   [v] is at least [length v + delta]. If necessary, the capacity of the
+   vector [v] is increased. The increment [delta] must be nonnegative. *)
+val ensure_extra_capacity : VECTOR -> capacity -> unit
+
+(**[fit_capacity v] ensures that the capacity of the vector [v] matches its
+   length. If necessary, the capacity of the vector [v] is decreased. *)
+val fit_capacity : VECTOR -> unit
+
+(**[set_capacity v c] ensures that the capacity of the vector [v] is exactly
+   [c]. If [c] is less than [length v], then the vector [v] is truncated:
+   some elements are lost. Otherwise, the elements of the vector [v] are
+   preserved, and its capacity is decreased or increased as necessary. *)
+val set_capacity : VECTOR -> capacity -> unit
 
 (* -------------------------------------------------------------------------- *)
 
