@@ -223,11 +223,15 @@ val fit_capacity : VECTOR -> unit
    and its capacity is decreased or increased as necessary. *)
 val set_capacity : VECTOR -> capacity -> unit
 
-(**[iter f v] applies the function [f] in turn, from left to right, to each
-   element [x] of the vector [v]. *)
+(**[iter f v] applies the function [f] to each element [x] of the vector [v]
+   in turn, from left to right. *)
 val iter : (ELEMENT -> unit) -> VECTOR -> unit
 
-(**[iter f v] applies the function [f] in turn, from left to right, to each
+(**[iter_down f v] applies the function [f] to each element [x] of the vector
+   [v] in turn, from right to left. *)
+val iter_down : (ELEMENT -> unit) -> VECTOR -> unit
+
+(**[iteri f v] applies the function [f] in turn, from left to right, to each
    index [i] and element [x] in the vector [v]. *)
 val iteri : (int -> ELEMENT -> unit) -> VECTOR -> unit
 

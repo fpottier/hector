@@ -151,6 +151,9 @@ let set_capacity =
 let iter f v =
   List.iter f !v
 
+let iter_down f v =
+  List.iter f (List.rev !v)
+
 let iteri f v =
   List.iteri f !v
 

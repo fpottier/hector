@@ -75,6 +75,11 @@ let fill v ofs len x =
     set v i x
   done
 
+let iter_down f v =
+  for i = length v - 1 downto 0 do
+    f (get v i)
+  done
+
 (* -------------------------------------------------------------------------- *)
 
 open Monolith

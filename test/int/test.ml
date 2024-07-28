@@ -241,6 +241,10 @@ let () =
   declare "elements_of_iter iter" spec
     (elements_of_iter R.iter) (elements_of_iter C.iter);
 
+  let spec = vector ^> list element in
+  declare "elements_of_iter iter_down" spec
+    (elements_of_iter R.iter_down) (elements_of_iter C.iter_down);
+
   let spec = vector ^> list (int *** element) in
   declare "elements_of_iteri iteri" spec
     (elements_of_iteri R.iteri) (elements_of_iteri C.iteri);
