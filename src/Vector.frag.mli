@@ -99,6 +99,14 @@ val find_last : VECTOR -> ELEMENT option (* synonym *)
    [i] and [n] must describe a valid segment of the vector [v]. *)
 val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
+(**[blit v i v' i' n] copies data from the vector segment determined by
+   vector [v], index [i], and length [n] into the vector segment
+   determined by vector [v'], index [i'], and length [n]. It works
+   correctly even if the source and destination segments overlap.
+   [i] and [n] must describe a valid segment of the vector [v].
+   [i'] and [n] must describe a valid segment of the vector [v']. *)
+val blit : VECTOR -> index -> VECTOR -> index -> length -> unit
+
 (** {2:access_unsafe Unsafe access} *)
 
 (**[unsafe_get v i] fetches the element that lies at index [i] in the vector

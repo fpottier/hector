@@ -708,6 +708,10 @@ end
 
 (* An emulation of the [Array] API. *)
 
+(* Array segments provided by the user are validated with respect to
+   the logical length of the vector, not with respect to the length of
+   the vector's data array. *)
+
 let (* public *) concat vs =
   let v = create() in
   let n = List.fold_left (fun n a -> n + length a) 0 vs in
@@ -718,14 +722,17 @@ let (* public *) concat vs =
 
 let (* public *) sub v ofs len =
   GET_LENGTH_DATA(length, data, v);
-  (* Validate this array segment with respect to the logical length
-     of the vector [v]. *)
   if defensive then validate_segment length ofs len;
   unsafe_steal_array (A.sub data ofs len)
 
 let (* public *) fill v ofs len x =
   GET_LENGTH_DATA(length, data, v);
-  (* Validate this array segment with respect to the logical length
-     of the vector [v]. *)
   if defensive then validate_segment length ofs len;
   A.fill data ofs len x
+
+let (* public *) blit v1 ofs1 v2 ofs2 len =
+  GET_LENGTH_DATA(length1, data1, v1);
+  GET_LENGTH_DATA(length2, data2, v2);
+  if defensive then validate_segment length1 ofs1 len;
+  if defensive then validate_segment length2 ofs2 len;
+  A.blit data1 ofs1 data2 ofs2 len
