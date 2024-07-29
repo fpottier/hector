@@ -11,6 +11,8 @@
 (******************************************************************************)
 
 #include "Loop.frag.ml"
+#include "ValidateSegment.frag.ml"
+  (* needed by MonoArray.frag.ml and by Vector.frag.ml *)
 
 include ArraySignature
 

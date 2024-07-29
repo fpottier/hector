@@ -11,6 +11,8 @@
 (******************************************************************************)
 
 #include "Loop.frag.ml"
+#include "ValidateSegment.frag.ml"
+  (* needed by MonoArray.frag.ml *)
 
 (* Our implementation of integer arrays is compiled by the OCaml compiler with
    the knowledge that elements have type [int]. As a result, we get better

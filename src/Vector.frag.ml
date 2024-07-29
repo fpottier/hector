@@ -109,24 +109,6 @@ let[@inline never] length_failure n =
 let[@inline never] index_failure v i =
   fail "index %d is out of range [0, %d)" i v.length
 
-let[@inline never] array_segment_base_failure n ofs =
-  fail "segment base index %d is out of range [0, %d]" ofs n
-
-let[@inline never] array_segment_end_failure n ofs len =
-  fail "segment end index %d+%d = %d is out of range [0, %d]"
-    ofs len (ofs+len) n
-
-(* [validate_array_segment n ofs len] checks that the offset [ofs] and the
-   length [len] determine a valid interval inside an array of length [n]. *)
-
-let validate_array_segment n ofs len =
-  if not (0 <= ofs && ofs <= n) then
-    array_segment_base_failure n ofs;
-  if not (0 <= len) then
-    length_failure len;
-  if not (0 <= ofs + len && ofs + len <= n) then
-    array_segment_end_failure n ofs len
-
 (* [validate length data] checks [length <= A.length data]. This property is
    part of our invariant, and can be violated only through racy accesses. *)
 
@@ -670,7 +652,7 @@ let (* public *) ensure_extra_capacity v delta =
   ensure_extra_capacity v delta
 
 let[@inline] (* public *) push_array_segment v a ofs len =
-  if defensive then validate_array_segment (A.length a) ofs len;
+  if defensive then validate_segment (A.length a) ofs len;
   unsafe_push_array_segment v a ofs len
 
 let (* public *) append_array_segment =
@@ -738,12 +720,12 @@ let (* public *) sub v ofs len =
   GET_LENGTH_DATA(length, data, v);
   (* Validate this array segment with respect to the logical length
      of the vector [v]. *)
-  if defensive then validate_array_segment length ofs len;
+  if defensive then validate_segment length ofs len;
   unsafe_steal_array (A.sub data ofs len)
 
 let (* public *) fill v ofs len x =
   GET_LENGTH_DATA(length, data, v);
   (* Validate this array segment with respect to the logical length
      of the vector [v]. *)
-  if defensive then validate_array_segment length ofs len;
+  if defensive then validate_segment length ofs len;
   A.fill data ofs len x
