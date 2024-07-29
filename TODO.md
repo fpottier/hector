@@ -8,7 +8,6 @@
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
 * Publish `IntArray` as `Arrays.Int`.
-  Document and publish `ArraySegment`.
 
 * Use the new release of `cppo`
   to write multi-line macros without backslashes,
@@ -25,6 +24,8 @@
 
 ## Maybe Later
 
+* Document and publish `ArraySegment`?
+
 * Benchmark `map`.
   Examine the generated assembly code for `map` and `mapi`.
   Do we pay two function calls per loop iteration?
@@ -34,7 +35,6 @@
 * Add `of_array_segment`.
 
 * Add new operations taken from the `Array` API:
-  `blit`, -- use `memmove` for integer arrays!
   `map_inplace`,
   `mapi_inplace`,
   `fold_left_map`,
