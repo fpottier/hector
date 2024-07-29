@@ -38,14 +38,14 @@ let[@inline] unsafe_set (a : t) i x =
 (* Validation ensures that our use of [unsafe_get] and [unsafe_set]
    is safe. *)
 
-let[@inline never] violation a o n =
+let[@inline never] violation a ofs len =
   Printf.ksprintf invalid_arg
     "invalid offset/length pair (%d, %d) in an array of length %d"
-    o n (length a)
+    ofs len (length a)
 
-let[@inline] validate a o n =
-  if not (0 <= n && 0 <= o && o + n <= length a) then
-    violation a o n
+let[@inline] validate a ofs len =
+  if not (0 <= len && 0 <= ofs && ofs + len <= length a) then
+    violation a ofs len
 
 (* -------------------------------------------------------------------------- *)
 
