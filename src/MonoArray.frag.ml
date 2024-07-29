@@ -103,5 +103,9 @@ let sub a o n =
 
 (* [fill] is taken from [Stdlib.Array]. *)
 
+(* Because there is no word-sized variant of [memset] in C, we cannot
+   implement [fill] in a more efficient way, even when IMMEDIATE is
+   #defined. *)
+
 let[@inline] fill (a : t) o k x =
   Array.fill a o k x
