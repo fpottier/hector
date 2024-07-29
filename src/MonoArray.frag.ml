@@ -40,7 +40,7 @@ let[@inline] unsafe_set (a : t) i x =
 
 let[@inline never] violation a ofs len =
   Printf.ksprintf invalid_arg
-    "invalid offset/length pair (%d, %d) in an array of length %d"
+    "invalid segment (ofs = %d, len = %d) in a sequence of length %d"
     ofs len (length a)
 
 let[@inline] validate a ofs len =
