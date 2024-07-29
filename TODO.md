@@ -16,9 +16,6 @@
 * Publish `IntArray` as `Arrays.Int`.
   Document and publish `ArraySegment`.
 
-* Add a benchmark that mixes `push` and `pop`.
-  Include `Stack` in the benchmark.
-
 * Benchmark more operations, if necessary.
   Double-check the performance claims
   found in the documentation.
@@ -42,9 +39,6 @@
 
 * Add `of_array_segment`.
 
-* Look at the `List` API and
-  check which operations should be supported by our vectors.
-
 * Add new operations taken from the `Array` API:
   `blit`, -- use `memmove` for integer arrays!
   `map_inplace`,
@@ -59,18 +53,19 @@
   `find_index`,
   `find_map`,
   `find_mapi`,
+  `filteri`, -- from List
   `split`,
   `combine`,
   `sort`,
   `stable_sort`,
   `fast_sort`,
+  `compress`, -- from Ogre.ArrayExtra
   `shuffle`,
   `to_seqi`.
 
 * Define `iteri_down`, `foldi_left`, `foldi_right`.
 
-* Add an in-place `reverse` function,
-  as well as `rev` (an instance of `mapi`).
+* Add `rev` (an instance of `init`) and `rev_inplace`.
 
 * Add `push_list_segment` and `push_seq_segment`
   to push a sequence whose length is known in advance.
