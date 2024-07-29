@@ -21,8 +21,6 @@
 * Once a new version of Monolith is released,
   use its new combinators `naive_array` and `naive_seq`.
 
-* Benchmark `fill` and decide whether a loop should be used.
-
 * Release.
 
 ## Maybe Later
@@ -77,7 +75,7 @@
   Perhaps, instead of generalizing our implementation, we could develop a
   separate implementation (with some shared code) where the type `A.t` is
   abstract. It would be necessary to distinguish several variants of `A.sub`
-  and `A.blit_disjoint`. it would be necessary to remove the public operation
+  and `A.blit`. it would be necessary to remove the public operation
   `unsafe_borrow`.
 
   Then, implement `BitArray` and `CharArray` using a compact representation,
