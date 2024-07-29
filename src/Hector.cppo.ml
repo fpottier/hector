@@ -120,7 +120,6 @@ module Poly = struct
       let b = Array.make n x in
       Array.blit a 0 b 0 k;
       b
-    let blit_disjoint = blit
   end
   #include "Vector.frag.ml"
 end

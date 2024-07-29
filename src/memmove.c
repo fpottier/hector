@@ -14,14 +14,19 @@
 #include <stdatomic.h>
 #include "caml/mlvalues.h"
 
-CAMLprim value hector_array_blit_disjoint (
+/* Using [memmove] can in general be incompatible with the OCaml
+   memory model. However, our vectors are supposed to be accessed by
+   at most one thread at a time, so this should be safe. We place a
+   single memory barrier before the loop. */
+
+CAMLprim value hector_array_blit (
   value src, value sofs,
   value dst, value dofs,
   value n
 )
 {
   atomic_thread_fence(memory_order_acquire);
-  memcpy (
+  memmove(
     ((value*) dst) + Long_val(dofs),
     ((value*) src) + Long_val(sofs),
     Long_val(n) * sizeof(value)

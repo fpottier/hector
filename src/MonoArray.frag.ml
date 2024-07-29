@@ -35,65 +35,45 @@ let[@inline] unsafe_set (a : t) i x =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [blit_disjoint] is the special case of [blit] where there is no overlap
-   between the source and destination. In C, [memcpy] can be used; there is
-   no need for [memmove]. *)
+(* [blit]. *)
 
-#ifdef USE_MEMCPY
+(* All of our internal uses of [blit] fall in a special case where there is
+   no overlap between the source and destination. Nevertheless, we implement
+   [blit] in the general case, because a few extra checks cost nothing. In C,
+   we use [memmove], which supports overlap, as opposed to [memcpy], which
+   does not. *)
 
-(* If the type [element] is immediate (i.e., not a pointer type)
-   then [memcpy] can be used. *)
+#ifdef IMMEDIATE
 
-(* In the case of integer arrays, [memcpy] can be 4 times faster than
+(* If the type [element] is immediate (i.e., not a pointer type) then
+   [memmove] can be used. *)
+
+(* In the case of integer arrays, [memmove] can be 4 times faster than
    hand-written loop, and 12 times faster than [Array.blit]. *)
 
-external unsafe_blit_disjoint :
+external unsafe_blit :
   int array -> int ->
   int array -> int ->
   int ->
   unit
-= "hector_array_blit_disjoint"
+= "hector_array_blit"
 
 #else
 
-(* Should we use [Array.blit], or re-implement it using a loop? *)
+(* We always use [Array.blit], as opposed to a hand-written loop, because this
+   is easier, and because [Array.blit] can be more efficient. In particular,
+   in [Array.blit], some tests (e.g., is this array young?) are hoisted out of
+   the loop. *)
 
-(* One advantage of re-implementing it might be that [unsafe_set] is
-   then our sole way of writing an array, so we can safely use truly
-   initialized arrays (where an uninitialized slot contains arbitrary
-   bits). But this seems too dangerous anyway. We do not currently use
-   uninitialized arrays. *)
-
-(* In the case of integer arrays, a loop can be 3 times faster than
-   [Array.blit]. In the case of polymorphic arrays, a loop can be 30%
-   slower than [Array.blit]. So, a loop seems advantageous if the code
-   is specialized for a known immediate type; otherwise, [Array.blit]
-   is advantageous. *)
-
-(* The parallel loop LOOPRW5 is not noticeably faster than the ordinary
-   loop LOOP5. *)
-
-(* Unfortunately, we do not know in which situation we are: this code
-   is used as part of the functor [Mono.Make], which can be applied
-   either to an immediate type, or to a pointer type. Furthermore,
-   this code could be compiled either by the maintream OCaml compiler,
-   which ignores [@inline] annotations on functors, or by the Flambda2
-   compiler, which does specialize functors. *)
-
-(* In the end, it seems preferable to always use [Array.blit]. *)
-
-let[@inline] unsafe_blit_disjoint (src : t) sofs dst dofs n =
- (* LOOP5(j, 0, n, unsafe_set dst (dofs + j) (unsafe_get src (sofs + j))) *)
- (* LOOPRW5(j, 0, n, x, unsafe_get src (sofs + j), unsafe_set dst (dofs + j) x) *)
+let[@inline] unsafe_blit (src : t) sofs dst dofs n =
  Array.blit src sofs dst dofs n
 
 #endif
 
-let blit_disjoint (src : t) sofs dst dofs n =
+let blit (src : t) sofs dst dofs n =
   validate_segment (length src) sofs n;
   validate_segment (length dst) dofs n;
-  assert (src != dst || sofs + n <= dofs || dofs + n <= sofs);
-  unsafe_blit_disjoint src sofs dst dofs n
+  unsafe_blit src sofs dst dofs n
 
 (* -------------------------------------------------------------------------- *)
 
@@ -116,7 +96,7 @@ let sub a o n =
   if n = 0 then empty else
   let dummy = unsafe_get a o in (* safe *)
   let a' = alloc n dummy in
-  blit_disjoint a o a' 0 n;
+  blit a o a' 0 n;
   a'
 
 (* -------------------------------------------------------------------------- *)

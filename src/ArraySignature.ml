@@ -70,12 +70,10 @@ module type MONOARRAY = sig
      and length [k]. *)
   val sub : t -> offset -> length -> t
 
-  (**[blit_disjoint a1 o1 a2 o2 k] copies the content of the array segment
+  (**[blit a1 o1 a2 o2 k] copies the content of the array segment
      identified by array [a1], offset [o1], and length [k] into the array
-     segment identified by array [a2], offset [o2], and length [k]. The two
-     array segments must be disjoint: that is,
-     [a1 != a2 || o1 + k <= o2 || o2 + k <= o1] must hold. *)
-  val blit_disjoint : t -> offset -> t -> offset -> length -> unit
+     segment identified by array [a2], offset [o2], and length [k]. *)
+  val blit : t -> offset -> t -> offset -> length -> unit
 
   (**[fill a o k x] fills the array segment identified by array [a],
      offset [o], and length [k] with the value [x]. *)

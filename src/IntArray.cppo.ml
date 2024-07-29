@@ -99,7 +99,10 @@ let make (n : length) (x : element) : t =
 
 (* Then comes our implementation of monomorphic arrays. *)
 
-#define USE_MEMCPY
+(* #defining IMMEDIATE tells MonoArray that we are dealing with an immediate
+   type, that is, a non-pointer type. *)
+
+#define IMMEDIATE
 
 #include "MonoArray.frag.ml"
 
@@ -108,10 +111,10 @@ let make (n : length) (x : element) : t =
 (* [grow] allocates a semi-initialized array. *)
 
 (* Of course, [grow] can always be implemented by a combination of [alloc]
-   and [blit_disjoint]. Our implementation (below) can in principle be more
-   efficient, as the lower segment is written just once, instead of twice.
-   In practice, we observe that it yields only a 1% performance improvement
-   on the [push] benchmark. *)
+   and [blit]. Our implementation (below) can in theory be more efficient,
+   as the lower segment is written just once, instead of twice. In practice,
+   we observe that it yields only a 1% performance improvement on the [push]
+   benchmark. *)
 
 let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
   assert (0 <= k && k <= n);
@@ -120,7 +123,7 @@ let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
   (* Cast it to the type [int array]. *)
   let a : int array = Obj.obj a in
   (* Initialize the lower segment by copying data from [s]. *)
-  blit_disjoint s 0 a 0 k;
+  blit s 0 a 0 k;
   (* Initialize the upper segment with arbitrary integer values. *)
   unsafe_initialize_int_array_segment a k (n - k);
   (* Done. *)

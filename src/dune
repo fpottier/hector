@@ -2,7 +2,7 @@
 (library
   (name hector)
   (public_name hector)
-  (foreign_stubs (language c) (names memcpy))
+  (foreign_stubs (language c) (names memmove))
 )
 
 ;; Warnings are enabled in development builds and disabled in release builds.
