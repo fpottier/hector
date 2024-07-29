@@ -14,11 +14,13 @@ include module type of ArraySignature
 
 module type MONOVECTOR = sig
   type element
+  #undef INJECTIVE
   #undef VECTOR
   #undef SYNONYM
   #undef ELEMENT
   #undef VECTOR'
   #undef ELEMENT'
+  #define INJECTIVE
   #define VECTOR   vector
   #define SYNONYM  t
   #define ELEMENT  element
@@ -28,11 +30,13 @@ module type MONOVECTOR = sig
 end
 
 module type POLYVECTOR = sig
+  #undef INJECTIVE
   #undef VECTOR
   #undef SYNONYM
   #undef ELEMENT
   #undef VECTOR'
   #undef ELEMENT'
+  #define INJECTIVE !
   #define VECTOR   'a vector
   #define SYNONYM  'a t
   #define ELEMENT  'a

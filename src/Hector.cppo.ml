@@ -20,6 +20,7 @@ include ArraySignature
 
 (* Set up our macros for monomorphic vectors. *)
 
+#define INJECTIVE
 #define VECTOR   vector
 #define VECTOR'  vector
 #define SYNONYM  t
@@ -86,6 +87,7 @@ end
 
 (* Set up our macros for polymorphic vectors. *)
 
+#undef INJECTIVE
 #undef VECTOR
 #undef VECTOR'
 #undef SYNONYM
@@ -93,6 +95,7 @@ end
 #undef ELEMENT'
 #undef ARRAY
 
+#define INJECTIVE !
 #define VECTOR   'a vector
 #define VECTOR'  'b vector
 #define SYNONYM  'a t

@@ -18,7 +18,7 @@
 (* Types. *)
 
 (**The type of a vector. *)
-type VECTOR
+type INJECTIVE VECTOR
 
 (**A synonym for the type of a vector. *)
 type SYNONYM = VECTOR
