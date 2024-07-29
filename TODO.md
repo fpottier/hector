@@ -7,18 +7,8 @@
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
-* Benchmark `map`.
-  Examine the generated assembly code for `map` and `mapi`.
-  Do we pay two function calls per loop iteration?
-    (one call to `f` plus one call to `fun i -> ...`)
-  If so, consider exporting `A.init` as a macro.
-
 * Publish `IntArray` as `Arrays.Int`.
   Document and publish `ArraySegment`.
-
-* Benchmark more operations, if necessary.
-  Double-check the performance claims
-  found in the documentation.
 
 * Use the new release of `cppo`
   to write multi-line macros without backslashes,
@@ -36,6 +26,12 @@
 * Release.
 
 ## Maybe Later
+
+* Benchmark `map`.
+  Examine the generated assembly code for `map` and `mapi`.
+  Do we pay two function calls per loop iteration?
+    (one call to `f` plus one call to `fun i -> ...`)
+  If so, consider exporting `A.init` as a macro.
 
 * Add `of_array_segment`.
 
