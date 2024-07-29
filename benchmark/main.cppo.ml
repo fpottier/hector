@@ -64,6 +64,41 @@ let pushes n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Pop. *)
+
+#define POP(candidate,init,pop,n) \
+( \
+  let basis = n \
+  and name = sprintf "pop (size %d) (%s)" n candidate \
+  and run () () = \
+    let v = init n (fun i -> i) in \
+    let s = ref 0 in \
+    for _ = 0 to n-1 do \
+      s := !s + pop v \
+    done; \
+    assert (!s = n * (n - 1) / 2) \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let stack_init n f =
+  let s = Stack.create() in
+  for i = 0 to n-1 do
+    Stack.push (f i) s
+  done;
+  s
+
+let pops n =
+  [
+    POP("dynarray", R.init, R.pop_last, n);
+    POP("poly", P.init, P.pop, n);
+    POP("mono", M.init, M.pop, n);
+    POP("int", I.init, I.pop, n);
+    POP("stack", stack_init, Stack.pop, n);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Get. *)
 
 #define GET(candidate, create, push, get, n) \
@@ -283,12 +318,13 @@ let pushls k n =
 
 (* Read the command line. *)
 
-let push, get, set, iter, iteri, pusha, pushl =
-  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
+let push, pop, get, set, iter, iteri, pusha, pushl =
+  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
     "--push", Arg.Set_int push, " <n> Benchmark push";
+    "--pop", Arg.Set_int pop, " <n> Benchmark pop";
     "--get", Arg.Set_int get, " <n> Benchmark get";
     "--set", Arg.Set_int set, " <n> Benchmark set";
     "--iter", Arg.Set_int iter, " <n> Benchmark iter (and get)";
@@ -297,8 +333,8 @@ let () =
     "--pushl", Arg.Set_int pushl, " <n> Benchmark push_list";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, get, set, iter, iteri, pusha, pushl =
-  !push, !get, !set, !iter, !iteri, !pusha, !pushl
+let push, pop, get, set, iter, iteri, pusha, pushl =
+  !push, !pop, !get, !set, !iter, !iteri, !pusha, !pushl
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -309,6 +345,7 @@ let possibly n (benchmarks : int -> B.benchmark list) =
 
 let () =
   possibly push pushes;
+  possibly pop pops;
   possibly get gets;
   possibly set sets;
   possibly iter iters;
