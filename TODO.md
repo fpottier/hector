@@ -82,11 +82,5 @@
   based on the type `bytes`. Implement a bit vector and a character vector.
   Compare the efficiency of the character vector with `Buffer`.
 
-* Expose `MonoArray.frag.ml` as a functor that builds a complete
-  implementation of `MONOARRAY` out of just `empty`, `alloc`, and
-  `make`?
-
-* Can (should) the types `'a vector` and `'a t` be declared injective?
-
 * Benchmark a real-world application of integer vectors and determine
   whether it is worthwhile to use an unscanned integer array.
