@@ -38,14 +38,14 @@ let[@inline] unsafe_set (a : t) i x =
 (* Validation ensures that our use of [unsafe_get] and [unsafe_set]
    is safe. *)
 
-let[@inline never] violation a ofs len =
+let[@inline never] violation n ofs len =
   Printf.ksprintf invalid_arg
     "invalid segment (ofs = %d, len = %d) in a sequence of length %d"
-    ofs len (length a)
+    ofs len n
 
-let[@inline] validate a ofs len =
-  if not (0 <= len && 0 <= ofs && ofs + len <= length a) then
-    violation a ofs len
+let[@inline] validate_array_segment n ofs len =
+  if not (0 <= len && 0 <= ofs && ofs + len <= n) then
+    violation n ofs len
 
 (* -------------------------------------------------------------------------- *)
 
@@ -104,8 +104,8 @@ let[@inline] unsafe_blit_disjoint (src : t) sofs dst dofs n =
 #endif
 
 let blit_disjoint (src : t) sofs dst dofs n =
-  validate src sofs n;
-  validate dst dofs n;
+  validate_array_segment (length src) sofs n;
+  validate_array_segment (length dst) dofs n;
   assert (src != dst || sofs + n <= dofs || dofs + n <= sofs);
   unsafe_blit_disjoint src sofs dst dofs n
 
@@ -126,7 +126,7 @@ let init n f =
 (* [sub a o n] is equivalent to [init n (fun i -> A.get a (o + i))]. *)
 
 let sub a o n =
-  validate a o n;
+  validate_array_segment (length a) o n;
   if n = 0 then empty else
   let dummy = unsafe_get a o in (* safe *)
   let a' = alloc n dummy in
