@@ -57,10 +57,9 @@ val init : length -> (index -> ELEMENT) -> VECTOR
    and initializes it with a copy of the data stored in the vector [v]. *)
 val copy : VECTOR -> VECTOR
 
-(**[sub v ofs len] produces a new vector whose elements are the elements of
-   the vector segment determined by vector [v], offset [ofs], and length
-   [len].
-   [ofs] and [len] must describe a valid segment of the vector [v]. *)
+(**[sub v i n] produces a new vector whose elements are the elements of
+   the vector segment determined by vector [v], index [i], and length [n].
+   [i] and [n] must describe a valid segment of the vector [v]. *)
 val sub : VECTOR -> index -> length -> VECTOR
 
 (**[concat vs] produces a new vector whose sequence of elements is
@@ -95,9 +94,9 @@ val top_opt : VECTOR -> ELEMENT option
 (**[find_last] is a synonym for [top_opt]. *)
 val find_last : VECTOR -> ELEMENT option (* synonym *)
 
-(**[fill v ofs len x] writes the value [x] into every slot of the vector
-   segment determined by vector [v], offset [ofs], and length [len].
-   [ofs] and [len] must describe a valid segment of the vector [v]. *)
+(**[fill v i n x] writes the value [x] into every slot of the vector
+   segment determined by vector [v], index [i], and length [n].
+   [i] and [n] must describe a valid segment of the vector [v]. *)
 val fill : VECTOR -> index -> length -> ELEMENT -> unit
 
 (** {2:access_unsafe Unsafe access} *)
@@ -145,10 +144,10 @@ val push_array : VECTOR -> ELEMENT array -> unit
 (**[append_array] is a synonym for [push_array]. *)
 val append_array : VECTOR -> ELEMENT array -> unit (* synonym *)
 
-(**[push_array_segment v a ofs len] extends the vector [v] with the elements
-   of the array segment determined by array [a], offset [ofs], and length
-   [len]. The length of the vector [v] is increased by [len]. If necessary,
-   the capacity of the vector [v] is increased. [ofs] and [len] must describe
+(**[push_array_segment v a i n] extends the vector [v] with the elements
+   of the array segment determined by array [a], index [i], and length
+   [n]. The length of the vector [v] is increased by [n]. If necessary,
+   the capacity of the vector [v] is increased. [i] and [n] must describe
    a valid segment of the array [a]. *)
 val push_array_segment : VECTOR -> ELEMENT array -> index -> length -> unit
 
