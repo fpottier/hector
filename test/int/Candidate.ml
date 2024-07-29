@@ -12,6 +12,9 @@
 
 include Hector.Int
 
+let dynarray =
+  false
+
 open Monolith
 
 let () =

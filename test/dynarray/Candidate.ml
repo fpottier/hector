@@ -54,31 +54,29 @@ let top = get_last
 let top_opt = find_last
 let drop = remove_last
 
-(* The following operations do not exist in [Dynarray]. *)
+(* -------------------------------------------------------------------------- *)
 
-(* We provide vanilla implementations. *)
+(* The following operations do not exist in [Dynarray]. We do not test them.
+   Because we do not use [cppo] here, we do not have #if; so we must still
+   define dummy operations. *)
 
-let concat vs =
-  vs
-  |> List.map to_array
-  |> Array.concat
-  |> of_array
+let dynarray =
+  true
 
-let sub v ofs len =
-  v
-  |> to_array
-  |> (fun a -> Array.sub a ofs len)
-  |> of_array
+let concat _vs =
+  assert false
 
-let fill v ofs len x =
-  for i = ofs to ofs + len - 1 do
-    set v i x
-  done
+let sub _v _ofs _len =
+  assert false
 
-let iter_down f v =
-  for i = length v - 1 downto 0 do
-    f (get v i)
-  done
+let fill _v _ofs _len _x =
+  assert false
+
+let blit _v _ofs _v' _ofs' _len =
+  assert false
+
+let iter_down _f _v =
+  assert false
 
 (* -------------------------------------------------------------------------- *)
 

@@ -195,6 +195,7 @@ let () =
     closed_interval 0 (n - ofs) ^>
     vector
   in
+  if not C.dynarray then
   declare "sub" spec R.sub C.sub;
 
   let spec =
@@ -205,7 +206,21 @@ let () =
     element ^>
     unit
   in
+  if not C.dynarray then
   declare "fill" spec R.fill C.fill;
+
+  let spec =
+    vector ^>> fun v ->
+    let n = R.length v in
+    closed_interval 0 n ^>> fun ofs ->
+    vector ^>> fun v' ->
+    let n' = R.length v' in
+    closed_interval 0 n' ^>> fun ofs' ->
+    closed_interval 0 (min (n - ofs) (n' - ofs')) ^>
+    unit
+  in
+  if not C.dynarray then
+  declare "blit" spec R.blit C.blit;
 
   let spec = vector ^> vector ^> unit in
   declare "push_vector" spec R.push_vector C.push_vector;
@@ -219,6 +234,7 @@ let () =
   (* [push_iter] is not tested. *)
 
   let spec = list vector ^> vector in
+  if not C.dynarray then
   declare "concat" spec R.concat C.concat;
 
   let spec = vector ^> length ^> unit in
@@ -242,6 +258,7 @@ let () =
     (elements_of_iter R.iter) (elements_of_iter C.iter);
 
   let spec = vector ^> list element in
+  if not C.dynarray then
   declare "elements_of_iter iter_down" spec
     (elements_of_iter R.iter_down) (elements_of_iter C.iter_down);
 

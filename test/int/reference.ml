@@ -225,3 +225,12 @@ let fill v ofs len x =
   for i = ofs to ofs + len - 1 do
     set v i x
   done
+
+let blit v ofs v' ofs' len =
+  v' :=
+    List.init (length v') @@ fun i ->
+      if ofs' <= i && i < ofs' + len then
+        let delta = i - ofs' in
+        get v (ofs + delta)
+      else
+        get v' i
