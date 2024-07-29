@@ -136,7 +136,7 @@ let validate_array_segment n ofs len =
    [unsafe_set], which read just the [data] field, are still unsafe.) *)
 
 let[@inline never] violation length data =
-  fail "length is %d, but data array has length %d (racy access?)"
+  fail "vector length is %d, but data array has length %d (racy access?)"
     length (A.length data)
 
 let[@inline] validate length data =
