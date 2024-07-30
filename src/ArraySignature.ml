@@ -49,6 +49,12 @@ module type MONOARRAY = sig
      [a]. {b The index [i] must be valid}, or all hell may break loose. *)
   val unsafe_set : t -> index -> element -> unit
 
+  (**[alloc n d] returns a new array of length [n]. The dummy element [d]
+     may be used to initialize this array, but this is not guaranteed.
+     Thus, {b this array must be considered uninitialized}: every slot
+     must be written before it is read. *)
+  val alloc : length -> dummy -> t
+
   (**[make n x] returns a new array of length [n], where every slot contains
      the value [x]. *)
   val make : length -> element -> t
