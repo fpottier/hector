@@ -171,7 +171,11 @@ let isortto cmp src srcofs dst dstofs len =
     SET dst (!j + 1) e
   done
 
-let cutoff = 5
+(* The cutoff determines where we switch from merge sort to insertion sort.
+   OCaml uses 5. I find 8 to be slightly better, but the difference is very
+   small: about 2%. The best setting is likely machine-dependent. *)
+
+let cutoff = 8
 
 (* [sortto cmp src srcofs dst dstofs len] sorts the array segment described
    by [src], [srcofs], [len]. The resulting data is written into the array
