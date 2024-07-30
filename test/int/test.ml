@@ -314,6 +314,12 @@ let () =
   declare "compare Int.compare" spec
     (R.compare Int.compare) (C.compare Int.compare);
 
+  (* [sort] is applied specifically to the function [Int.compare]. *)
+  let spec = vector ^> unit in
+  if not C.dynarray then
+  declare "stable_sort Int.compare" spec
+    (R.stable_sort Int.compare) (C.stable_sort Int.compare);
+
   let spec = array element ^> vector in
   declare "of_array" spec R.of_array C.of_array;
 

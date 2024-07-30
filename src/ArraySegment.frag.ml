@@ -108,3 +108,108 @@ let rec find f a i j =
     i
   else
     find f a (i + 1) j
+
+(* -------------------------------------------------------------------------- *)
+
+(* Our stable sort algorithm is taken from OCaml's [Stdlib.Array] and adapted
+   to use our array module [A] and to sort an array segment. *)
+
+#undef  ALLOC
+#define ALLOC A.alloc
+#undef  GET
+#define GET   A.unsafe_get
+#undef  SET
+#define SET   A.unsafe_set
+#undef  BLIT
+#define BLIT  A.blit
+
+(* [merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs] merges
+   the sorted array segments described by [src1], [src1ofs], [src1len] and
+   [src2], [src2ofs], [src2len]. The resulting data is written into the
+   array segment described by [dst], [dstofs], and [src1len + src2len].
+   One of the source segments (say, the first one) must be disjoint with
+   the destination segment. The other source segment (say, the second one)
+   can be either disjoint with the destination segment or a suffix of the
+   destination segment. (This works because the data in the second source
+   segment is then moved left: it is read before it is overwritten.) *)
+
+let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
+  let src1r = src1ofs + src1len
+  and src2r = src2ofs + src2len in
+  let rec loop i1 s1 i2 s2 d =
+    if cmp s1 s2 <= 0 then begin
+      SET dst d s1;
+      let i1 = i1 + 1 in
+      if i1 < src1r then
+        loop i1 (GET src1 i1) i2 s2 (d + 1)
+      else
+        BLIT src2 i2 dst (d + 1) (src2r - i2)
+    end else begin
+      SET dst d s2;
+      let i2 = i2 + 1 in
+      if i2 < src2r then
+        loop i1 s1 i2 (GET src2 i2) (d + 1)
+      else
+        BLIT src1 i1 dst (d + 1) (src1r - i1)
+    end
+  in
+  loop src1ofs (GET src1 src1ofs) src2ofs (GET src2 src2ofs) dstofs
+
+(* [isortto cmp src srcofs dst dstofs len] sorts the array segment described
+   by [src], [srcofs], [len]. The resulting data is written into the array
+   segment described by [dst], [dstofs], [len]. The destination segment must
+   be disjoint from the source segment. This is an insertion sort. *)
+
+let isortto cmp src srcofs dst dstofs len =
+  for i = 0 to len - 1 do
+    let e = GET src (srcofs + i) in
+    let j = ref (dstofs + i - 1) in
+    while !j >= dstofs && cmp (GET dst !j) e > 0 do
+      SET dst (!j + 1) (GET dst !j);
+      decr j
+    done;
+    SET dst (!j + 1) e
+  done
+
+let cutoff = 5
+
+(* [sortto cmp src srcofs dst dstofs len] sorts the array segment described
+   by [src], [srcofs], [len]. The resulting data is written into the array
+   segment described by [dst], [dstofs], [len]. The destination segment must
+   be disjoint from the source segment. This is a merge sort, with an
+   insertion sort at the leaves. *)
+
+let rec sortto cmp src srcofs dst dstofs len =
+  if len <= cutoff then
+    isortto cmp src srcofs dst dstofs len
+  else begin
+    let len1 = len / 2 in
+    let len2 = len - len1 in
+    (* The second half of [src] can be larger by one slot. *)
+    assert (len1 <= len2 && len2 <= len1 + 1);
+    (* Sort the second half of [src] and move it to the second half of [dst]. *)
+    sortto cmp src (srcofs + len1) dst (dstofs + len1) len2;
+    (* Sort the first half of [src] and move it to the second half of [src]. *)
+    (* This requires [len1 <= len2]. *)
+    sortto cmp src srcofs src (srcofs + len2) len1;
+    (* Merge the two sorted halves, moving the data to [dst]. *)
+    (* This is an in-place merge: the second source segment is contained
+       within the destination segment! *)
+    merge cmp src (srcofs + len2) len1 dst (dstofs + len1) len2 dst dstofs
+  end
+
+(* [unsafe_stable_sort_segment cmp a ofs len] sorts the array segment
+   described by [a], [ofs], [len]. This array segment is sorted in place.
+   This function is named [unsafe] because it does not validate [ofs] and
+   [len]. *)
+
+let unsafe_stable_sort cmp a ofs len =
+  let base = ofs in
+  if len <= cutoff then isortto cmp a base a base len else begin
+    let len1 = len / 2 in
+    let len2 = len - len1 in
+    let t = ALLOC len2 (GET a base) in
+    sortto cmp a (base + len1) t 0 len2;
+    sortto cmp a base a (base + len2) len1;
+    merge cmp a (base + len2) len1 t 0 len2 a base;
+  end

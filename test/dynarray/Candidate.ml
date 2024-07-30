@@ -78,6 +78,9 @@ let blit _v _ofs _v' _ofs' _len =
 let iter_down _f _v =
   assert false
 
+let stable_sort _cmp _v =
+  assert false
+
 (* -------------------------------------------------------------------------- *)
 
 open Monolith

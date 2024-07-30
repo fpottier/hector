@@ -736,3 +736,13 @@ let (* public *) blit v1 ofs1 v2 ofs2 len =
   if defensive then validate_segment length1 ofs1 len;
   if defensive then validate_segment length2 ofs2 len;
   A.blit data1 ofs1 data2 ofs2 len
+
+let (* public *) stable_sort cmp v =
+  GET_LENGTH_DATA(length, data, v);
+  ArraySegment.unsafe_stable_sort cmp data 0 length
+
+let (* public *) sort =
+  stable_sort
+
+let (* public *) fast_sort =
+  stable_sort

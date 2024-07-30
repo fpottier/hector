@@ -313,7 +313,7 @@ val find : (ELEMENT -> bool) -> VECTOR -> int
 
 (* -------------------------------------------------------------------------- *)
 
-(** {1:comparing Comparing} *)
+(** {1:comparing Comparing and sorting} *)
 
 (**While comparison is in progress, the vector must not be modified. For
    example, in [equal eq v v'], the function [eq] is not allowed to modify
@@ -336,6 +336,26 @@ val equal : (ELEMENT -> ELEMENT -> bool) -> VECTOR -> VECTOR -> bool
    [Dynarray.compare] implements a preorder on vectors
    that is not is the lexicographic preorder. *)
 val compare : (ELEMENT -> ELEMENT -> int) -> VECTOR -> VECTOR -> int
+
+(**[sort cmp v] sorts the vector [v], in place,
+   according to the preorder [cmp].
+
+   [sort] is currently a synonym for {!stable_sort}. *)
+val sort : (ELEMENT -> ELEMENT -> int) -> VECTOR -> unit
+
+(**[stable_sort cmp v] sorts the vector [v], in place,
+   according to the preorder [cmp]. This is a stable sort:
+   if two elements are equivalent according to [cmp] then
+   their relative order in the sequence is preserved.
+   This is a merge sort algorithm; it is the same algorithm
+   as in [Array.stable_sort]. *)
+val stable_sort : (ELEMENT -> ELEMENT -> int) -> VECTOR -> unit
+
+(**[fast_sort cmp v] sorts the vector [v], in place,
+   according to the preorder [cmp].
+
+   [fast_sort] is currently a synonym for {!stable_sort}. *)
+val fast_sort : (ELEMENT -> ELEMENT -> int) -> VECTOR -> unit
 
 (* -------------------------------------------------------------------------- *)
 

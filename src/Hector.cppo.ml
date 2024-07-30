@@ -119,6 +119,7 @@ module Poly = struct
   module A = struct
     include Array
     let empty = [||]
+    let alloc = make
     let grow n x a k =
       let b = Array.make n x in
       Array.blit a 0 b 0 k;

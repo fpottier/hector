@@ -234,3 +234,6 @@ let blit v ofs v' ofs' len =
         get v (ofs + delta)
       else
         get v' i
+
+let stable_sort cmp v =
+  v := List.stable_sort cmp !v
