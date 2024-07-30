@@ -333,8 +333,10 @@ let get_data n =
   let basis = n \
   and name = sprintf "sort (size %d) (%s)" n candidate \
   and run () = \
-    let v = of_array (get_data n) in \
     fun () -> \
+      (* We must create a fresh array every time, so we must benchmark
+         the combination of copying + sorting. *) \
+      let v = of_array (get_data n) in \
       sort Int.compare v \
   in \
   B.benchmark ~name ~quota ~basis ~run \
@@ -342,7 +344,7 @@ let get_data n =
 
 let sorts n =
   [
-    SORT("array", Fun.id, Array.stable_sort, n);
+    SORT("array", Array.copy, Array.stable_sort, n);
     SORT("poly", P.of_array, P.stable_sort, n);
     SORT("mono", M.of_array, M.stable_sort, n);
     SORT("int", I.of_array, I.stable_sort, n);
