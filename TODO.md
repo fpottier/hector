@@ -25,6 +25,8 @@
 ## Maybe Later
 
 * Document and publish `ArraySegment`?
+  These operations would allow operating not only on array segments,
+  but also (through `unsafe_borrow`) on vector segments.
 
 * Benchmark `map`.
   Examine the generated assembly code for `map` and `mapi`.
@@ -50,9 +52,6 @@
   `filteri`, -- from List
   `split`,
   `combine`,
-  `sort`,
-  `stable_sort`,
-  `fast_sort`,
   `compress`, -- from Ogre.ArrayExtra
   `shuffle`,
   `to_seqi`.
