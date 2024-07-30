@@ -316,10 +316,44 @@ let pushls k n =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Sort. *)
+
+(* We make sure that all benchmarks use the same random data. *)
+
+let data =
+  ref [||]
+
+let get_data n =
+  if Array.length !data <> n then
+    data := Array.init n (fun _i -> Random.int n);
+  !data
+
+#define SORT(candidate,of_array,sort,n) \
+( \
+  let basis = n \
+  and name = sprintf "sort (size %d) (%s)" n candidate \
+  and run () = \
+    let v = of_array (get_data n) in \
+    fun () -> \
+      sort Int.compare v \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
+let sorts n =
+  [
+    SORT("array", Fun.id, Array.stable_sort, n);
+    SORT("poly", P.of_array, P.stable_sort, n);
+    SORT("mono", M.of_array, M.stable_sort, n);
+    SORT("int", I.of_array, I.stable_sort, n);
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* Read the command line. *)
 
-let push, pop, get, set, iter, iteri, pusha, pushl =
-  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
+let push, pop, get, set, iter, iteri, pusha, pushl, sort =
+  ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0, ref 0
 
 let () =
   Arg.parse [
@@ -331,10 +365,11 @@ let () =
     "--iteri", Arg.Set_int iteri, " <n> Benchmark iteri (and set)";
     "--pusha", Arg.Set_int pusha, " <n> Benchmark push_array";
     "--pushl", Arg.Set_int pushl, " <n> Benchmark push_list";
+    "--sort", Arg.Set_int sort, " <n> Benchmark sort";
   ] (fun _ -> ()) "Invalid usage"
 
-let push, pop, get, set, iter, iteri, pusha, pushl =
-  !push, !pop, !get, !set, !iter, !iteri, !pusha, !pushl
+let push, pop, get, set, iter, iteri, pusha, pushl, sort =
+  !push, !pop, !get, !set, !iter, !iteri, !pusha, !pushl, !sort
 
 let possibly n (benchmarks : int -> B.benchmark list) =
   if n > 0 then run (benchmarks n)
@@ -352,4 +387,5 @@ let () =
   possibly iteri iteris;
   possibly pusha (let k = 10 in pushas k);
   possibly pushl (let k = 10 in pushls k);
+  possibly sort sorts;
   ()

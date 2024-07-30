@@ -32,6 +32,8 @@ bench:
 	@ $(MAIN) --pusha 10000 2>&1 | tee log/pusha.log
 	@ echo
 	@ $(MAIN) --pushl 10000 2>&1 | tee log/pushl.log
+	@ echo
+	@ $(MAIN) --sort 10000 2>&1 | tee log/sort.log
 
 ASSEMBLY=$(shell find ../_build -name '*Main.s')
 .PHONY: assembly
