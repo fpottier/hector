@@ -200,8 +200,8 @@ let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
 
 (* Although [merge] (above) works in all situations, we can make it much
    faster in the special case where the data in the first source segment is
-   less than or equal to than the data in the second source segment. Indeed,
-   in that case, two calls to [blit] suffice. The cost of recognizing this
+   less than or equal to the data in the second source segment. Indeed, in
+   that case, two calls to [blit] suffice. The cost of recognizing this
    special case is two reads, a comparison, and a conditional. *)
 
 let[@inline] optimistic_merge
