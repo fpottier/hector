@@ -323,6 +323,9 @@ let pushls k n =
 let data =
   ref [||]
 
+let () =
+  Random.init 42
+
 let get_data n =
   if Array.length !data <> n then
     data := Array.init n (fun _i -> Random.int n);
