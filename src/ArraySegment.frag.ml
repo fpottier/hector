@@ -120,8 +120,17 @@ let rec find f a i j =
 #define GET   A.unsafe_get
 #undef  SET
 #define SET   A.unsafe_set
-#undef  BLIT
-#define BLIT  A.unsafe_blit
+
+(* If the input data is already sorted, or close to sorted, it may be the
+   case that the calls from [merge] (below) to [blit] attempt to copy an
+   array segment to itself. We recognize this situation, where there is
+   nothing to do. *)
+
+let[@inline] terminal_blit src srcofs dst dstofs len =
+  if src == dst && srcofs = dstofs then
+    ()
+  else
+    A.unsafe_blit src srcofs dst dstofs len
 
 (* [merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs] merges
    the sorted array segments described by [src1], [src1ofs], [src1len] and
@@ -145,17 +154,56 @@ let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
       if i1 < src1r then
         loop i1 (GET src1 i1) i2 s2 (d + 1)
       else
-        BLIT src2 i2 dst (d + 1) (src2r - i2)
+        terminal_blit src2 i2 dst (d + 1) (src2r - i2)
     end else begin
       SET dst d s2;
       let i2 = i2 + 1 in
       if i2 < src2r then
         loop i1 s1 i2 (GET src2 i2) (d + 1)
       else
-        BLIT src1 i1 dst (d + 1) (src1r - i1)
+        terminal_blit src1 i1 dst (d + 1) (src1r - i1)
     end
   in
   loop src1ofs (GET src1 src1ofs) src2ofs (GET src2 src2ofs) dstofs
+
+(* Although [merge] (above) works in all situations, we can make it much
+   faster in the special case where the data in the first source segment is
+   less than or equal to than the data in the second source segment. Indeed,
+   in that case, two calls to [blit] suffice. The cost of recognizing this
+   special case is two reads, a comparison, and a conditional. *)
+
+(* [optimistic_merge] requires [0 < src1len && 0 < src2len]. This simplifies
+   the code, and this requirement is satisfied in our use case. *)
+
+let[@inline] optimistic_merge
+    cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
+  assert (0 < src1len && 0 < src2len);
+  let last1  = GET src1 (src1ofs + src1len - 1)
+  and first2 = GET src2 src2ofs in
+  if cmp last1 first2 <= 0 then begin
+    A.unsafe_blit src1 src1ofs dst dstofs src1len;
+    A.unsafe_blit src2 src2ofs dst (dstofs + src1len) src2len
+  end
+  else
+    merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs
+
+(* Even better: in the special case where the second source segment is a
+   suffix of the destination segment, [optimistic_merge] is simplified: the
+   second call to [blit] has no effect, as it copies the second source
+   segment to itself. Thus, it can be removed. *)
+
+let[@inline] magic_optimistic_merge
+    cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
+  (* Check that the second source segment
+     is a suffix of the destination segment. *)
+  assert (src2 == dst && dstofs + src1len = src2ofs);
+  assert (0 < src1len && 0 < src2len);
+  let last1  = GET src1 (src1ofs + src1len - 1)
+  and first2 = GET src2 src2ofs in
+  if cmp last1 first2 <= 0 then
+    A.unsafe_blit src1 src1ofs dst dstofs src1len
+  else
+    merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs
 
 (* [isortto cmp src srcofs dst dstofs len] sorts the array segment described
    by [src], [srcofs], [len]. The resulting data is written into the array
@@ -201,7 +249,10 @@ let rec sortto cmp src srcofs dst dstofs len =
     (* Merge the two sorted halves, moving the data to [dst]. *)
     (* This is an in-place merge: the second source segment is contained
        within the destination segment! *)
-    merge cmp src (srcofs + len2) len1 dst (dstofs + len1) len2 dst dstofs
+    (* This is a stable sort, because the first half of the original
+       data (now moved and sorted) is the first argument to [merge]. *)
+    magic_optimistic_merge cmp
+      src (srcofs + len2) len1 dst (dstofs + len1) len2 dst dstofs
   end
 
 (* [unsafe_stable_sort_segment cmp a ofs len] sorts the array segment
@@ -228,7 +279,7 @@ let unsafe_stable_sort cmp a ofs len =
     (* Merge the two sorted halves, moving the data to [a]. *)
     (* This is an in-place merge: the first source segment is contained
        within the destination segment! *)
-    merge cmp a (base + len2) len1 t 0 len2 a base;
     (* This is a stable sort, because the first half of the original
        data (now moved and sorted) is the first argument to [merge]. *)
+    optimistic_merge cmp a (base + len2) len1 t 0 len2 a base
   end
