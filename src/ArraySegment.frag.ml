@@ -121,10 +121,27 @@ let rec find f a i j =
 #undef  SET
 #define SET   A.unsafe_set
 
+(* [disjoint a1 ofs1 len1 a2 ofs2 len2] tests whether the array segments
+   described by [a1], [ofs1], [len1] and [a2], [ofs2], [len2] are disjoint.
+   It is used only in assertions. *)
+
+let disjoint a1 ofs1 len1 a2 ofs2 len2 =
+  a1 != a2 ||
+  ofs1 + len1 <= ofs2 ||
+  ofs2 + len2 <= ofs1
+
+(* [suffix a1 ofs1 len1 a2 ofs2 len2] tests whether the array segment
+   described by [a1], [ofs1], [len1] is a suffix of the array segment
+   described by [a2], [ofs2], [len2]. It is used only in assertions. *)
+
+let suffix a1 ofs1 len1 a2 ofs2 len2 =
+  a1 == a2 &&
+  ofs1 + len1 = ofs2 + len2 &&
+  len1 <= len2
+
 (* If the input data is already sorted, or close to sorted, it may be the
-   case that the calls from [merge] (below) to [blit] attempt to copy an
-   array segment to itself. We recognize this situation, where there is
-   nothing to do. *)
+   case that the calls from [merge] (below) to [blit] copy an array segment
+   to itself. We recognize this situation, where there is nothing to do. *)
 
 let[@inline] terminal_blit src srcofs dst dstofs len =
   if src == dst && srcofs = dstofs then
@@ -142,9 +159,24 @@ let[@inline] terminal_blit src srcofs dst dstofs len =
    destination segment. (This works because the data in the second source
    segment is then moved left: it is read before it is overwritten.) *)
 
+(* [src1len] and [src2len] must be nonzero. *)
+
 (* This is a stable merge: when [s1] and [s2] are equal, [s1] is favored. *)
 
 let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
+  assert (0 < src1len && 0 < src2len);
+  assert (
+    let dstlen = src1len + src2len in
+    (* Either both source segments are disjoint with the destination segment, *)
+    disjoint src1 src1ofs src1len dst dstofs dstlen &&
+    disjoint src2 src2ofs src2len dst dstofs dstlen ||
+    (* or the first source segment is a suffix of the destination segment, *)
+      suffix src1 src1ofs src1len dst dstofs dstlen &&
+    disjoint src2 src2ofs src2len dst dstofs dstlen ||
+    (* or the second source segment is a suffix of the destination segment. *)
+    disjoint src1 src1ofs src1len dst dstofs dstlen &&
+      suffix src2 src2ofs src2len dst dstofs dstlen
+  );
   let src1r = src1ofs + src1len
   and src2r = src2ofs + src2len in
   let rec loop i1 s1 i2 s2 d =
@@ -171,9 +203,6 @@ let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
    less than or equal to than the data in the second source segment. Indeed,
    in that case, two calls to [blit] suffice. The cost of recognizing this
    special case is two reads, a comparison, and a conditional. *)
-
-(* [optimistic_merge] requires [0 < src1len && 0 < src2len]. This simplifies
-   the code, and this requirement is satisfied in our use case. *)
 
 let[@inline] optimistic_merge
     cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
