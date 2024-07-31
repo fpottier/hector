@@ -123,7 +123,7 @@ let grow (n : length) (_dummy : element) (s : t) (k : length) : t =
   (* Cast it to the type [int array]. *)
   let a : int array = Obj.obj a in
   (* Initialize the lower segment by copying data from [s]. *)
-  blit s 0 a 0 k;
+  unsafe_blit s 0 a 0 k;
   (* Initialize the upper segment with arbitrary integer values. *)
   unsafe_initialize_int_array_segment a k (n - k);
   (* Done. *)

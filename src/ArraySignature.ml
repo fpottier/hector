@@ -76,6 +76,12 @@ module type MONOARRAY = sig
      and length [k]. *)
   val sub : t -> offset -> length -> t
 
+  (**[unsafe_blit a1 o1 a2 o2 k] copies the content of the array segment
+     identified by array [a1], offset [o1], and length [k] into the array
+     segment identified by array [a2], offset [o2], and length [k]. {b No
+     bounds check is performed.} *)
+  val unsafe_blit : t -> offset -> t -> offset -> length -> unit
+
   (**[blit a1 o1 a2 o2 k] copies the content of the array segment
      identified by array [a1], offset [o1], and length [k] into the array
      segment identified by array [a2], offset [o2], and length [k]. *)

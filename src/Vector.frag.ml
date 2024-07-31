@@ -12,12 +12,12 @@
 
 (* We use a subset of the functionality of the [Array] module, namely [empty],
    [length], [unsafe_get], [unsafe_set], [make], [grow], [init], [sub],
-   [blit], and [fill]. We take these functions from a module named [A], and do
-   not make any reference to the standard library module [Array]. This makes
-   our code largely independent of the type of arrays that is used as a basis
-   for our vectors. (Not completely independent, though, because we still rely
-   on the ability to convert, without any code, from an internal array to an
-   external array.) *)
+   [unsafe_blit], and [fill]. We take these functions from a module named [A],
+   and do not make any reference to the standard library module [Array]. This
+   makes our code largely independent of the type of arrays that is used as a
+   basis for our vectors. (Not completely independent, though, because we
+   still rely on the ability to convert, without any code, from an internal
+   array to an external array.) *)
 
 (* We assume that the macros [VECTOR], [SYNONYM], and [ARRAY] are defined.
 
@@ -434,7 +434,7 @@ let[@inline] (* private *) unsafe_push_array_segment v a ofs len =
   let data = DATA(assert (0 < len); A.unsafe_get a 0 (* safe *)) in
   (* Physical array slots now exist. *)
   v.length <- new_length;
-  A.blit a ofs data length len
+  A.unsafe_blit a ofs data length len
 
 let[@inline] (* public *) push_array v a =
   let ofs = 0
@@ -735,7 +735,7 @@ let (* public *) blit v1 ofs1 v2 ofs2 len =
   GET_LENGTH_DATA(length2, data2, v2);
   if defensive then validate_segment length1 ofs1 len;
   if defensive then validate_segment length2 ofs2 len;
-  A.blit data1 ofs1 data2 ofs2 len
+  A.unsafe_blit data1 ofs1 data2 ofs2 len
 
 let (* public *) stable_sort cmp v =
   GET_LENGTH_DATA(length, data, v);

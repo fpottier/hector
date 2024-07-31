@@ -121,7 +121,7 @@ let rec find f a i j =
 #undef  SET
 #define SET   A.unsafe_set
 #undef  BLIT
-#define BLIT  A.blit
+#define BLIT  A.unsafe_blit
 
 (* [merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs] merges
    the sorted array segments described by [src1], [src1ofs], [src1len] and

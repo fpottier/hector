@@ -58,6 +58,11 @@ external unsafe_blit :
   unit
 = "hector_array_blit"
 
+let blit (src : t) sofs dst dofs n =
+  validate_segment (length src) sofs n;
+  validate_segment (length dst) dofs n;
+  unsafe_blit src sofs dst dofs n
+
 #else
 
 (* We always use [Array.blit], as opposed to a hand-written loop, because this
@@ -68,12 +73,10 @@ external unsafe_blit :
 let[@inline] unsafe_blit (src : t) sofs dst dofs n =
  Array.blit src sofs dst dofs n
 
-#endif
+let blit =
+  unsafe_blit
 
-let blit (src : t) sofs dst dofs n =
-  validate_segment (length src) sofs n;
-  validate_segment (length dst) dofs n;
-  unsafe_blit src sofs dst dofs n
+#endif
 
 (* -------------------------------------------------------------------------- *)
 
