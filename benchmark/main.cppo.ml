@@ -331,9 +331,9 @@ let get_data n =
 #define SORT(candidate,of_array,sort,n) \
 ( \
   let basis = n \
-  and name = sprintf "sort (size %d) (%s)" n candidate \
+  and name = sprintf "sort (random data, size %d) (%s)" n candidate \
   and run () = \
-    (* We must create a fresh array every time. *) \
+    (* We must create a fresh vector every time. *) \
     let v = of_array (get_data n) in \
     fun () -> \
       sort Int.compare v \
@@ -341,12 +341,30 @@ let get_data n =
   B.benchmark ~name ~quota ~basis ~run \
 )
 
+#define SORTED(candidate,of_array,sort,n) \
+( \
+  let a = Array.init n (fun i -> i) in \
+  let v = of_array a in \
+  let basis = n \
+  and name = sprintf "sort (sorted data, size %d) (%s)" n candidate \
+  and run () () = \
+    sort Int.compare v \
+  in \
+  B.benchmark ~name ~quota ~basis ~run \
+)
+
 let sorts n =
   [
+    (* Sorting random data: *)
     SORT("array", Array.copy, Array.stable_sort, n);
     SORT("poly", P.of_array, P.stable_sort, n);
     SORT("mono", M.of_array, M.stable_sort, n);
     SORT("int", I.of_array, I.stable_sort, n);
+    (* Sorting an already-sorted array: *)
+    SORTED("array", Array.copy, Array.stable_sort, n);
+    SORTED("poly", P.of_array, P.stable_sort, n);
+    SORTED("mono", M.of_array, M.stable_sort, n);
+    SORTED("int", I.of_array, I.stable_sort, n);
   ]
 
 (* -------------------------------------------------------------------------- *)
