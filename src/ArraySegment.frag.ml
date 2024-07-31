@@ -133,6 +133,8 @@ let rec find f a i j =
    destination segment. (This works because the data in the second source
    segment is then moved left: it is read before it is overwritten.) *)
 
+(* This is a stable merge: when [s1] and [s2] are equal, [s1] is favored. *)
+
 let merge cmp src1 src1ofs src1len src2 src2ofs src2len dst dstofs =
   let src1r = src1ofs + src1len
   and src2r = src2ofs + src2len in
@@ -181,7 +183,7 @@ let cutoff = 8
    by [src], [srcofs], [len]. The resulting data is written into the array
    segment described by [dst], [dstofs], [len]. The destination segment must
    be disjoint from the source segment. This is a merge sort, with an
-   insertion sort at the leaves. *)
+   insertion sort at the leaves. It is a stable sort. *)
 
 let rec sortto cmp src srcofs dst dstofs len =
   if len <= cutoff then
@@ -227,4 +229,6 @@ let unsafe_stable_sort cmp a ofs len =
     (* This is an in-place merge: the first source segment is contained
        within the destination segment! *)
     merge cmp a (base + len2) len1 t 0 len2 a base;
+    (* This is a stable sort, because the first half of the original
+       data (now moved and sorted) is the first argument to [merge]. *)
   end
