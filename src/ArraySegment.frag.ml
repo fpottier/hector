@@ -209,11 +209,22 @@ let rec sortto cmp src srcofs dst dstofs len =
 
 let unsafe_stable_sort cmp a ofs len =
   let base = ofs in
-  if len <= cutoff then isortto cmp a base a base len else begin
+  if len <= cutoff then
+    isortto cmp a base a base len
+  else begin
     let len1 = len / 2 in
     let len2 = len - len1 in
+    (* The second half of [a] can be larger by one slot. *)
+    assert (len1 <= len2 && len2 <= len1 + 1);
+    (* Allocate a temporary array that fits the second half of [a]. *)
     let t = ALLOC len2 (GET a base) in
+    (* Sort the second half of [a] and move it to [t]. *)
     sortto cmp a (base + len1) t 0 len2;
+    (* Sort the first half of [a] and move it to the second half of [a]. *)
+    (* This requires [len1 <= len2]. *)
     sortto cmp a base a (base + len2) len1;
+    (* Merge the two sorted halves, moving the data to [a]. *)
+    (* This is an in-place merge: the first source segment is contained
+       within the destination segment! *)
     merge cmp a (base + len2) len1 t 0 len2 a base;
   end
