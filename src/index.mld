@@ -122,6 +122,11 @@ OCaml's
 {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray} library
 does not (and cannot) offer this feature.
 
+[hector]'s [stable_sort] is
+slightly faster than [Array.stable_sort],
+and can be {b significantly faster} than [Array.stable_sort]
+if the data is already sorted or almost sorted.
+
 A few operations have different behavior in
 {{: https://ocaml.org/manual/5.2/api/Dynarray.html}Dynarray}
 and in [hector]:
@@ -157,6 +162,8 @@ but not in
 + [sub],
 + [concat],
 + [fill],
++ [blit],
++ [sort], [stable_sort], [fast_sort],
 + [unsafe_get],
 + [unsafe_set],
 + [unsafe_borrow],
