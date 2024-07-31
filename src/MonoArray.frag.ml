@@ -37,12 +37,6 @@ let[@inline] unsafe_set (a : t) i x =
 
 (* [blit]. *)
 
-(* All of our internal uses of [blit] fall in a special case where there is
-   no overlap between the source and destination. Nevertheless, we implement
-   [blit] in the general case, because a few extra checks cost nothing. In C,
-   we use [memmove], which supports overlap, as opposed to [memcpy], which
-   does not. *)
-
 #ifdef IMMEDIATE
 
 (* If the type [element] is immediate (i.e., not a pointer type) then
