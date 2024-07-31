@@ -236,10 +236,14 @@ let[@inline] magic_optimistic_merge
 
 (* [isortto cmp src srcofs dst dstofs len] sorts the array segment described
    by [src], [srcofs], [len]. The resulting data is written into the array
-   segment described by [dst], [dstofs], [len]. The destination segment must
-   be disjoint from the source segment. This is an insertion sort. *)
+   segment described by [dst], [dstofs], [len]. The source and destination
+   segments must either coincide or be disjoint. This is an insertion sort. *)
 
 let isortto cmp src srcofs dst dstofs len =
+  assert (
+    src == dst && srcofs = dstofs ||
+    disjoint src srcofs len dst dstofs len
+  );
   for i = 0 to len - 1 do
     let e = GET src (srcofs + i) in
     let j = ref (dstofs + i - 1) in
@@ -263,6 +267,7 @@ let cutoff = 8
    insertion sort at the leaves. It is a stable sort. *)
 
 let rec sortto cmp src srcofs dst dstofs len =
+  assert (disjoint src srcofs len dst dstofs len);
   if len <= cutoff then
     isortto cmp src srcofs dst dstofs len
   else begin
