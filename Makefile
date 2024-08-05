@@ -103,7 +103,7 @@ export: doc
 .PHONY: count
 count:
 	@ echo "Number of operations in the signature (not counting synonyms):"
-	@ grep -w val src/Signature.frag.mli | grep -v synonym | grep -vw check | wc -l
+	@ grep -w val src/Vector.frag.mli | grep -v synonym | grep -vw check | wc -l
 
 # ------------------------------------------------------------------------------
 
