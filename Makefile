@@ -140,7 +140,8 @@ handiwork:
 
 HEADACHE := headache
 HEADER   := header.txt
-SOURCES  := $(shell gfind . -type f -regex ".*\.\(mli?\|c\)" | grep -v dynarray)
+SOURCES  := $(shell gfind src test benchmark -type f -regex ".*\.\(mli?\|c\)" \
+                    | grep -v dynarray)
 
 .PHONY: headache
 headache:
