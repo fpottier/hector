@@ -7,7 +7,7 @@
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
-* Publish `IntArray` as `Arrays.Int`.
+* Publish the module `IntArray`.
 
 * Use the new release of `cppo`
   to write multi-line macros without backslashes,
@@ -19,8 +19,6 @@
 
 * Once a new version of Monolith is released,
   use its new combinators `naive_array` and `naive_seq`.
-
-* Release.
 
 ## Maybe Later
 
