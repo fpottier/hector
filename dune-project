@@ -1,4 +1,5 @@
 (lang dune 3.11)
+(name hector)
 (generate_opam_files true)
 (package
   (name hector)
