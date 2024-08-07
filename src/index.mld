@@ -108,6 +108,7 @@ are {b generally significantly faster}
 than OCaml's dynamic arrays,
 and on some operations,
 can be {b up to 5x faster}.
+[hector]'s {b integer vectors are not scanned} by the garbage collector.
 
 [hector] offers fast (but dangerous) {b unchecked random access operations},
 [unsafe_get] and [unsafe_set],
