@@ -128,3 +128,9 @@ module Poly = struct
   end
   #include "Vector.frag.ml"
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Expose our integer arrays. *)
+
+module IntArray = IntArray

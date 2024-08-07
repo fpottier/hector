@@ -62,3 +62,5 @@ module Mono : sig
 end
 
 module Poly : POLYVECTOR
+
+module IntArray : MONOARRAY with type element = int
