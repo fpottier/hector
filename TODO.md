@@ -22,6 +22,10 @@
 
 ## Maybe Later
 
+* We need functions to extend the length of a segment and initialize
+  every new slot with a value `x`, or with a function `f i`. In other
+  words, combinations of `push_vector` and `make` or `init`.
+
 * Document and publish `ArraySegment`?
   These operations would allow operating not only on array segments,
   but also (through `unsafe_borrow`) on vector segments.
