@@ -42,7 +42,7 @@ external unsafe_fill_bytes :
   (* offset in bytes: *) int  ->
   (* length in bytes: *) int  ->
   (* value:           *) char ->
-  unit = "caml_fill_bytes"
+  unit = "caml_fill_bytes" [@@noalloc]
 
 (* [unsafe_initialize_int_array_segment a o n] initializes the array segment
    determined by array [a], offset [o], and length [n], with arbitrary (valid)
