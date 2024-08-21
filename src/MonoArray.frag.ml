@@ -96,6 +96,11 @@ let sub a o n =
   blit a o a' 0 n;
   a'
 
+(* [copy] is a special case of [sub]. *)
+
+let[@inline] copy a =
+  sub a 0 (length a)
+
 (* -------------------------------------------------------------------------- *)
 
 (* [fill] is taken from [Stdlib.Array]. *)

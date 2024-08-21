@@ -75,6 +75,7 @@ module Mono = struct
         Array.blit a 0 b 0 k;
         b
       #include "MonoArray.frag.ml"
+      let _ = copy (* [copy] is not needed here *)
     end
 
     #include "Vector.frag.ml"
