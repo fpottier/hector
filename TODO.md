@@ -1,5 +1,19 @@
 # To Do
 
+## Documentation
+
+* The hyperlinks to the API are not colored.
+  See [this page](https://ocaml.org/p/hector/latest/doc/index.html).
+
+* The explanation of the physical capacity in the documentation
+  could be clarified.
+
+  Each vector has a capacity (which can be updated by `set_capacity`), and
+  each vector has an internal data array (which can be accessed via
+  `unsafe_borrow`), but the length of the data array is not always the
+  vector’s capacity. There is one special case where the data array can have
+  length zero even if the capacity is nonzero.
+
 ## Soon
 
 * Reconsider the use of `LOOP5` in every loop.
@@ -7,7 +21,7 @@
   If we are certain to use `LOOP`, then a `for` loop may be preferable.
   Also, some functions use `LOOP_DOWN`; `LOOP5_DOWN` is still missing.
 
-* Publish the module `IntArray`.
+* The module `IntArray` has been exposed, but needs to be documented.
 
 * Use the new release of `cppo`
   to write multi-line macros without backslashes,
