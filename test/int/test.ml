@@ -11,6 +11,8 @@
 (******************************************************************************)
 
 open Monolith
+let array = naive_array
+let seq = naive_seq
 
 (* -------------------------------------------------------------------------- *)
 
@@ -26,27 +28,6 @@ module C = Candidate
 
 (* -------------------------------------------------------------------------- *)
 
-(* A Monolith combinator for arrays. *)
-
-let constructible_array spec =
-  map_outof
-    Array.of_list
-    (Array.of_list, constant "Array.of_list")
-    (list spec)
-
-let deconstructible_array spec =
-  map_into
-    Array.to_list
-    (Array.to_list, constant "Array.to_list")
-    (list spec)
-
-let array spec =
-  ifpol
-    (constructible_array spec)
-    (deconstructible_array spec)
-
-(* -------------------------------------------------------------------------- *)
-
 (* We have one abstract type, namely [vector]. *)
 
 let check _model =
@@ -59,28 +40,6 @@ let vector =
 
 let element =
   semi_open_interval 0 32
-
-(* We can produce and read sequences of elements. *)
-
-(* [to_seq] and [to_seq_rev] produce sequences that are valid only as
-   long as the vector is not mutated. This could be expressed, with
-   some work, but it is not really worth the trouble. Instead, we
-   immediately convert the sequence to a list. This is good enough. *)
-
-let seq ?length:(length=Gen.lt 16) element =
-  ifpol
-
-    (* The construction side. *)
-    begin
-      list ~length element
-      |> map_outof List.to_seq (List.to_seq, constant "List.to_seq")
-    end
-
-    (* The deconstruction side. *)
-    begin
-      list element
-      |> map_into List.of_seq (List.of_seq, constant "List.of_seq")
-    end
 
 (* We draw random integer capacities and lengths. *)
 
@@ -99,25 +58,6 @@ let index v =
 
 let flip f x y =
   f y x
-
-(* We test [iter] by converting it to an [elements] function. *)
-
-let elements_of_iter iter v =
-  let xs = ref [] in
-  iter (fun x -> xs := x :: !xs) v;
-  List.rev !xs
-
-let elements_of_iteri iteri v =
-  let ixs = ref [] in
-  iteri (fun i x -> ixs := (i, x) :: !ixs) v;
-  List.rev !ixs
-
-let elements_of_fold_left fold_left v =
-  fold_left (fun xs x -> x :: xs) [] v
-  |> List.rev
-
-let elements_of_fold_right fold_right v =
-  fold_right (fun x xs -> x :: xs) v []
 
 (* -------------------------------------------------------------------------- *)
 
@@ -253,18 +193,15 @@ let () =
   let spec = vector ^> unit in
   declare "fit_capacity" spec R.fit_capacity C.fit_capacity;
 
-  let spec = vector ^> list element in
-  declare "elements_of_iter iter" spec
-    (elements_of_iter R.iter) (elements_of_iter C.iter);
+  let spec = iter (vector ^> list element) in
+  declare "iter" spec R.iter C.iter;
 
-  let spec = vector ^> list element in
+  let spec = iter (vector ^> list element) in
   if not C.dynarray then
-  declare "elements_of_iter iter_down" spec
-    (elements_of_iter R.iter_down) (elements_of_iter C.iter_down);
+  declare "iter_down" spec R.iter_down C.iter_down;
 
-  let spec = vector ^> list (int *** element) in
-  declare "elements_of_iteri iteri" spec
-    (elements_of_iteri R.iteri) (elements_of_iteri C.iteri);
+  let spec = iteri (vector ^> list (int *** element)) in
+  declare "iteri" spec R.iteri C.iteri;
 
   (* [map] is applied specifically to the function [succ]. *)
   (* We do not check that [map] calls [f x] at most once for each [x]
@@ -278,13 +215,11 @@ let () =
   let spec = vector ^> vector in
   declare "mapi (+)" spec (R.mapi (+)) (C.mapi (+));
 
-  let spec = vector ^> list element in
-  declare "elements_of_fold_left fold_left" spec
-    (elements_of_fold_left R.fold_left) (elements_of_fold_left C.fold_left);
+  let spec = foldl (vector ^> list element) in
+  declare "fold_left" spec R.fold_left C.fold_left;
 
-  let spec = vector ^> list element in
-  declare "elements_of_fold_right fold_right" spec
-    (elements_of_fold_right R.fold_right) (elements_of_fold_right C.fold_right);
+  let spec = foldr (vector ^> list element) in
+  declare "fold_right" spec R.fold_right C.fold_right;
 
   (* [exists] is applied specifically to the function [(<=) 0]. *)
   let spec = vector ^> bool in
@@ -349,10 +284,6 @@ let () =
 (* Start the engine! *)
 
 let () =
-  dprintf "          let elements_of_iter iter v = let xs = ref [] in iter (fun x -> xs := x :: !xs) v; List.rev !xs;;\n";
-  dprintf "          let elements_of_iteri iteri v = let ixs = ref [] in iteri (fun i x -> ixs := (i, x) :: !ixs) v; List.rev !ixs;;\n";
-  dprintf "          let elements_of_fold_left fold_left v = fold_left (fun xs x -> x :: xs) [] v |> List.rev;;\n";
-  dprintf "          let elements_of_fold_right fold_right v = fold_right (fun x xs -> x :: xs) v [];;\n";
   dprintf "          let increment_if_positive x = if x < 0 then None else Some (x + 1);;\n";
   let fuel = 128 in
   main fuel
