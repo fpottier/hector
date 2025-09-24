@@ -178,6 +178,8 @@ val push_list : 'a vector -> 'a list -> unit
 (**[append_list] is a synonym for [push_list]. *)
 val append_list : 'a vector -> 'a list -> unit (* synonym *)
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
 (**[push_seq v xs] extends the vector [v] with the elements of the sequence
    [xs]. The length of the vector [v] is increased by the length of the
    sequence [xs]. If necessary, the capacity of the vector [v] is increased.
@@ -186,6 +188,8 @@ val push_seq : 'a vector -> 'a Seq.t -> unit
 
 (**[append_seq] is a synonym for [push_seq]. *)
 val append_seq : 'a vector -> 'a Seq.t -> unit (* synonym *)
+
+*****************************************************************************)
 
 (** [push_iter v iter c] pushes each element of the collection [c]
     in turn onto the vector [v]. The function [iter] is used to
@@ -371,10 +375,14 @@ val of_array : 'a array -> 'a vector
    of the list [xs]. *)
 val of_list : 'a list -> 'a vector
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
 (**[of_seq xs] returns a new vector whose elements are the elements of the
    sequence [xs]. The length and capacity of the new vector are the length
    of the sequence [xs]. *)
 val of_seq : 'a Seq.t -> 'a vector
+
+*****************************************************************************)
 
 (**[to_array v] creates a new array whose elements are the elements of the
    vector [v]. The length of the new array is the length of the vector [v]. *)
@@ -383,6 +391,8 @@ val to_array : 'a vector -> 'a array
 (**[to_list v] creates a new list whose elements are the elements of the
    vector [v]. The length of the new list is the length of the vector [v]. *)
 val to_list : 'a vector -> 'a list
+
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
 
 (**[to_seq v] creates a sequence whose elements are the elements of the
    vector [v]. The length of this sequence is the length of the vector
@@ -399,6 +409,8 @@ val to_seq : 'a vector -> 'a Seq.t
    vector [v] is not modified. As soon as [v] is modified, this sequence
    must no longer be used. *)
 val to_seq_rev : 'a vector -> 'a Seq.t
+
+*****************************************************************************)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -481,7 +493,9 @@ module Stack : sig
   val length : 'a t -> int
   val iter : ('a -> unit) -> 'a t -> unit
   val fold : ('s -> 'a -> 's) -> 's -> 'a t -> 's
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
   val to_seq : 'a t -> 'a Seq.t
   val add_seq : 'a t -> 'a Seq.t -> unit
   val of_seq : 'a Seq.t -> 'a t
+*****************************************************************************)
 end

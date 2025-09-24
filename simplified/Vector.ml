@@ -475,6 +475,8 @@ let (* public *) push_list v xs =
 let (* public *) append_list =
   push_list
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
 let (* public *) push_seq v xs =
   push_list v (List.of_seq xs)
     (* I do not feel the need to optimize this function for speed. *)
@@ -485,6 +487,8 @@ let (* public *) append_seq =
 let (* public *) of_seq xs =
   let v = create() in push_seq v xs; v
     (* I do not feel the need to optimize this function for speed. *)
+
+*****************************************************************************)
 
 (* In [push_iter], assuming that we are not allowed to call [iter] twice,
    the best and simplest implementation is to just iterate [push]. Using
@@ -541,6 +545,8 @@ let[@inline] to_list a i j =
   for i = j-1 downto i do accu := A.unsafe_get a i :: !accu done;
   !accu
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
 let rec to_seq a i j =
   assert (0 <= i && i <= j && i <= A.length a);
   if i = j then
@@ -556,6 +562,8 @@ let rec to_seq_rev a i j =
     fun () ->
       let j = j - 1 in
       Seq.Cons (A.unsafe_get a j, to_seq_rev a i j)
+
+*****************************************************************************)
 
 let[@inline] exists f a i j =
   assert (0 <= i && i <= j && i <= A.length a);
@@ -860,6 +868,8 @@ let (* public *) to_list v =
   let { length; data; _ } = v in validate length data;
   ArraySegment.to_list data 0 length
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
 let (* public *) to_seq v =
   let { length; data; _ } = v in validate length data;
   ArraySegment.to_seq data 0 length
@@ -867,6 +877,8 @@ let (* public *) to_seq v =
 let (* public *) to_seq_rev v =
   let { length; data; _ } = v in validate length data;
   ArraySegment.to_seq_rev data 0 length
+
+*****************************************************************************)
 
 let (* public *) exists f v =
   let { length; data; _ } = v in validate length data;
@@ -1003,12 +1015,16 @@ module Stack = struct
     done;
     !accu
 
+(*** Temporarily removed for export to Menhir: Menhir cannot rely on Seq.
+
   (* [Stack.to_seq] takes a snapshot (at no cost) of the stack when
      it is called, so the stack can be modified, without affecting
      iteration. We simulate this (at a cost) by making a copy. *)
   let to_seq v = to_seq_rev (copy v)
   let add_seq = push_seq
   let of_seq = of_seq
+
+*****************************************************************************)
 
 end
 
