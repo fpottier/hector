@@ -206,3 +206,11 @@ undo:
 # Undo the last release (assuming it was done on the same date).
 	@ git tag -d $(DATE)
 	@ git push -u origin :$(DATE)
+
+# -------------------------------------------------------------------------
+
+# Vendoring Hector inside Menhir.
+
+.PHONY: vendor
+vendor:
+	@ make -C simplified $@
