@@ -1,5 +1,5 @@
 # The switch that is used for testing is the current switch.
-SWITCH := default
+SWITCH := $(shell opam switch show)
 
 EXE := test.exe
 
