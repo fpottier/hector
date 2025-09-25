@@ -1,19 +1,16 @@
-(lang dune 3.11)
+(lang dune 3.18)
 (name hector)
 (generate_opam_files true)
 (package
   (name hector)
-  (authors
-    "François Pottier <francois.pottier@inria.fr>"
-  )
-  (maintainers
-    "François Pottier <francois.pottier@inria.fr>"
-  )
+  (authors "François Pottier <francois.pottier@inria.fr>")
+  (maintainers "François Pottier <francois.pottier@inria.fr>")
   (source (uri git+https://github.com/fpottier/hector.git))
   (homepage https://github.com/fpottier/hector/)
   (bug_reports https://github.com/fpottier/hector/issues)
   (synopsis "Vectors (dynamic arrays)")
   (license "LGPL-2.0-only WITH OCaml-LGPL-linking-exception")
+  (maintenance_intent "(latest)")
   (depends
     (ocaml (>= 4.14))
     cppo
