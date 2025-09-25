@@ -18,7 +18,7 @@
 (* Types. *)
 
 (**The type of a vector. *)
-type !'a vector
+type 'a vector
 
 (**A synonym for the type of a vector. *)
 type 'a t = 'a vector
