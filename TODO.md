@@ -36,6 +36,8 @@
 
 ## Maybe Later
 
+* Publish operations that iterate on vector segments.
+
 * We need functions to extend the length of a segment and initialize
   every new slot with a value `x`, or with a function `f i`. In other
   words, combinations of `push_vector` and `make` or `init`.
