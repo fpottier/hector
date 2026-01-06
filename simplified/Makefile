@@ -14,7 +14,7 @@ vendor:
 	fi
 # Copy the files of interest into Menhir's working directory.
 	@ cp -f Vector.{ml,mli} $(CLIENT)/base/
-	@ cd $(CLIENT) && headache -h $(CLIENT)/headers/regular-header src/Vector.{ml,mli}
+	@ cd $(CLIENT) && headache -h $(CLIENT)/headers/regular-header base/Vector.{ml,mli}
 
 .PHONY: clean
 clean:
