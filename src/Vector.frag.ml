@@ -418,7 +418,7 @@ let[@inline] (* public *) push v x =
   let new_length = length + 1 in
   let data = DATA(x) in
   (* A physical array slot now exists. *)
-  A.unsafe_set data (new_length - 1) x; (* safe *)
+  A.unsafe_set data length x; (* safe *)
   v.length <- new_length
 
 let (* public *) add_last =

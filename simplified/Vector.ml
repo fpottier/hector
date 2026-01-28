@@ -403,7 +403,7 @@ let[@inline] (* public *) push v x =
     else really_ensure_capacity v new_length x
   in
   (* A physical array slot now exists. *)
-  A.unsafe_set data (new_length - 1) x; (* safe *)
+  A.unsafe_set data length x; (* safe *)
   v.length <- new_length
 
 let (* public *) add_last =
